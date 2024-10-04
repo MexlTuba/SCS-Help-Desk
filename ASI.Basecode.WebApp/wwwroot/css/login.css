@@ -15,6 +15,55 @@
     width: 600px;
 }
 
+.btn-outline-custom {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    font-weight: 400;
+    text-align: center;
+    text-decoration: none;
+    color: #E68D4F;
+    border: 1px solid #E68D4F;
+    background-color: transparent;
+    border-radius: 0.25rem;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.btn-outline-custom:hover {
+    background-color: #E68D4F;
+    color: white;
+}
+
+.btn-outline-custom:focus, .btn-outline-custom:active {
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(230, 141, 79, 0.5);
+}
+
+.btn-primary-custom {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    font-weight: 400;
+    text-align: center;
+    text-decoration: none;
+    color: white; /* Text color */
+    background-color: #E68D4F; /* Background color */
+    border: 1px solid #E68D4F; /* Border color */
+    border-radius: 0.25rem;
+    transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-primary-custom:hover {
+    background-color: #d37e2e; /* Darker shade on hover */
+    border-color: #d37e2e; /* Darker border on hover */
+}
+
+.btn-primary-custom:focus, .btn-primary-custom:active {
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(230, 141, 79, 0.5); /* Focus shadow */
+}
+
+
 @media (min-width: 768px) {
     .gradient-form {
         height: 100vh !important;
