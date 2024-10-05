@@ -2,8 +2,7 @@
     ViewData["Title"] = "User List - SCS Help Desk";
 }
 
-
-<div class="display: flex; min-height: 100vh;">
+<div style="display: flex; min-height: 100vh;">
     <!-- Sidebar -->
     <div style="width: 250px; background-color: #f8f9fa;">
         <div style="padding: 15px;">
@@ -14,11 +13,11 @@
             <a href="@Url.Action("Index", "Home")" style="display: block; padding: 10px 15px; text-decoration: none; color: black;">
                 <i class="bi bi-grid"></i> DASHBOARD
             </a>
-            <a href="/Views/User/Index.cshtml" style="display: block; padding: 10px 15px; text-decoration: none; color: white; background-color: #6c757d;">
+            <a href="@Url.Action("Index", "User")" style="display: block; padding: 10px 15px; text-decoration: none; color: white; background-color: #6c757d;">
                 <i class="bi bi-person"></i> USER LIST
             </a>
             <a href="@Url.Action("Index", "KnowledgeBase")" style="display: block; padding: 10px 15px; text-decoration: none; color: black;">
-                <i class="bi bi-book"></i> KNOWLEDGE BASE
+                <i class="bi bi-book"></i> KNOWLEDGE
             </a>
             <a href="@Url.Action("Index", "Tickets")" style="display: block; padding: 10px 15px; text-decoration: none; color: black;">
                 <i class="bi bi-ticket"></i> TICKETS
@@ -32,64 +31,63 @@
         </div>
     </div>
 
-        <!-- Design of Page -->
-        <div class="col-md-10 p-4">
-            <div class="card">
-                <div class="card-body">
-                    <h2 class="card-title mb-4">USER LIST</h2>
+    <!-- Main Content -->
+    <div style="flex: 1; padding: 20px;">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="card-title mb-4">USER LIST</h2>
 
-                    <div class="row mb-4">
-                        <div class="col-md-4">
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-search"></i></span>
-                                <input type="text" class="form-control" placeholder="Search user">
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <select class="form-select">
-                                <option selected>Role: All</option>
-                                <option>Admin</option>
-                                <option>User</option>
-                                <option>Support</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4 text-end">
-                            <button class="btn btn-warning">
-                                <i class="bi bi-plus"></i> Add User
-                            </button>
+                <div class="row mb-4">
+                    <div class="col-md-4">
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-search"></i></span>
+                            <input type="text" class="form-control" placeholder="Search user">
                         </div>
                     </div>
-
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead class="table-warning">
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Role</th>
-                                    <th>Mail</th>
-                                    <th>Mobile</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Data should be displayed Here -->
-                            </tbody>
-                        </table>
+                    <div class="col-md-4">
+                        <select class="form-select">
+                            <option selected>Role: All</option>
+                            <option>Admin</option>
+                            <option>User</option>
+                            <option>Support</option>
+                        </select>
                     </div>
-
-                    <nav>
-                        <ul class="pagination justify-content-center">
-                            <li class="page-item"><a class="page-link" href="#"><i class="bi bi-chevron-left"></i></a></li>
-                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                            <li class="page-item"><a class="page-link" href="#">4</a></li>
-                            <li class="page-item"><span class="page-link">...</span></li>
-                            <li class="page-item"><a class="page-link" href="#">9</a></li>
-                            <li class="page-item"><a class="page-link" href="#"><i class="bi bi-chevron-right"></i></a></li>
-                        </ul>
-                    </nav>
+                    <div class="col-md-4 text-end">
+                        <a href="@Url.Action("Add", "User")" class="btn btn-warning">
+                            <i class="bi bi-plus"></i> Add User
+                        </a>
+                    </div>
                 </div>
+
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead class="table-warning">
+                            <tr>
+                                <th>Name</th>
+                                <th>Role</th>
+                                <th>Mail</th>
+                                <th>Mobile</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Data should be displayed Here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <nav>
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item"><a class="page-link" href="#"><i class="bi bi-chevron-left"></i></a></li>
+                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item"><a class="page-link" href="#">4</a></li>
+                        <li class="page-item"><span class="page-link">...</span></li>
+                        <li class="page-item"><a class="page-link" href="#">9</a></li>
+                        <li class="page-item"><a class="page-link" href="#"><i class="bi bi-chevron-right"></i></a></li>
+                    </ul>
+                </nav>
             </div>
         </div>
     </div>
