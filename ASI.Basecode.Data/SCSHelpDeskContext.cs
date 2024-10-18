@@ -29,6 +29,14 @@ namespace ASI.Basecode.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Role>().HasData(
+            new Role { RoleId = 1, RoleName = "Super Admin" },
+            new Role { RoleId = 2, RoleName = "Admin" },
+            new Role { RoleId = 3, RoleName = "Student" }
+        );
+
             modelBuilder.Entity<Role>(entity =>
             {
                 entity.ToTable("Role");
