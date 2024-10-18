@@ -199,4 +199,4 @@ node_modules
 */src/*/Scripts/**/*.js.map
 
 # Ignore Migrations folder
-SCS-Help-Desk/ASI.Basecode.Data/Migrations/
+ASI.Basecode.Data/Migrations/
