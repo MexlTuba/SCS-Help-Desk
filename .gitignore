@@ -197,3 +197,6 @@ $RECYCLE.BIN/
 node_modules
 */src/*/Scripts/**/*.js
 */src/*/Scripts/**/*.js.map
+
+# Ignore Migrations folder
+SCS-Help-Desk/ASI.Basecode.Data/Migrations/
