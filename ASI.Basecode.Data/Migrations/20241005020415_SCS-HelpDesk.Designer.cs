@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ASI.Basecode.Data.Migrations
 {
     [DbContext(typeof(AsiBasecodeDBContext))]
-    [Migration("20241005021902_SCS-HelpDesk")]
+    [Migration("20241005020415_SCS-HelpDesk")]
     partial class SCSHelpDesk
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
