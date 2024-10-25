@@ -1,54 +1,36 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using ASI.Basecode.Services.ServiceModels;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.IO;
+using System;
+using ASI.Basecode.Services.Interfaces;
 
 namespace ASI.Basecode.WebApp.Controllers
 {
     public class UserController : Controller
     {
+        private readonly IUserService _userService;
+
         // GET: UsersController
-        public ActionResult Index()
-        {
-            return View();
-        }
-        public IActionResult Add()
-        {
-            return View("user_add");
-        }
-
-        // GET: UsersController/Details/5
-        public ActionResult Details(int id)
+        public ActionResult UserList()
         {
             return View();
         }
 
-        // GET: UsersController/Create
-        public ActionResult Create()
+        // GET: UsersController/UserAdd
+        public ActionResult UserAdd()
         {
             return View();
         }
 
-        // POST: UsersController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: UsersController/Edit/5
+        // GET: UsersController/Edit/UserId
         public ActionResult Edit(int id)
         {
             return View();
         }
 
-        // POST: UsersController/Edit/5
+        // POST: UsersController/Edit/userId
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, IFormCollection collection)
@@ -63,13 +45,13 @@ namespace ASI.Basecode.WebApp.Controllers
             }
         }
 
-        // GET: UsersController/Delete/5
+        // GET: UsersController/Delete/userId
         public ActionResult Delete(int id)
         {
             return View();
         }
 
-        // POST: UsersController/Delete/5
+        // POST: UsersController/Delete/userId
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, IFormCollection collection)

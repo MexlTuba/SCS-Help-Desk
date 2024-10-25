@@ -21,10 +21,6 @@ namespace ASI.Basecode.Data
         public virtual DbSet<Role> Roles { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (!optionsBuilder.IsConfigured)
-            {
-                optionsBuilder.UseSqlServer("Addr=localhost\\SQLEXPRESS;database=SCSHelpDesk;Integrated Security=False;Trusted_Connection=True");
-            }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -34,7 +30,8 @@ namespace ASI.Basecode.Data
             modelBuilder.Entity<Role>().HasData(
             new Role { RoleId = 1, RoleName = "Super Admin" },
             new Role { RoleId = 2, RoleName = "Admin" },
-            new Role { RoleId = 3, RoleName = "Student" }
+            new Role { RoleId = 3, RoleName = "SupportAgent" },
+            new Role { RoleId = 4, RoleName = "Student" }
         );
 
             modelBuilder.Entity<Role>(entity =>

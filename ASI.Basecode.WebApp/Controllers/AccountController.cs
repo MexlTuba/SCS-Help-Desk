@@ -6,13 +6,17 @@ using ASI.Basecode.WebApp.Authentication;
 using ASI.Basecode.WebApp.Models;
 using ASI.Basecode.WebApp.Mvc;
 using AutoMapper;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using static ASI.Basecode.Resources.Constants.Enums;
 
@@ -95,17 +99,32 @@ namespace ASI.Basecode.WebApp.Controllers
             var loginResult = _userService.AuthenticateUser(model.UserId, model.Password, ref user);
             if (loginResult == LoginResult.Success)
             {
-                // 認証OK
+                // Authentication Succesful
                 await this._signInManager.SignInAsync(user);
                 this._session.SetString("UserName", user.Name);
-                return RedirectToAction("Index", "Home");
+
+                // fetch roleId
+                int? roledId = user.RoleId;
+
+                switch (roledId)
+                {
+                    case 1:
+                        return RedirectToAction("SuperAdminDashboard", "SuperAdmin");
+                    case 2:
+                        return RedirectToAction("AdminDashboard", "Admin");
+                    case 3:
+                        return RedirectToAction("SupportAgentDashboard", "SupportAgent");
+                    case 4:
+                        return RedirectToAction("StudentDashboard", "Student");
+                }
             }
             else
             {
-                // 認証NG
+                // Authentication Failed
                 TempData["ErrorMessage"] = "Incorrect UserId or Password";
                 return View();
             }
+            return View();
         }
 
         [HttpGet]
@@ -117,24 +136,40 @@ namespace ASI.Basecode.WebApp.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public IActionResult Register(UserViewModel model)
+        public IActionResult Register(UserViewModel model, string role)
         {
             try
             {
-                model.RoleID = 3;
+                if (role == "admin")
+                {
+                    model.RoleID = 2;
+                }
+                else if (role == "support")
+                {
+                    model.RoleID = 3;
+                }
+                else if (role == "student")
+                {
+                    model.RoleID = 4;
+                }
+                else
+                {
+                    model.RoleID = 4;
+                };
+
                 _userService.AddUser(model);
-                return RedirectToAction("Login", "Account");
             }
-            catch(InvalidDataException ex)
+            catch (InvalidDataException ex)
             {
                 TempData["ErrorMessage"] = ex.Message;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 TempData["ErrorMessage"] = Resources.Messages.Errors.ServerError;
             }
             return View();
         }
+
 
         /// <summary>
         /// Sign Out current account and return login view.
