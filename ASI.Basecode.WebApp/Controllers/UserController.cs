@@ -11,11 +11,16 @@ namespace ASI.Basecode.WebApp.Controllers
     public class UserController : Controller
     {
         private readonly IUserService _userService;
+        public UserController(IUserService userService)
+        {
+            _userService = userService;
+        }
 
         // GET: UsersController
         public ActionResult UserList()
         {
-            return View();
+            var users = _userService.GetAllUsers(); // Fetch users from the service
+            return View(users);
         }
 
         // GET: UsersController/UserAdd

@@ -5,6 +5,7 @@ using ASI.Basecode.Services.Manager;
 using ASI.Basecode.Services.ServiceModels;
 using AutoMapper;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using static ASI.Basecode.Resources.Constants.Enums;
@@ -20,6 +21,11 @@ namespace ASI.Basecode.Services.Services
         {
             _mapper = mapper;
             _repository = repository;
+        }
+
+        public List<User> GetAllUsers()
+        {
+            return _repository.GetUsers().ToList();
         }
 
         public LoginResult AuthenticateUser(string userId, string password, ref User user)
@@ -43,6 +49,7 @@ namespace ASI.Basecode.Services.Services
                 user.UpdatedTime = DateTime.Now;
                 user.CreatedBy = System.Environment.UserName;
                 user.UpdatedBy = System.Environment.UserName;
+                user.email = model.Email;
 
                 _repository.AddUser(user);
             }

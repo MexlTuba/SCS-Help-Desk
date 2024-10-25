@@ -17,6 +17,7 @@ namespace ASI.Basecode.Data.Models
         public string UpdatedBy { get; set; }
         public DateTime UpdatedTime { get; set; }
         public int? RoleId { get; set; }
+        public string email { get; set; }
 
         public virtual Role Role { get; set; }
     }
