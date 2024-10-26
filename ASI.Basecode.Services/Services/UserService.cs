@@ -49,7 +49,8 @@ namespace ASI.Basecode.Services.Services
                 user.UpdatedTime = DateTime.Now;
                 user.CreatedBy = System.Environment.UserName;
                 user.UpdatedBy = System.Environment.UserName;
-                user.email = model.Email;
+                user.Email = model.Email;
+                user.Role = model.Role;
 
                 _repository.AddUser(user);
             }

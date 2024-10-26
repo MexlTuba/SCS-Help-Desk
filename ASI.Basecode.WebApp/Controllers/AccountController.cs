@@ -104,17 +104,17 @@ namespace ASI.Basecode.WebApp.Controllers
                 this._session.SetString("UserName", user.Name);
 
                 // fetch roleId
-                int? roledId = user.RoleId;
+                String roled = user.Role;
 
-                switch (roledId)
+                switch (roled)
                 {
-                    case 1:
+                    case "Super Admin":
                         return RedirectToAction("SuperAdminDashboard", "SuperAdmin");
-                    case 2:
+                    case "Admin":
                         return RedirectToAction("AdminDashboard", "Admin");
-                    case 3:
+                    case "Support Agent":
                         return RedirectToAction("SupportAgentDashboard", "SupportAgent");
-                    case 4:
+                    case "Student":
                         return RedirectToAction("StudentDashboard", "Student");
                 }
             }
@@ -136,27 +136,14 @@ namespace ASI.Basecode.WebApp.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public IActionResult Register(UserViewModel model, string role)
+        public IActionResult Register(UserViewModel model)
         {
             try
             {
-                if (role == "admin")
+                if (string.IsNullOrEmpty(model.Role))
                 {
-                    model.RoleID = 2;
+                    model.Role = "Student";
                 }
-                else if (role == "support")
-                {
-                    model.RoleID = 3;
-                }
-                else if (role == "student")
-                {
-                    model.RoleID = 4;
-                }
-                else
-                {
-                    model.RoleID = 4;
-                };
-
                 _userService.AddUser(model);
             }
             catch (InvalidDataException ex)
