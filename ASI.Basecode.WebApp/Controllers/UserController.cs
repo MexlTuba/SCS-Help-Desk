@@ -1,40 +1,75 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using ASI.Basecode.Services.ServiceModels;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.IO;
+using System;
+using ASI.Basecode.Services.Interfaces;
+using ASI.Basecode.Data.Models;
 
 namespace ASI.Basecode.WebApp.Controllers
 {
     public class UserController : Controller
     {
+        private readonly IUserService _userService;
+        public UserController(IUserService userService)
+        {
+            _userService = userService;
+        }
+
         // GET: UsersController
-        public ActionResult Index()
+        public ActionResult UserList()
         {
-            return View();
-        }
-        public IActionResult Add()
-        {
-            return View("user_add");
+            var users = _userService.GetAllUsers(); // Fetch users from the service
+            return View(users);
         }
 
-        // GET: UsersController/Details/5
-        public ActionResult Details(int id)
+        // GET: UsersController/UserAdd
+        public ActionResult UserAdd()
         {
             return View();
         }
 
-        // GET: UsersController/Create
-        public ActionResult Create()
+        // GET: UsersController/Edit/UserId
+        public ActionResult Edit(string id)
         {
-            return View();
+            var user = _userService.GetUserById(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return View(user);
         }
 
-        // POST: UsersController/Create
+        // POST: UsersController/Edit/userId
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Edit(User user)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    _userService.UpdateUser(user);
+                    return RedirectToAction(nameof(UserList));
+                }
+                return View(user);
+            }
+            catch
+            {
+                return View(user);
+            }
+        }
+
+        // POST: UsersController/ResetPassword/userId
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ResetPassword(string id)
+        {
+            try
+            {
+                _userService.ResetPassword(id, "Temp_123");
+                return RedirectToAction(nameof(UserList));
             }
             catch
             {
@@ -42,20 +77,13 @@ namespace ASI.Basecode.WebApp.Controllers
             }
         }
 
-        // GET: UsersController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: UsersController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        // GET: UsersController/Delete/userId
+        public ActionResult Delete(string id)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                _userService.DeleteUser(id);
+                return RedirectToAction(nameof(UserList));
             }
             catch
             {
@@ -63,13 +91,7 @@ namespace ASI.Basecode.WebApp.Controllers
             }
         }
 
-        // GET: UsersController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: UsersController/Delete/5
+        // POST: UsersController/Delete/userId
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id, IFormCollection collection)

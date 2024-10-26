@@ -5,6 +5,7 @@ using ASI.Basecode.Services.Manager;
 using ASI.Basecode.Services.ServiceModels;
 using AutoMapper;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using static ASI.Basecode.Resources.Constants.Enums;
@@ -20,6 +21,40 @@ namespace ASI.Basecode.Services.Services
         {
             _mapper = mapper;
             _repository = repository;
+        }
+
+        public List<User> GetAllUsers()
+        {
+            return _repository.GetUsers().ToList();
+        }
+
+        public User GetUserById(string userId)
+        {
+            return _repository.GetUsers().FirstOrDefault(u => u.UserId == userId);
+        }
+
+        public void UpdateUser(User user)
+        {
+            _repository.UpdateUser(user);
+        }
+
+        public void ResetPassword(string userId, string newPassword)
+        {
+            var user = _repository.GetUsers().FirstOrDefault(u => u.UserId == userId);
+            if (user != null)
+            {
+                user.Password = PasswordManager.EncryptPassword(newPassword);
+                _repository.UpdateUser(user);
+            }
+        }
+
+        public void DeleteUser(string userId)
+        {
+            var user = _repository.GetUsers().FirstOrDefault(u => u.UserId == userId);
+            if (user != null)
+            {
+                _repository.DeleteUser(user);
+            }
         }
 
         public LoginResult AuthenticateUser(string userId, string password, ref User user)
@@ -43,6 +78,8 @@ namespace ASI.Basecode.Services.Services
                 user.UpdatedTime = DateTime.Now;
                 user.CreatedBy = System.Environment.UserName;
                 user.UpdatedBy = System.Environment.UserName;
+                user.Email = model.Email;
+                user.Role = model.Role;
 
                 _repository.AddUser(user);
             }

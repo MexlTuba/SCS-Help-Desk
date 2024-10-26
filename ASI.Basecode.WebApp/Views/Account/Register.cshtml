@@ -33,6 +33,12 @@
                                 <span asp-validation-for="Name" class="text-danger"></span>
                             </div>
                             <div class="form-outline mb-4">
+                                <label class="form-label" for="email">School Email</label>
+                                <input type="text" id="email" class="form-control"
+                                       asp-for="Email" placeholder="Enter School Email" />
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+                            <div class="form-outline mb-4">
                                 <label class="form-label" for="password">Password</label>
                                 <input type="password" id="password" class="form-control"
                                        asp-for="Password" placeholder="Enter password" />

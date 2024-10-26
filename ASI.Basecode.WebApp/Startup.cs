@@ -1,6 +1,8 @@
 ﻿using ASI.Basecode.Data;
 using ASI.Basecode.Resources.Constants;
+using ASI.Basecode.Services.Interfaces;
 using ASI.Basecode.Services.Manager;
+using ASI.Basecode.Services.Services;
 using ASI.Basecode.WebApp.Authentication;
 using ASI.Basecode.WebApp.Extensions.Configuration;
 using ASI.Basecode.WebApp.Models;
@@ -81,6 +83,7 @@ namespace ASI.Basecode.WebApp
             this._services = services;
 
             services.AddMemoryCache();
+            services.AddScoped<IUserService, UserService>();
 
             // Register SQL database configuration context as services.
             services.AddDbContext<SCSHelpDeskContext>(options =>
