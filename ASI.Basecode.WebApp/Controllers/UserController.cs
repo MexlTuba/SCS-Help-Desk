@@ -51,9 +51,17 @@ namespace ASI.Basecode.WebApp.Controllers
         }
 
         // GET: UsersController/Delete/userId
-        public ActionResult Delete(int id)
+        public ActionResult Delete(string id)
         {
-            return View();
+            try
+            {
+                _userService.DeleteUser(id);
+                return RedirectToAction(nameof(UserList));
+            }
+            catch
+            {
+                return View();
+            }
         }
 
         // POST: UsersController/Delete/userId

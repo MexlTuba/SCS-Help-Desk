@@ -7,11 +7,11 @@
     <div style="flex: 1; background: linear-gradient(135deg, #ff6b00 0%, #ffa500 100%); padding: 20px;">
         <div style="background-color: white; border-radius: 15px; padding: 30px; max-width: 800px; margin: 0 auto;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-                <h2 style="margin: 0;">ADD USER</h2>
+                <h2 style="margin: 0;">EDIT USER</h2>
                 <a href="javascript:history.back()" style="padding: 8px 20px; background-color: #f4a460; color: black; text-decoration: none; border-radius: 5px;">Back</a>
             </div>
 
-            <form method="post" action="/Account/Register">
+            <form method="post" action="/User/Edit">
                 <div style="display: flex;">
                     <!-- Form Fields -->
                     <div style="flex: 1; margin-right: 40px;">
@@ -23,16 +23,6 @@
                         <div style="margin-bottom: 20px;">
                             <label style="display: block; margin-bottom: 5px; font-weight: bold;">Full Name</label>
                             <input type="text" name="Name" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; background-color: #f0f0f0;">
-                        </div>
-
-                        <div style="margin-bottom: 20px;">
-                            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Password</label>
-                            <input type="password" name="Password" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; background-color: #f0f0f0;">
-                        </div>
-
-                        <div style="margin-bottom: 20px;">
-                            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Confirm Password</label>
-                            <input type="password" name="ConfirmPassword" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; background-color: #f0f0f0;">
                         </div>
 
                         <div style="margin-bottom: 20px;">
@@ -57,12 +47,15 @@
                 </div>
 
                 <!-- Buttons -->
-                <div style="display: flex; justify-content: flex-end; margin-top: 30px;">
+                <div style="display: flex; justify-content: flex-end; margin-top: 30px; margin-top: 30px;">
                     <button type="reset" style="padding: 10px 20px; background-color: white; color: #f4a460; border: 1px solid #f4a460; border-radius: 5px; margin-right: 10px; cursor: pointer;">
                         Clear Form
                     </button>
-                    <button type="submit" style="padding: 10px 20px; background-color: #f4a460; color: black; border: none; border-radius: 5px; cursor: pointer;">
+                    <button type="submit" style="padding: 10px 20px; background-color: #f4a460; color: black; border: none; border-radius: 5px;margin-right: 10px; cursor: pointer; ">
                         Create User
+                    </button>
+                    <button type="reset" style="padding: 10px 20px; background-color: white; color: #FF0000; border: 1px solid #FF0000; border-radius: 5px; margin-right: 10px; cursor: pointer;">
+                        Reset Password
                     </button>
                 </div>
             </form>

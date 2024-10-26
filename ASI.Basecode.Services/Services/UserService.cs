@@ -28,6 +28,15 @@ namespace ASI.Basecode.Services.Services
             return _repository.GetUsers().ToList();
         }
 
+        public void DeleteUser(string userId)
+        {
+            var user = _repository.GetUsers().FirstOrDefault(u => u.UserId == userId);
+            if (user != null)
+            {
+                _repository.DeleteUser(user);
+            }
+        }
+
         public LoginResult AuthenticateUser(string userId, string password, ref User user)
         {
             user = new User();
