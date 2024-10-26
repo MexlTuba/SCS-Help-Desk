@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.IO;
 using System;
 using ASI.Basecode.Services.Interfaces;
+using ASI.Basecode.Data.Models;
 
 namespace ASI.Basecode.WebApp.Controllers
 {
@@ -30,19 +31,45 @@ namespace ASI.Basecode.WebApp.Controllers
         }
 
         // GET: UsersController/Edit/UserId
-        public ActionResult Edit(int id)
+        public ActionResult Edit(string id)
         {
-            return View();
+            var user = _userService.GetUserById(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return View(user);
         }
 
         // POST: UsersController/Edit/userId
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(User user)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    _userService.UpdateUser(user);
+                    return RedirectToAction(nameof(UserList));
+                }
+                return View(user);
+            }
+            catch
+            {
+                return View(user);
+            }
+        }
+
+        // POST: UsersController/ResetPassword/userId
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ResetPassword(string id)
+        {
+            try
+            {
+                _userService.ResetPassword(id, "Temp_123");
+                return RedirectToAction(nameof(UserList));
             }
             catch
             {

@@ -28,6 +28,26 @@ namespace ASI.Basecode.Services.Services
             return _repository.GetUsers().ToList();
         }
 
+        public User GetUserById(string userId)
+        {
+            return _repository.GetUsers().FirstOrDefault(u => u.UserId == userId);
+        }
+
+        public void UpdateUser(User user)
+        {
+            _repository.UpdateUser(user);
+        }
+
+        public void ResetPassword(string userId, string newPassword)
+        {
+            var user = _repository.GetUsers().FirstOrDefault(u => u.UserId == userId);
+            if (user != null)
+            {
+                user.Password = PasswordManager.EncryptPassword(newPassword);
+                _repository.UpdateUser(user);
+            }
+        }
+
         public void DeleteUser(string userId)
         {
             var user = _repository.GetUsers().FirstOrDefault(u => u.UserId == userId);

@@ -1,4 +1,6 @@
-﻿@{
+﻿@model ASI.Basecode.Data.Models.User
+
+@{
     ViewData["Title"] = "Edit User - SCS Help Desk";
 }
 
@@ -11,28 +13,33 @@
                 <a href="javascript:history.back()" style="padding: 8px 20px; background-color: #f4a460; color: black; text-decoration: none; border-radius: 5px;">Back</a>
             </div>
 
-            <form method="post" action="/User/Edit">
+            <form method="post" asp-action="Edit">
                 <div style="display: flex;">
                     <!-- Form Fields -->
                     <div style="flex: 1; margin-right: 40px;">
                         <div style="margin-bottom: 20px;">
                             <label style="display: block; margin-bottom: 5px; font-weight: bold;">ID Number</label>
-                            <input type="text" name="UserId" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; background-color: #f0f0f0;">
+                            <input type="text" asp-for="UserId" class="form-control" readonly />
                         </div>
 
                         <div style="margin-bottom: 20px;">
                             <label style="display: block; margin-bottom: 5px; font-weight: bold;">Full Name</label>
-                            <input type="text" name="Name" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; background-color: #f0f0f0;">
+                            <input type="text" asp-for="Name" class="form-control" />
                         </div>
 
                         <div style="margin-bottom: 20px;">
                             <label style="display: block; margin-bottom: 5px; font-weight: bold;">Role:</label>
-                            <select name="role" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; background-color: #f0f0f0;">
+                            <select asp-for="Role" class="form-control">
                                 <option value="">Select option</option>
-                                <option value="admin">Admin</option>
-                                <option value="support">Support Agent</option>
-                                <option value="student">Student</option>
+                                <option value="Admin">Admin</option>
+                                <option value="Support Agent">Support Agent</option>
+                                <option value="Student">Student</option>
                             </select>
+                        </div>
+
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Email</label>
+                            <input type="email" asp-for="Email" class="form-control" />
                         </div>
                     </div>
 
@@ -47,19 +54,39 @@
                 </div>
 
                 <!-- Buttons -->
-                <div style="display: flex; justify-content: flex-end; margin-top: 30px; margin-top: 30px;">
+                <div style="display: flex; justify-content: flex-end; margin-top: 30px;">
                     <button type="reset" style="padding: 10px 20px; background-color: white; color: #f4a460; border: 1px solid #f4a460; border-radius: 5px; margin-right: 10px; cursor: pointer;">
                         Clear Form
                     </button>
-                    <button type="submit" style="padding: 10px 20px; background-color: #f4a460; color: black; border: none; border-radius: 5px;margin-right: 10px; cursor: pointer; ">
-                        Create User
+                    <button type="submit" style="padding: 10px 20px; background-color: #f4a460; color: black; border: none; border-radius: 5px; margin-right: 10px; cursor: pointer;">
+                        Save Changes
                     </button>
-                    <button type="reset" style="padding: 10px 20px; background-color: white; color: #FF0000; border: 1px solid #FF0000; border-radius: 5px; margin-right: 10px; cursor: pointer;">
+                    <button type="button" onclick="resetPassword('@Model.UserId')" style="padding: 10px 20px; background-color: white; color: #FF0000; border: 1px solid #FF0000; border-radius: 5px; margin-right: 10px; cursor: pointer;">
                         Reset Password
                     </button>
                 </div>
             </form>
-
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        function resetPassword(userId) {
+            if (confirm("Are you sure you want to reset the password for this user?")) {
+                var form = document.createElement("form");
+                form.method = "post";
+                form.action = "/User/ResetPassword";
+
+                var input = document.createElement("input");
+                input.type = "hidden";
+                input.name = "id";
+                input.value = userId;
+                form.appendChild(input);
+
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+    </script>
+}
