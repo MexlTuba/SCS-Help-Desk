@@ -103,7 +103,7 @@ namespace ASI.Basecode.WebApp.Controllers
                 await this._signInManager.SignInAsync(user);
                 this._session.SetString("UserName", user.Name);
 
-                // fetch roleId
+                // fetch role
                 String roled = user.Role;
 
                 switch (roled)
@@ -140,11 +140,10 @@ namespace ASI.Basecode.WebApp.Controllers
         {
             try
             {
-                if (string.IsNullOrEmpty(model.Role))
-                {
-                    model.Role = "Student";
-                }
+                model.Role = "Student";
                 _userService.AddUser(model);
+                return RedirectToAction("Login", "Account");
+
             }
             catch (InvalidDataException ex)
             {
@@ -155,6 +154,32 @@ namespace ASI.Basecode.WebApp.Controllers
                 TempData["ErrorMessage"] = Resources.Messages.Errors.ServerError;
             }
             return View();
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public IActionResult RegisterFromUserAdd(UserViewModel model)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(model.Role))
+                {
+                    model.Role = "Student";
+                }
+                _userService.AddUser(model);
+
+                // Redirect to UserList after successful registration
+                return RedirectToAction("UserList", "SuperAdmin");
+            }
+            catch (InvalidDataException ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = Resources.Messages.Errors.ServerError;
+            }
+            return View("UserAdd"); // Stay on the UserAdd page if there's an error
         }
 
 

@@ -1,42 +1,132 @@
 ﻿@{
-    ViewData["Title"] = "Ticket Summary - SCS Help Desk";
+    ViewData["Title"] = "SCS Help Desk";
 }
-<div style="flex: 1; padding: 20px;">
-    <div style="background-color: white; border-radius: 15px; padding: 30px;">
-        <!-- Ticket Summary Section -->
-        <div style="margin-bottom: 40px;">
-            <h2 style="margin-bottom: 20px;">TICKET SUMMARY</h2>
-            <div style="display: flex; align-items: center; margin-bottom: 20px;">
-                <span style="margin-right: 10px;"> Sort by:</span>
-                <select style="padding: 5px; border: 1px solid #ddd; border-radius: 4px;">
-                    <option>Last 7 days</option>
-                    <option>Last 30 days</option>
-                    <option>Last 90 days</option>
-                </select>
-            </div>
 
-            <!-- Chart Area -->
-            <div style="width: 100%; height: 300px; background-color: #fff; border: 1px solid #e0e0e0; margin-bottom: 40px;">
-            </div>
-        </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+        }
 
-        <!-- Feedback Section -->
-        <div>
-            <h2 style="margin-bottom: 20px;">CUSTOMER FEEDBACK</h2>
-            <!-- Feedback Cards should be placed here-->
-            <div style="margin-bottom: 20px;">
-                <div style="background-color: #f8f9fa; border-radius: 5px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-                    <div style="height: 100px;"></div>
-                </div>
-                <div style="background-color: #f8f9fa; border-radius: 5px; padding: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-                    <div style="height: 100px;"></div>
-                </div>
-            </div>
+        .banner {
+            background: url('Banner.png') no-repeat center;
+            background-size: cover;
+            color: white;
+            text-align: center;
+            position: relative;
+        }
+
+        .banner h2 {
+            font-size: 1.5em;
+        }
+
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .campuses {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .campuses div {
+            font-size: 1em;
+            text-align: center;
+            color: black;
+        }
+
+        .button-section {
+            display: flex;
+            justify-content: space-around;
+            padding: 20px 0;
+            background-color: #f8f9fa;
+        }
+
+        .button {
+            background-color: #e9ecef;
+            padding: 20px;
+            width: 200px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .button:hover {
+            background-color: #dee2e6;
+        }
+
+        .button h3 {
+            margin: 0;
+            font-size: 1.2em;
+        }
+
+        .button p {
+            margin-top: 10px;
+            color: #6c757d;
+        }
+
+        .logout-btn {
+            position: absolute;
+            top: 10px;  
+            right: 40px;
+            background-color: red;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .adelante-badge {
+            background-color: #28a745;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="banner">
+        <a asp-action="SignOutUser" asp-controller="Account" style="display: block; padding: 10px 15px; text-decoration: none; color: black;">
+            <button class="logout-btn">LOGOUT</button>
+        </a>
+        <img src="~/img/Banner.png" alt="Banner">
         </div>
     </div>
-</div>
-</div>
 
-@section Styles {
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
-}
+    <div class="button-section">
+        <div class="button" onclick="window.location.href='CreateTicket.cshtml'">
+            <h3>Create Ticket</h3>
+            <p>Need assistance or have an issue? Submit your request.</p>
+        </div>
+        <div class="button" onclick="window.location.href='MyTickets.cshtml'">
+            <h3>My Tickets</h3>
+            <p>View and track your requests.</p>
+        </div>
+        <div class="button" onclick="window.location.href='KnowledgeBase.cshtml'">
+            <h3>Knowledge Base</h3>
+            <p>View frequently asked questions.</p>
+        </div>
+        <div class="button" onclick="window.location.href='Settings.cshtml'">
+            <h3>Settings & Preferences</h3>
+            <p>Customize your experience.</p>
+        </div>
+    </div>
+</body>
+</html>

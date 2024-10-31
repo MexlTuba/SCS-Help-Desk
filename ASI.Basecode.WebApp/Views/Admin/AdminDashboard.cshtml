@@ -1,11 +1,40 @@
 ﻿@{
-    ViewData["Title"] = "Ticket Summary - SCS Help Desk";
+    ViewData["Title"] = "Admin Dashboard - SCS Help Desk";
 }
+
+<div style="display: flex; min-height: 100vh;">
+    <!-- Sidebar -->
+    <div style="width: 250px; background-color: #f8f9fa; ">
+        <div style="padding: 15px;">
+            <img src="~/img/SCS-Logo.png" alt="SCS Logo" style="max-width: 50px; margin-bottom: 10px;">
+            <h5 style="margin-bottom: 20px;">SCS HELP DESK</h5>
+        </div>
+        <div>
+            <a href="@Url.Action("AdminDashboard", "Admin")" style="display: block; padding: 10px 15px; text-decoration: none; color: white; background-color: #6c757d;">
+                <i class="bi bi-grid"></i> DASHBOARD
+            </a>
+            <a href="@Url.Action("UserList", "Admin")" style="display: block; padding: 10px 15px; text-decoration: none; color: black;">
+                <i class="bi bi-person"></i> USER LIST
+            </a>
+            <a href="@Url.Action("Knowledge", "Admin")" style="display: block; padding: 10px 15px; text-decoration: none; color: black;">
+                <i class="bi bi-book"></i> KNOWLEDGE BASE
+            </a>
+            <a href="@Url.Action("Tickets", "Admin")" style="display: block; padding: 10px 15px; text-decoration: none; color: black;">
+                <i class="bi bi-ticket"></i> TICKETS
+            </a>
+            <a href="@Url.Action("Account", "Admin")" style="display: block; padding: 10px 15px; text-decoration: none; color: black;">
+                <i class="bi bi-gear"></i> ACCOUNT SETTINGS
+            </a>
+            <a asp-action="SignOutUser" asp-controller="Account" style="display: block; padding: 10px 15px; text-decoration: none; color: black;">
+                <i class="bi bi-box-arrow-right"></i> LOGOUT
+            </a>
+        </div>
+    </div>
 <div style="flex: 1; padding: 20px;">
     <div style="background-color: white; border-radius: 15px; padding: 30px;">
         <!-- Ticket Summary Section -->
         <div style="margin-bottom: 40px;">
-            <h2 style="margin-bottom: 20px;">TICKET SUMMARY</h2>
+            <h2 style="margin-bottom: 20px;">Admin TICKET SUMMARY</h2>
             <div style="display: flex; align-items: center; margin-bottom: 20px;">
                 <span style="margin-right: 10px;"> Sort by:</span>
                 <select style="padding: 5px; border: 1px solid #ddd; border-radius: 4px;">

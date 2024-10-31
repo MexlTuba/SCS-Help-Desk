@@ -1,0 +1,121 @@
+﻿@model ASI.Basecode.Data.Models.User
+
+@{
+    ViewData["Title"] = "Edit User - SCS Help Desk";
+}
+
+<div style="display: flex; min-height: 100vh; width: 100vw;">
+    <!-- Sidebar -->
+    <div style="width: 250px; background-color: #f8f9fa;">
+        <div style="padding: 15px;">
+            <img src="~/img/SCS-Logo.png" alt="SCS Logo" style="max-width: 50px; margin-bottom: 10px;">
+            <h5 style="margin-bottom: 20px;">SCS HELP DESK</h5>
+        </div>
+        <div>
+            <a href="@Url.Action("SuperAdminDashboard", "SuperAdmin")" style="display: block; padding: 10px 15px; text-decoration: none; color: black;">
+                <i class="bi bi-grid"></i> DASHBOARD
+            </a>
+            <a href="@Url.Action("UserList", "SuperAdmin")" style="display: block; padding: 10px 15px; text-decoration: none; color: white; background-color: #6c757d;">
+                <i class="bi bi-person"></i> USER LIST
+            </a>
+            <a href="@Url.Action("Knowledge", "SuperAdmin")" style="display: block; padding: 10px 15px; text-decoration: none; color: black;">
+                <i class="bi bi-book"></i> KNOWLEDGE BASE
+            </a>
+            <a href="@Url.Action("Tickets", "SuperAdmin")" style="display: block; padding: 10px 15px; text-decoration: none; color: black;">
+                <i class="bi bi-ticket"></i> TICKETS
+            </a>
+            <a href="@Url.Action("Settings", "SuperAdmin")" style="display: block; padding: 10px 15px; text-decoration: none; color: black;">
+                <i class="bi bi-gear"></i> ACCOUNT SETTINGS
+            </a>
+            <a asp-action="SignOutUser" asp-controller="Account" style="display: block; padding: 10px 15px; text-decoration: none; color: black;">
+                <i class="bi bi-box-arrow-right"></i> LOGOUT
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div style="flex: 1; background: linear-gradient(135deg, #ff6b00 0%, #ffa500 100%); padding: 20px;">
+        <div style="background-color: white; border-radius: 15px; padding: 30px; max-width: 800px; margin: 0 auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                <h2 style="margin: 0;">EDIT USER</h2>
+                <a href="javascript:history.back()" style="padding: 8px 20px; background-color: #f4a460; color: black; text-decoration: none; border-radius: 5px;">Back</a>
+            </div>
+
+            <form method="post" asp-action="Edit">
+                <div style="display: flex;">
+                    <!-- Form Fields -->
+                    <div style="flex: 1; margin-right: 40px;">
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 5px; font-weight: bold;">ID Number</label>
+                            <input type="text" asp-for="UserId" class="form-control" readonly />
+                        </div>
+
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Full Name</label>
+                            <input type="text" asp-for="Name" class="form-control" />
+                        </div>
+
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Email</label>
+                            <input type="email" asp-for="Email" class="form-control" />
+                        </div>
+
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Role:</label>
+                            <select asp-for="Role" class="form-control">
+                                <option value="">Select option</option>
+                                <option value="Admin">Admin</option>
+                                <option value="Support Agent">Support Agent</option>
+                                <option value="Student">Student</option>
+                            </select>
+                        </div>
+                        
+                    </div>
+
+                    <!-- Photo Upload Area -->
+                    <div style="width: 200px; text-align: center;">
+                        <div style="width: 150px; height: 150px; margin: 0 auto 20px; background-color: #f0f0f0; border-radius: 50%; display: flex; justify-content: center; align-items: center;">
+                            <div style="color: #666;">
+                                Add Photo
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <div style="display: flex; justify-content: flex-end; margin-top: 30px;">
+                    <button type="button" onclick="resetPassword('@Model.UserId')" style="padding: 10px 20px; background-color: white; color: #FF0000; border: 1px solid #FF0000; border-radius: 5px; margin-right: 10px; cursor: pointer;">
+                        Reset Password
+                    </button>
+                    <button type="submit" style="padding: 10px 20px; background-color: #f4a460; color: black; border: none; border-radius: 5px; margin-right: 10px; cursor: pointer;">
+                        Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function resetPassword(userId) {
+            if (confirm("Are you sure you want to reset the password for this user?")) {
+                var form = document.createElement("form");
+                form.method = "post";
+                form.action = "/SuperAdmin/ResetPassword";
+
+                var input = document.createElement("input");
+                input.type = "hidden";
+                input.name = "id";
+                input.value = userId;
+                form.appendChild(input);
+
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+    </script>
+}
+    @section Styles {
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    }

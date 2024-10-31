@@ -38,8 +38,6 @@ namespace ASI.Basecode.Data
             {
                 entity.ToTable("Role");
 
-                entity.Property(e => e.RoleId).HasColumnName("RoleID");
-
                 entity.Property(e => e.RoleName)
                     .IsRequired()
                     .HasMaxLength(50)
