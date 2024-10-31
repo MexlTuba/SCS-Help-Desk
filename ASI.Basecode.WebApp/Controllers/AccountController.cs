@@ -157,6 +157,32 @@ namespace ASI.Basecode.WebApp.Controllers
             return View();
         }
 
+        [HttpPost]
+        [AllowAnonymous]
+        public IActionResult RegisterFromUserAdd(UserViewModel model)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(model.Role))
+                {
+                    model.Role = "Student";
+                }
+                _userService.AddUser(model);
+
+                // Redirect to UserList after successful registration
+                return RedirectToAction("UserList", "SuperAdmin");
+            }
+            catch (InvalidDataException ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = Resources.Messages.Errors.ServerError;
+            }
+            return View("UserAdd"); // Stay on the UserAdd page if there's an error
+        }
+
 
         /// <summary>
         /// Sign Out current account and return login view.

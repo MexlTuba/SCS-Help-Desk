@@ -33,6 +33,26 @@ namespace ASI.Basecode.WebApp.Controllers
             return View();
         }
 
+        // POST: SuperAdminController/UserAdd
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult UserAdd(UserViewModel model)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    _userService.AddUser(model);
+                    return RedirectToAction(nameof(UserList));
+                }
+                return View(model);
+            }
+            catch
+            {
+                return View(model);
+            }
+        }
+
         // GET: UsersController/Edit/UserId
         public ActionResult Edit(string id)
         {
