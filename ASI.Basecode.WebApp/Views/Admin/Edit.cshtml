@@ -12,19 +12,19 @@
             <h5 style="margin-bottom: 20px;">SCS HELP DESK</h5>
         </div>
         <div>
-            <a href="@Url.Action("SuperAdminDashboard", "SuperAdmin")" style="display: block; padding: 10px 15px; text-decoration: none; color: black;">
+            <a href="@Url.Action("AdminDashboard", "Admin")" style="display: block; padding: 10px 15px; text-decoration: none; color: black;">
                 <i class="bi bi-grid"></i> DASHBOARD
             </a>
-            <a href="@Url.Action("UserList", "SuperAdmin")" style="display: block; padding: 10px 15px; text-decoration: none; color: white; background-color: #6c757d;">
+            <a href="@Url.Action("UserList", "Admin")" style="display: block; padding: 10px 15px; text-decoration: none; color: white; background-color: #6c757d;">
                 <i class="bi bi-person"></i> USER LIST
             </a>
-            <a href="@Url.Action("Knowledge", "SuperAdmin")" style="display: block; padding: 10px 15px; text-decoration: none; color: black;">
+            <a href="@Url.Action("Knowledge", "Admin")" style="display: block; padding: 10px 15px; text-decoration: none; color: black;">
                 <i class="bi bi-book"></i> KNOWLEDGE BASE
             </a>
-            <a href="@Url.Action("Tickets", "SuperAdmin")" style="display: block; padding: 10px 15px; text-decoration: none; color: black;">
+            <a href="@Url.Action("Tickets", "Admin")" style="display: block; padding: 10px 15px; text-decoration: none; color: black;">
                 <i class="bi bi-ticket"></i> TICKETS
             </a>
-            <a href="@Url.Action("Settings", "SuperAdmin")" style="display: block; padding: 10px 15px; text-decoration: none; color: black;">
+            <a href="@Url.Action("Account", "Admin")" style="display: block; padding: 10px 15px; text-decoration: none; color: black;">
                 <i class="bi bi-gear"></i> ACCOUNT SETTINGS
             </a>
             <a asp-action="SignOutUser" asp-controller="Account" style="display: block; padding: 10px 15px; text-decoration: none; color: black;">
@@ -56,11 +56,6 @@
                         </div>
 
                         <div style="margin-bottom: 20px;">
-                            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Email</label>
-                            <input type="email" asp-for="Email" class="form-control" />
-                        </div>
-
-                        <div style="margin-bottom: 20px;">
                             <label style="display: block; margin-bottom: 5px; font-weight: bold;">Role:</label>
                             <select asp-for="Role" class="form-control">
                                 <option value="">Select option</option>
@@ -69,7 +64,11 @@
                                 <option value="Student">Student</option>
                             </select>
                         </div>
-                        
+
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Email</label>
+                            <input type="email" asp-for="Email" class="form-control" />
+                        </div>
                     </div>
 
                     <!-- Photo Upload Area -->
@@ -84,11 +83,14 @@
 
                 <!-- Buttons -->
                 <div style="display: flex; justify-content: flex-end; margin-top: 30px;">
-                    <button type="button" onclick="resetPassword('@Model.UserId')" style="padding: 10px 20px; background-color: white; color: #FF0000; border: 1px solid #FF0000; border-radius: 5px; margin-right: 10px; cursor: pointer;">
-                        Reset Password
+                    <button type="reset" style="padding: 10px 20px; background-color: white; color: #f4a460; border: 1px solid #f4a460; border-radius: 5px; margin-right: 10px; cursor: pointer;">
+                        Clear Form
                     </button>
                     <button type="submit" style="padding: 10px 20px; background-color: #f4a460; color: black; border: none; border-radius: 5px; margin-right: 10px; cursor: pointer;">
                         Save Changes
+                    </button>
+                    <button type="button" onclick="resetPassword('@Model.UserId')" style="padding: 10px 20px; background-color: white; color: #FF0000; border: 1px solid #FF0000; border-radius: 5px; margin-right: 10px; cursor: pointer;">
+                        Reset Password
                     </button>
                 </div>
             </form>
@@ -102,7 +104,7 @@
             if (confirm("Are you sure you want to reset the password for this user?")) {
                 var form = document.createElement("form");
                 form.method = "post";
-                form.action = "/SuperAdmin/ResetPassword";
+                form.action = "/User/ResetPassword";
 
                 var input = document.createElement("input");
                 input.type = "hidden";
@@ -116,6 +118,6 @@
         }
     </script>
 }
-    @section Styles {
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
-    }
+@section Styles {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+}

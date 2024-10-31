@@ -140,11 +140,10 @@ namespace ASI.Basecode.WebApp.Controllers
         {
             try
             {
-                if (string.IsNullOrEmpty(model.Role))
-                {
-                    model.Role = "Student";
-                }
+                model.Role = "Student";
                 _userService.AddUser(model);
+                return RedirectToAction("Login", "Account");
+
             }
             catch (InvalidDataException ex)
             {

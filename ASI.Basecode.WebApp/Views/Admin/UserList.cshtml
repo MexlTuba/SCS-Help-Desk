@@ -1,0 +1,114 @@
+﻿@model List<ASI.Basecode.Data.Models.User>
+
+@{
+    ViewData["Title"] = "Admin User List - SCS Help Desk";
+}
+
+<div style="display: flex; min-height: 100vh;">
+    <!-- Sidebar -->
+    <div style="width: 250px; background-color: #f8f9fa; ">
+        <div style="padding: 15px;">
+            <img src="~/img/SCS-Logo.png" alt="SCS Logo" style="max-width: 50px; margin-bottom: 10px;">
+            <h5 style="margin-bottom: 20px;">SCS HELP DESK</h5>
+        </div>
+        <div style="width: 250px; background-color: #f8f9fa; ">
+            <div style="padding: 15px;">
+                <img src="~/img/SCS-Logo.png" alt="SCS Logo" style="max-width: 50px; margin-bottom: 10px;">
+                <h5 style="margin-bottom: 20px;">SCS HELP DESK</h5>
+            </div>
+            <div>
+                <a href="@Url.Action("AdminDashboard", "Admin")" style="display: block; padding: 10px 15px; text-decoration: none; color: black;">
+                    <i class="bi bi-grid"></i> DASHBOARD
+                </a>
+                <a href="@Url.Action("UserList", "Admin")" style="display: block; padding: 10px 15px; text-decoration: none; color: white; background-color: #6c757d;">
+                    <i class="bi bi-person"></i> USER LIST
+                </a>
+                <a href="@Url.Action("Knowledge", "Admin")" style="display: block; padding: 10px 15px; text-decoration: none; color: black;">
+                    <i class="bi bi-book"></i> KNOWLEDGE BASE
+                </a>
+                <a href="@Url.Action("Tickets", "Admin")" style="display: block; padding: 10px 15px; text-decoration: none; color: black;">
+                    <i class="bi bi-ticket"></i> TICKETS
+                </a>
+                <a href="@Url.Action("Settings", "Admin")" style="display: block; padding: 10px 15px; text-decoration: none; color: black;">
+                    <i class="bi bi-gear"></i> ACCOUNT SETTINGS
+                </a>
+                <a asp-action="SignOutUser" asp-controller="Account" style="display: block; padding: 10px 15px; text-decoration: none; color: black;">
+                    <i class="bi bi-box-arrow-right"></i> LOGOUT
+                </a>
+            </div>
+    </div>
+
+    <div style="flex: 1; padding: 20px;">
+        <!-- Main Content -->
+        <div style="background-color: white; border-radius: 15px; padding: 30px;">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title mb-4">USER LIST</h2>
+
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                                <input type="text" class="form-control" placeholder="Search user">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <select class="form-select">
+                                <option selected>Role: All</option>
+                                <option>Admin</option>
+                                <option>User</option>
+                                <option>Support</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <a href="@Url.Action("UserAdd", "SuperAdmin")" class="btn btn-warning">
+                                <i class="bi bi-plus"></i> Add User
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead class="table-warning">
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Role</th>
+                                    <th>ID Number</th>
+                                    <th>School email</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var user in Model)
+                                {
+                                    <tr>
+                                        <td>@user.Name</td>
+                                        <td>@user.Role</td>
+                                        <td>@user.UserId</td>
+                                        <td>@user.Email</td>
+                                        <td>
+                                            <a href="@Url.Action("Edit", "SuperAdmin", new { id = user.UserId })" class="btn btn-primary">Edit</a>
+                                            <a href="#" class="btn btn-danger" onclick="confirmDelete('@user.UserId')">Delete</a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @section Scripts {
+        <script>
+            function confirmDelete(userId) {
+                if (confirm("Are you sure you want to delete this user?")) {
+                    window.location.href = '@Url.Action("Delete", "SuperAdmin")?id=' + userId;
+                }
+            }
+        </script>
+    }
+    @section Styles {
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    }

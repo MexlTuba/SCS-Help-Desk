@@ -35,7 +35,18 @@ namespace ASI.Basecode.Services.Services
 
         public void UpdateUser(User user)
         {
-            _repository.UpdateUser(user);
+            var existingUser = _repository.GetUsers().FirstOrDefault(u => u.UserId == user.UserId);
+            if (existingUser != null)
+            {
+                // Update only the provided fields
+                existingUser.Name = user.Name ?? existingUser.Name;
+                existingUser.Email = user.Email ?? existingUser.Email;
+                existingUser.Role = user.Role ?? existingUser.Role;
+                existingUser.UpdatedTime = DateTime.Now;
+                existingUser.UpdatedBy = System.Environment.UserName;
+
+                _repository.UpdateUser(existingUser);
+            }
         }
 
         public void ResetPassword(string userId, string newPassword)
@@ -43,6 +54,7 @@ namespace ASI.Basecode.Services.Services
             var user = _repository.GetUsers().FirstOrDefault(u => u.UserId == userId);
             if (user != null)
             {
+                user.Password = "Temp_123";
                 user.Password = PasswordManager.EncryptPassword(newPassword);
                 _repository.UpdateUser(user);
             }

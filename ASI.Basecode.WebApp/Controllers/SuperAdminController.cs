@@ -9,6 +9,7 @@ using ASI.Basecode.Services.ServiceModels;
 using ASI.Basecode.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using ASI.Basecode.Services.Manager;
 
 namespace ASI.Basecode.WebApp.Controllers
 {
@@ -28,7 +29,7 @@ namespace ASI.Basecode.WebApp.Controllers
         // GET: UsersController
         public ActionResult UserList()
         {
-            var users = _userService.GetAllUsers(); // Fetch users from the service
+            var users = _userService.GetAllUsers();
             return View(users);
         }
 
@@ -96,7 +97,6 @@ namespace ASI.Basecode.WebApp.Controllers
         {
             try
             {
-                _userService.ResetPassword(id, "Temp_123");
                 return RedirectToAction(nameof(UserList));
             }
             catch

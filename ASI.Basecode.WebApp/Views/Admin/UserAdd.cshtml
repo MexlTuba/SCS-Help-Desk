@@ -1,34 +1,35 @@
 ﻿@{
-    ViewData["Title"] = "Super Admin Add User - SCS Help Desk";
+    ViewData["Title"] = "Admin Add User - SCS Help Desk";
 }
 
 <div style="display: flex; min-height: 100vh; width: 100vw;">
     <!-- Sidebar -->
     <div style="width: 250px; background-color: #f8f9fa;">
-        <div style="padding: 15px;">
-            <img src="~/img/SCS-Logo.png" alt="SCS Logo" style="max-width: 50px; margin-bottom: 10px;">
-            <h5 style="margin-bottom: 20px;">SCS HELP DESK</h5>
-        </div>
-        <div>
-            <a href="@Url.Action("SuperAdminDashboard", "SuperAdmin")" style="display: block; padding: 10px 15px; text-decoration: none; color: black;">
-                <i class="bi bi-grid"></i> DASHBOARD
-            </a>
-            <a href="@Url.Action("UserList", "User")" style="display: block; padding: 10px 15px; text-decoration: none; color: white; background-color: #6c757d;">
-                <i class="bi bi-person"></i> USER LIST
-            </a>
-            <a href="@Url.Action("Index", "KnowledgeBase")" style="display: block; padding: 10px 15px; text-decoration: none; color: black;">
-                <i class="bi bi-book"></i> KNOWLEDGE BASE
-            </a>
-            <a href="@Url.Action("Index", "Tickets")" style="display: block; padding: 10px 15px; text-decoration: none; color: black;">
-                <i class="bi bi-ticket"></i> TICKETS
-            </a>
-            <a href="@Url.Action("Index", "AccountSettings")" style="display: block; padding: 10px 15px; text-decoration: none; color: black;">
-                <i class="bi bi-gear"></i> ACCOUNT SETTINGS
-            </a>
-            <a asp-action="SignOutUser" asp-controller="Account" style="display: block; padding: 10px 15px; text-decoration: none; color: black;">
-                <i class="bi bi-box-arrow-right"></i> LOGOUT
-            </a>
-        </div>
+        <div style="width: 250px; background-color: #f8f9fa; ">
+            <div style="padding: 15px;">
+                <img src="~/img/SCS-Logo.png" alt="SCS Logo" style="max-width: 50px; margin-bottom: 10px;">
+                <h5 style="margin-bottom: 20px;">SCS HELP DESK</h5>
+            </div>
+            <div>
+                <a href="@Url.Action("AdminDashboard", "Admin")" style="display: block; padding: 10px 15px; text-decoration: none; color: black;">
+                    <i class="bi bi-grid"></i> DASHBOARD
+                </a>
+                <a href="@Url.Action("UserList", "Admin")" style="display: block; padding: 10px 15px; text-decoration: none; color: white; background-color: #6c757d;">
+                    <i class="bi bi-person"></i> USER LIST
+                </a>
+                <a href="@Url.Action("Knowledge", "Admin")" style="display: block; padding: 10px 15px; text-decoration: none; color: black;">
+                    <i class="bi bi-book"></i> KNOWLEDGE BASE
+                </a>
+                <a href="@Url.Action("Tickets", "Admin")" style="display: block; padding: 10px 15px; text-decoration: none; color: black;">
+                    <i class="bi bi-ticket"></i> TICKETS
+                </a>
+                <a href="@Url.Action("Account", "Admin")" style="display: block; padding: 10px 15px; text-decoration: none; color: black;">
+                    <i class="bi bi-gear"></i> ACCOUNT SETTINGS
+                </a>
+                <a asp-action="SignOutUser" asp-controller="Account" style="display: block; padding: 10px 15px; text-decoration: none; color: black;">
+                    <i class="bi bi-box-arrow-right"></i> LOGOUT
+                </a>
+            </div>
     </div>
 
     <!-- Main Content -->
