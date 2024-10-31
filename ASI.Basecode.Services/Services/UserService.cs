@@ -54,7 +54,6 @@ namespace ASI.Basecode.Services.Services
             var user = _repository.GetUsers().FirstOrDefault(u => u.UserId == userId);
             if (user != null)
             {
-                user.Password = "Temp_123";
                 user.Password = PasswordManager.EncryptPassword(newPassword);
                 _repository.UpdateUser(user);
             }

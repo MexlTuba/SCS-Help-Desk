@@ -90,13 +90,12 @@ namespace ASI.Basecode.WebApp.Controllers
             }
         }
 
-        // POST: SuperAdminController/ResetPassword/userId
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public ActionResult ResetPassword(string id)
         {
             try
             {
+                _userService.ResetPassword(id, "Temp_123");
                 return RedirectToAction(nameof(UserList));
             }
             catch

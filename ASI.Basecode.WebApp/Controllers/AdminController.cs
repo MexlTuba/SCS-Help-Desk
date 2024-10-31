@@ -83,7 +83,6 @@ namespace ASI.Basecode.WebApp.Controllers
 
         // POST: SuperAdminController/ResetPassword/userId
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public ActionResult ResetPassword(string id)
         {
             try
