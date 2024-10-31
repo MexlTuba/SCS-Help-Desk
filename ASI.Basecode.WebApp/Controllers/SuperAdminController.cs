@@ -20,6 +20,11 @@ namespace ASI.Basecode.WebApp.Controllers
             _userService = userService;
         }
 
+        public IActionResult SuperAdminDashboard()
+        {
+            return View();
+        }
+
         // GET: UsersController
         public ActionResult UserList()
         {
@@ -33,7 +38,7 @@ namespace ASI.Basecode.WebApp.Controllers
             return View();
         }
 
-        // POST: SuperAdminController/UserAdd
+        // POST: SuperAdminController/RegisterUser
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult UserAdd(UserViewModel model)
@@ -100,11 +105,11 @@ namespace ASI.Basecode.WebApp.Controllers
             }
         }
 
-        // GET: SuperAdminController/Delete/userId
         public ActionResult Delete(string id)
         {
             try
             {
+                _userService.DeleteUser(id);
                 return RedirectToAction(nameof(UserList));
             }
             catch
@@ -120,7 +125,6 @@ namespace ASI.Basecode.WebApp.Controllers
         {
             try
             {
-                _userService.DeleteUser(id.ToString());
                 return RedirectToAction(nameof(UserList));
             }
             catch
@@ -128,10 +132,5 @@ namespace ASI.Basecode.WebApp.Controllers
                 return View();
             }
         }
-    public IActionResult SuperAdminDashboard()
-        {
-            return View();
-        }
-
     }
 }
