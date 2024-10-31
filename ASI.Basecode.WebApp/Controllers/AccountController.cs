@@ -103,7 +103,7 @@ namespace ASI.Basecode.WebApp.Controllers
                 await this._signInManager.SignInAsync(user);
                 this._session.SetString("UserName", user.Name);
 
-                // fetch roleId
+                // fetch role
                 String roled = user.Role;
 
                 switch (roled)
