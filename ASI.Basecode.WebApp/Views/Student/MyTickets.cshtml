@@ -1,6 +1,9 @@
 ﻿@{
     ViewData["Title"] = "SCS Help Desk";
 }
+@section styles {
+    <link rel="stylesheet" href="~/css/myTickets.css" />
+}
 
 <!DOCTYPE html>
 
@@ -11,7 +14,17 @@
 </head>
 <body>
     <div>
-        <h1>My Tickets</h1>
+        <nav class="navbar bg-body-tertiary shadow-lg">
+            <a class="navbar-brand" href="#">
+                <img src="~/img/scsHelpDeskLogo.svg" alt="Bootstrap" class="scsLogo">
+            </a>
+
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <button class="btn btn-custom me-md-2 mr-5" type="button">Back to Homepage</button>
+                <a asp-action="SignOutUser" asp-controller="Account" class="btn btn-danger logout-btn shadow-lg" type="button">Logout</a>
+            </div>
+
+        </nav>
     </div>
 </body>
 </html>
