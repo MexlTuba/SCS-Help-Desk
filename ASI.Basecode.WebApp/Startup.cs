@@ -1,5 +1,8 @@
 ﻿using ASI.Basecode.Data;
+using ASI.Basecode.Data.Interfaces;
+using ASI.Basecode.Data.Repositories;
 using ASI.Basecode.Resources.Constants;
+using ASI.Basecode.Services;
 using ASI.Basecode.Services.Interfaces;
 using ASI.Basecode.Services.Manager;
 using ASI.Basecode.Services.Services;
@@ -104,6 +107,11 @@ namespace ASI.Basecode.WebApp
             {
                 options.Cookie.Name = Const.Issuer;
             });
+
+            // Additional Service Registrations
+            services.AddScoped<ITicketRepository, TicketRepository>();
+            services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IUserService, UserService>();
 
             // DI Services AutoMapper(Add Profile)
             this.ConfigureAutoMapper();

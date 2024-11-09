@@ -5,34 +5,85 @@
     <link rel="stylesheet" href="~/css/createTicket.css" />
 }
 
+
 <!DOCTYPE html>
 
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>@ViewBag.Title</title>
+    <script>
+        function clearForm() {
+            document.getElementById("createTicketForm").reset();
+        }
+    </script>
 </head>
 <body>
     <div>
-        <nav class="navbar bg-body-tertiary shadow-lg">
+        <nav class="ticketNavBar navbar bg-body-tertiary shadow-lg">
             <a class="navbar-brand" href="#">
                 <img src="~/img/scsHelpDeskLogo.svg" alt="Bootstrap" class="scsLogo">
             </a>
 
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                <button class="btn btn-custom me-md-2 mr-5" type="button">Back to Homepage</button>
+                <a href="@Url.Action("StudentDashboard", "Student")" class="btn btn-custom me-md-2 mr-5" type="button">Back to Homepage</a>
                 <a asp-action="SignOutUser" asp-controller="Account" class="btn btn-danger logout-btn shadow-lg" type="button">Logout</a>
             </div>
 
         </nav>
        
-        <div class="card shadow-lg" style="width: 18rem;">
-            <div class="card-body">
-                <h5 class="card-title">Card title</h5>
-                <h6 class="card-subtitle mb-2 text-body-secondary">Card subtitle</h6>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+        <div class="d-flex justify-content-center align-items-center vh-100">
+            <div class="formContent card shadow-lg">
+                <div class="card-body">
+                    <h1 class="custom-card-title">Create Ticket</h1>
+                    <h6 class="custom-card-subtitle mb-2 text-body-secondary">*Required Fields</h6>
+                    
+                    <form id="createTicketForm" asp-action="CreateTicket" asp-controller="Student" method="post">
+                        <div class="ticketDetails mt-4">
+                            <div class="row g-3">
+                                <div class="col">
+                                    <label><b><span style="color: red;">*</span>Category</b></label>
+                                    <select name="CategoryId" class="form-control form-select" aria-label="Default select example">
+                                        <option disabled selected value="">Select a category</option>
+                                        @foreach (var category in Model.Categories)
+                                        {
+                                            <option value="@category.CategoryId">@category.CategoryType</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col">
+                                    <label><b><span style="color: red;">*</span>Ticket Subject</b></label>
+                                    <input type="text" name="Title" class="form-control" aria-label="Title">
+                                </div>
+                            </div>
+
+                            <div class="row g-3 mt-4">
+                                <div class="col">
+                                    <label><b>Priority</b></label>
+                                    <input type="text" name="Priority" class="form-control" value="General" aria-label="Priority" readonly>
+                                </div>
+                                <div class="col">
+                                    <label><b><span style="color: red;">*</span>Ticket Description</b></label>
+                                    <textarea name="Description" class="form-control" id="floatingTextarea"></textarea>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="formFile" class="form-label"><b>Attatchments</b> (<i>Optional</i>)</label>
+                                <input name="Attachment" class="custom-formControl form-control" type="file" id="formFile">
+                            </div>
+                        </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        </div>
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-5">
+                            <button class="btn btn-danger me-md-2 mr-3" type="button" onclick="clearForm()">Clear Form</button>
+                            <button class="btn btn-custom" type="submit">Create Ticket</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
 </body>
 </html>
+

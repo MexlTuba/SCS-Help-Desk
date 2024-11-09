@@ -21,6 +21,11 @@ namespace ASI.Basecode.Data.Repositories
             return this.GetDbSet<User>();
         }
 
+        public User GetUserByName(string username)
+        {
+            return this.GetDbSet<User>().FirstOrDefault(e => e.Name.Equals(username));
+        }
+
         public bool UserExists(string userId)
         {
             return this.GetDbSet<User>().Any(x => x.UserId == userId);

@@ -9,6 +9,9 @@ namespace ASI.Basecode.Services.Interfaces
     {
         LoginResult AuthenticateUser(string userid, string password, ref User user);
         void AddUser(UserViewModel model);
+
+        public User GetUserByName(string name);
+
         List<User> GetAllUsers();
         void DeleteUser(string userId);
         User GetUserById(string userId);

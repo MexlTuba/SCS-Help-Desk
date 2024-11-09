@@ -1,5 +1,6 @@
 ﻿using ASI.Basecode.Data.Interfaces;
 using ASI.Basecode.Data.Models;
+using ASI.Basecode.Data.Repositories;
 using ASI.Basecode.Services.Interfaces;
 using ASI.Basecode.Services.Manager;
 using ASI.Basecode.Services.ServiceModels;
@@ -21,6 +22,11 @@ namespace ASI.Basecode.Services.Services
         {
             _mapper = mapper;
             _repository = repository;
+        }
+
+        public User GetUserByName(string name)
+        {
+            return _repository.GetUserByName(name);
         }
 
         public List<User> GetAllUsers()
