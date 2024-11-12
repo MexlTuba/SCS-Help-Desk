@@ -20,3 +20,67 @@
         background-color: #e18f4f;
         color: white;
     }
+
+.half-background {
+    background-image: url('/img/settingsBG.png');
+    background-size: cover;
+    background-position: center;
+    height: 50vh;
+    /*    position: relative;*/
+    z-index: 0;
+}
+
+.settings-preferences {
+    /*    position: relative;*/
+    width: 40vw;
+    z-index: 1;
+    margin-top: -45vh;
+    background-color: #fff;
+    border-radius: 12px;
+}
+
+    .settings-preferences h2 {
+        font-weight: bold;
+        color: #333;
+    }
+
+    .settings-preferences h5 {
+        font-weight: 600;
+        color: #555;
+    }
+
+.profile-photo .photo-placeholder {
+    width: 150px;
+    height: 150px;
+    background-color: #e9ecef;
+    border: 2px dashed #ccc;
+    color: #888;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.photo-text {
+    font-size: 0.9em;
+    color: #888;
+}
+
+/*.btn-custom {
+    background-color: #ffc107;
+    color: #fff;
+    border: none;
+}
+
+    .btn-custom:hover {
+        background-color: #e0a800;
+    }*/
+
+.btn-warning {
+    background-color: #ff9f43;
+    color: #fff;
+    border: none;
+}
+
+    .btn-warning:hover {
+        background-color: #ff6b1b;
+    }
