@@ -23,7 +23,6 @@ namespace ASI.Basecode.Data
         public virtual DbSet<Category> Categories { get; set; }
         public virtual DbSet<Priority> Priorities { get; set; }
         public virtual DbSet<Status> Statuses { get; set; }
-
         public virtual DbSet<Ticket> Ticket { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

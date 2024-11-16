@@ -1,17 +1,28 @@
 ﻿using ASI.Basecode.Data.Models;
+using ASI.Basecode.Services;
 using ASI.Basecode.Services.Interfaces;
 using ASI.Basecode.Services.ServiceModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Linq;
 
 namespace ASI.Basecode.WebApp.Controllers
 {
     public class AdminController : Controller
     {
         private readonly IUserService _userService;
-        public AdminController(IUserService userService)
+        private readonly ICategoryService _categoryService;
+        private readonly IPriorityService _priorityService;
+        private readonly IStatusService _statusService;
+        private readonly ITicketService _ticketService;
+        public AdminController(IUserService userService, ICategoryService categoryService, IPriorityService priorityService, IStatusService statusService, ITicketService ticketService)
         {
             _userService = userService;
+            _categoryService = categoryService;
+            _priorityService = priorityService;
+            _statusService = statusService;
+            _ticketService = ticketService;
         }
         public IActionResult AdminDashboard()
         {
@@ -22,6 +33,36 @@ namespace ASI.Basecode.WebApp.Controllers
         {
             var users = _userService.GetAllUsers(); // Fetch users from the service
             return View(users);
+        }
+
+        public ActionResult Tickets()
+        {
+            var model = new TicketViewModel
+            {
+                Tickets = _ticketService.GetAllTickets(),
+                Categories = _categoryService.GetAllCategories(),  // Load categories for dropdown
+                Priorities = _priorityService.GetAllPriorities(),  // Load priorities for dropdown
+                Statuses = _statusService.GetAllStatuses()    //Load statuses for dropdown
+            };
+            return View(model);
+        }
+
+        public ActionResult TicketDetails(int id)
+        {
+            var ticket = _ticketService.GetTicketById(id);
+
+            if (ticket == null)
+            {
+                return NotFound();
+            }
+            var supportAgents = _userService.GetAllUsers()
+                                            .Where(u => u.Role == "SupportAgent") // Filter by role
+                                            .Select(u => new { u.UserId, u.Name })
+                                            .ToList();
+
+            ViewBag.SupportAgents = new SelectList(supportAgents, "UserId", "Name");
+            ViewBag.Ticket = ticket;
+            return View();
         }
 
         // GET: UsersController/UserAdd
