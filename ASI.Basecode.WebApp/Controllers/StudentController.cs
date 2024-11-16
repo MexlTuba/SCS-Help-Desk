@@ -2,22 +2,31 @@
 using ASI.Basecode.Data.Models;
 using ASI.Basecode.Services.Interfaces;
 using ASI.Basecode.Services.ServiceModels;
+using ASI.Basecode.Services.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Linq;
 
 namespace ASI.Basecode.WebApp.Controllers
 {
     public class StudentController : Controller
     {
+        private readonly ITicketService _ticketService;
         private readonly ITicketRepository _ticketRepository;
         private readonly ICategoryService _categoryService; // To populate categories dropdown
+        private readonly IPriorityService _priorityService;
+        private readonly IStatusService _statusService;
         private readonly IUserService _userService;         // To get current user information
 
-        public StudentController(ITicketRepository ticketRepository, ICategoryService categoryService, IUserService userService)
+        public StudentController(ITicketService ticketService, ITicketRepository ticketRepository, ICategoryService categoryService, IUserService userService, IPriorityService priorityService, IStatusService statusService)
         {
             _ticketRepository = ticketRepository;
             _categoryService = categoryService;
+            _priorityService = priorityService;
+            _statusService = statusService;
             _userService = userService;
+            _ticketService = ticketService;
         }
 
         [HttpGet]
@@ -35,44 +44,27 @@ namespace ASI.Basecode.WebApp.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult CreateTicket(TicketViewModel model)
         {
-            var name = User.Identity.Name;
-            var user = _userService.GetUserByName(name);
-
-            if (!ModelState.IsValid)
-            {
-                // Repopulate categories for the dropdown on model validation failure
-                model.Categories = _categoryService.GetAllCategories();
-                return View(model);
-            }
-
             try
             {
-                // Create a new Ticket from the ViewModel
-                var ticket = new Ticket
+                if (ModelState.IsValid)
                 {
-                    Title = model.Title,
-                    Description = model.Description,
-                    CategoryId = model.CategoryId,
-                    Attatchment = model.Attatchment,
-                    PriorityId = 4,      // Default to "General" priority
-                    StatusId = 1,        // Default to "Open" status
-                    CreatedBy = user.UserId, // Get the ID of the logged-in user
+                    var userName = User.Identity.Name; // Retrieve the logged-in username
+                    _ticketService.AddTicket(model, userName);
 
-                    DateCreated = DateTime.Now
-                };
+                    // Set a success message in TempData
+                    TempData["SuccessMessage"] = "Ticket created successfully!";
+                    return RedirectToAction("MyTickets", "Student");
+                }
 
-                // Save the ticket to the database
-                _ticketRepository.AddTicket(ticket);
+                // Repopulate categories for the dropdown if model validation fails
+                model.Categories = _categoryService.GetAllCategories();
+                model.Statuses = _statusService.GetAllStatuses();
+                model.Priorities = _priorityService.GetAllPriorities();
 
-                // Set a success message in TempData
-                TempData["SuccessMessage"] = "Ticket created successfully!";
-
-                // Redirect to the Student's ticket list or confirmation page
-                return RedirectToAction("MyTickets", "Student");
+                return View(model);
             }
             catch (Exception ex)
             {
-                // Capture any exception, log it, and show an error message
                 TempData["ErrorMessage"] = "An error occurred while creating the ticket. Please try again.";
                 return View(model);
             }
@@ -80,8 +72,50 @@ namespace ASI.Basecode.WebApp.Controllers
 
         public IActionResult MyTickets()
         {
-            // Code to display student's tickets (this can be implemented as needed)
-            return View();
+            // Retrieve the logged-in user's UserId from claims
+            var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
+
+            if (string.IsNullOrEmpty(userIdClaim))
+            {
+                TempData["ErrorMessage"] = "User not found.";
+                return RedirectToAction("StudentDashboard");
+            }
+
+            // Fetch the User entity using the UserId from the claim
+            var user = _userService.GetUserById(userIdClaim);
+            if (user == null)
+            {
+                TempData["ErrorMessage"] = "User not found.";
+                return RedirectToAction("StudentDashboard");
+            }
+
+            // Fetch tickets created by the logged-in user
+            var tickets = _ticketService.GetTickets()
+                .Where(ticket => ticket.CreatedBy == user.UserId) // Filter tickets by the logged-in UserId
+                .Select(ticket => new TicketViewModel
+                {
+                    TicketId = ticket.TicketId,
+                    Title = ticket.Title,
+                    AssignedTo = ticket.AssignedTo,
+                    Description = ticket.Description,
+                    CategoryId = ticket.CategoryId,
+                    PriorityId = ticket.PriorityId,
+                    StatusId = ticket.StatusId,
+                    DateCreated = ticket.DateCreated,
+                    DateClosed = ticket.DateClosed,
+                })
+                .ToList();
+
+            // Create the wrapper view model with both tickets and filter options
+            var model = new MyTicketsViewModel
+            {
+                Tickets = tickets,
+                Categories = _categoryService.GetAllCategories(),
+                Statuses = _statusService.GetAllStatuses(),
+                Priorities = _priorityService.GetAllPriorities()
+            };
+
+            return View(model); // Pass the model to the view
         }
 
         public IActionResult StudentDashboard()
@@ -98,6 +132,53 @@ namespace ASI.Basecode.WebApp.Controllers
         {
             
             return View();
+        }
+
+        // GET: StudentController/Delete/5
+        public ActionResult Delete(int id)
+        {
+            try
+            {
+                var ticket = _ticketRepository.GetTickets().FirstOrDefault(t => t.TicketId == id);
+                if (ticket == null)
+                {
+                    TempData["ErrorMessage"] = "Ticket not found.";
+                    return RedirectToAction(nameof(MyTickets));
+                }
+
+                // Perform the deletion
+                _ticketRepository.DeleteTicket(ticket);
+
+                TempData["SuccessMessage"] = "Ticket deleted successfully!";
+                return RedirectToAction(nameof(MyTickets));
+            }
+            catch (Exception)
+            {
+                TempData["ErrorMessage"] = "An error occurred while deleting the ticket.";
+                return RedirectToAction(nameof(MyTickets));
+            }
+        }
+
+        // POST: StudentController/Delete/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Delete(int id, IFormCollection collection)
+        {
+            try
+            {
+                var ticket = _ticketRepository.GetTickets().FirstOrDefault(t => t.TicketId == id);
+                if (ticket != null)
+                {
+                    _ticketRepository.DeleteTicket(ticket);
+                    TempData["SuccessMessage"] = "Ticket deleted successfully!";
+                }
+                return RedirectToAction(nameof(MyTickets));
+            }
+            catch
+            {
+                TempData["ErrorMessage"] = "An error occurred while deleting the ticket.";
+                return RedirectToAction(nameof(MyTickets));
+            }
         }
     }
 }

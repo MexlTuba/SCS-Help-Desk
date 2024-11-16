@@ -10,6 +10,8 @@ namespace ASI.Basecode.Services.ServiceModels
 {
     public class TicketViewModel
     {
+        public int TicketId { get; set; }
+
         [Required(ErrorMessage = "Ticket subject is required.")]
         [MaxLength(100, ErrorMessage = "Title cannot exceed 100 characters.")]
         public string Title { get; set; }             // Title of the ticket
@@ -31,6 +33,9 @@ namespace ASI.Basecode.Services.ServiceModels
 
         public DateTime DateCreated { get; set; } = DateTime.Now; // Creation date (default to current date)
         public List<TicketServiceModel> Tickets { get; set; }
+
+        public DateTime? DateClosed { get; set; }
+
         // These properties are for dropdown lists in the form view
         public IEnumerable<CategoryViewModel> Categories { get; set; } // List of available categories
         public IEnumerable<PriorityViewModel> Priorities { get; set; } // List of available priorities
