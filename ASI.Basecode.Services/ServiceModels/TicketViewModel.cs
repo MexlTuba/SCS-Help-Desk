@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ASI.Basecode.Data.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -29,7 +30,7 @@ namespace ASI.Basecode.Services.ServiceModels
         public string CreatedBy { get; set; }            // Creator User ID
 
         public DateTime DateCreated { get; set; } = DateTime.Now; // Creation date (default to current date)
-
+        public List<TicketServiceModel> Tickets { get; set; }
         // These properties are for dropdown lists in the form view
         public IEnumerable<CategoryViewModel> Categories { get; set; } // List of available categories
         public IEnumerable<PriorityViewModel> Priorities { get; set; } // List of available priorities

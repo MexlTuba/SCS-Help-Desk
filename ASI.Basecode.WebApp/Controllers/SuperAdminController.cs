@@ -33,6 +33,16 @@ namespace ASI.Basecode.WebApp.Controllers
             return View(users);
         }
 
+        public ActionResult Tickets()
+        {
+            return View();
+        }
+
+        public ActionResult TicketDetails()
+        {
+            return View();
+        }
+
         // GET: UsersController/UserAdd
         public ActionResult UserAdd()
         {
