@@ -1,4 +1,4 @@
-﻿using ASI.Basecode.Data;
+using ASI.Basecode.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.IO;
@@ -40,7 +40,7 @@ namespace ASI.Basecode.WebApp.Controllers
         // GET: UsersController
         public ActionResult UserList()
         {
-            var users = _userService.GetAllUsers();
+            var users = _userService.GetAllUsers().Where(u => u.Role != "Super Admin").ToList();
             return View(users);
         }
 
