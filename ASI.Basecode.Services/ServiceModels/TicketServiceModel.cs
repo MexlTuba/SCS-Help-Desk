@@ -16,5 +16,9 @@ namespace ASI.Basecode.Services.ServiceModels
         public string CategoryType { get; set; }
         public string StatusType { get; set; }
         public DateTime DateCreated { get; set; }
+
+        public int CategoryId { get; set; }
+        public int StatusId { get; set; }
+        public int PriorityId { get; set; }
     }
 }

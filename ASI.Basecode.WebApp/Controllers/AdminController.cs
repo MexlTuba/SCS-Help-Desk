@@ -12,13 +12,15 @@ namespace ASI.Basecode.WebApp.Controllers
     public class AdminController : Controller
     {
         private readonly IUserService _userService;
+        private readonly IUserPreferencesService _userPreferencesService;
         private readonly ICategoryService _categoryService;
-        private readonly IPriorityService _priorityService;
+        private readonly IPriorityService _priorityService; 
         private readonly IStatusService _statusService;
         private readonly ITicketService _ticketService;
-        public AdminController(IUserService userService, ICategoryService categoryService, IPriorityService priorityService, IStatusService statusService, ITicketService ticketService)
+        public AdminController(IUserService userService, IUserPreferencesService userPreferencesService, ICategoryService categoryService, IPriorityService priorityService, IStatusService statusService, ITicketService ticketService)
         {
             _userService = userService;
+            _userPreferencesService = userPreferencesService;
             _categoryService = categoryService;
             _priorityService = priorityService;
             _statusService = statusService;
@@ -35,17 +37,50 @@ namespace ASI.Basecode.WebApp.Controllers
             return View(users);
         }
 
-        public ActionResult Tickets()
+        public ActionResult Tickets(int? categoryId = null, int? statusId = null, int? priorityId = null)
         {
+            var userId = HttpContext.Session.GetString("UserId");
+            if (string.IsNullOrEmpty(userId))
+            {
+                return RedirectToAction("Login", "Account"); // Redirect if session expired
+            }
+
+            // Get user preferences
+            var preferences = _userPreferencesService.GetPreferencesByUserId(userId);
+            var defaultCategoryId = preferences?.DefaultCategoryId ?? 1;
+            var defaultPriorityId = preferences?.DefaultPriorityId ?? 4;
+            var defaultStatusId = preferences?.DefaultStatusId ?? 1;
+
+            // Use user preferences as defaults if no filter is selected or "All" (0) is selected
+            var appliedCategoryId = categoryId == 0 || categoryId == null ? defaultCategoryId : categoryId.Value;
+            var appliedStatusId = statusId == 0 || statusId == null ? defaultStatusId : statusId.Value;
+            var appliedPriorityId = priorityId == 0 || priorityId == null ? defaultPriorityId : priorityId.Value;
+
+            // Filter tickets
+            var tickets = _ticketService.GetAllTickets()
+                                        .Where(t => (categoryId == 0 || t.CategoryId == appliedCategoryId) &&
+                                                    (statusId == 0 || t.StatusId == appliedStatusId) &&
+                                                    (priorityId == 0 || t.PriorityId == appliedPriorityId))
+                                        .ToList();
+
+            // Prepare the view model
             var model = new TicketViewModel
             {
-                Tickets = _ticketService.GetAllTickets(),
-                Categories = _categoryService.GetAllCategories(),  // Load categories for dropdown
-                Priorities = _priorityService.GetAllPriorities(),  // Load priorities for dropdown
-                Statuses = _statusService.GetAllStatuses()    //Load statuses for dropdown
+                Tickets = tickets,
+                Categories = _categoryService.GetAllCategories(),
+                Priorities = _priorityService.GetAllPriorities(),
+                Statuses = _statusService.GetAllStatuses(),
+                CategoryId = categoryId ?? defaultCategoryId, // Preserve selected filter or fallback to user default
+                PriorityId = priorityId ?? defaultPriorityId,
+                StatusId = statusId ?? defaultStatusId
             };
+
             return View(model);
         }
+
+
+
+
 
         public ActionResult TicketDetails(int id)
         {
@@ -164,5 +199,43 @@ namespace ASI.Basecode.WebApp.Controllers
                 return View();
             }
         }
+        public IActionResult Settings()
+        {
+            // Retrieve UserId from session
+            var userId = HttpContext.Session.GetString("UserId");
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return RedirectToAction("Login", "Account"); // Redirect to login if session expired
+            }
+
+            // Fetch user preferences using the service
+            var preferences = _userPreferencesService.GetPreferencesByUserId(userId);
+
+            if (preferences == null)
+            {
+                // Handle case where preferences do not exist (e.g., initialize defaults)
+                preferences = new UserPreferences
+                {
+                    UserId = userId,
+                    DefaultCategoryId = 1,
+                    DefaultStatusId = 1,
+                    DefaultPriorityId = 4
+                };
+                _userPreferencesService.AddPreferences(preferences);
+            }
+
+            // Map preferences to ViewModel
+            var model = new UserPreferencesViewModel
+            {
+                UserId = preferences.UserId,
+                DefaultCategoryId = preferences.DefaultCategoryId,
+                DefaultStatusId = preferences.DefaultStatusId,
+                DefaultPriorityId = preferences.DefaultPriorityId
+            };
+
+            return View(model);
+        }
+
     }
 }

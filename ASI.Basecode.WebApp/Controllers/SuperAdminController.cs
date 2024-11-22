@@ -141,5 +141,10 @@ namespace ASI.Basecode.WebApp.Controllers
                 return View();
             }
         }
+        public IActionResult Settings()
+        {
+
+            return View();
+        }
     }
 }

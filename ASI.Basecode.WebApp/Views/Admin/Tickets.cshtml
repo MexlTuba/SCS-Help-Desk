@@ -1,4 +1,6 @@
-﻿@{
+﻿@model ASI.Basecode.Services.ServiceModels.TicketViewModel
+
+@{
     ViewData["Title"] = "Ticket List - SCS Help Desk";
 }
 
@@ -22,7 +24,7 @@
             <a href="@Url.Action("Tickets", "Admin")" style="display: block; padding: 10px 15px; text-decoration: none; color: white; background-color: #6c757d;">
                 <i class="bi bi-ticket"></i> TICKETS
             </a>
-            <a href="@Url.Action("Account", "Admin")" style="display: block; padding: 10px 15px; text-decoration: none; color: black;">
+            <a href="@Url.Action("Settings", "Admin")" style="display: block; padding: 10px 15px; text-decoration: none; color: black;">
                 <i class="bi bi-gear"></i> ACCOUNT SETTINGS
             </a>
             <a asp-action="SignOutUser" asp-controller="Account" style="display: block; padding: 10px 15px; text-decoration: none; color: black;">
@@ -30,88 +32,79 @@
             </a>
         </div>
     </div>
-<div style="display: flex; min-height: 100vh; min-width:165vh; background-color: #D9D9D9; align-items: center;">
-    <div style="padding: 10px; width: 100%; height: 620px; background-color: #fff; margin-left:20px; margin-right:20px; border: 1px solid #e0e0e0; border-radius:20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
-        <h2 style="margin-top: 32px; margin-left:23px; font-weight:bold; font-size:30px;">TICKETS</h2>
-        <div style="display: flex; justify-content: space-between; margin-top: 30px;">
-            <div style="flex: 1; background-color: #F1F1F1; height: 63px; margin-right: 20px; border-radius: 10px; display: flex; justify-content: start; align-items: start;">
-                <div style="display: flex; flex-direction: row; padding: 10px">
-                    <img src="~/img/tickets.svg" style="width: 34px;" alt="logo" />
-                    <div style="flex-direction: column; margin-left:10px;">
-                        <h4 style="font-size: 16px;  font-weight: bold; color:#E68D4F;">100</h4>
-                        <p style="font-size: 12px;  font-weight: bold; color: rgba(0, 0, 0, 0.4);">Total Tickets</p>
-                    </div>
-                </div>
-            </div>
+    <div style="display: flex; min-height: 100vh; min-width:165vh; background-color: #D9D9D9; align-items: center;">
+        <div style="padding: 10px; width: 100%; height: 620px; background-color: #fff; margin-left:20px; margin-right:20px; border: 1px solid #e0e0e0; border-radius:20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+            <h2 style="margin-top: 32px; margin-left:23px; font-weight:bold; font-size:30px;">TICKETS</h2>
+            <div style="margin-top: 30px; border-bottom: 1px solid #e0e0e0; width: 100%;"></div>
+            <div style="margin-top: 30px; padding-left: 20px; padding-right: 20px;">
+                <form method="get" asp-action="Tickets" asp-controller="Admin">
+                    <div style="display: flex; flex-direction: row; align-items: start;">
+                        <img src="~/img/sort.svg" style="width: 19px; height: auto;" alt="logo" />
+                        <p style="font-size: 20px; font-weight: bold; margin-left: 10px; line-height: 1;">Sort by:</p>
 
-            <div style="flex: 1; background-color: #F1F1F1; height: 63px; margin-right: 20px; border-radius: 10px; display: flex; justify-content: start; align-items: start;">
-                <div style="display: flex; flex-direction: row; padding: 10px">
-                    <img src="~/img/pending.svg" style="width: 34px;" alt="logo" />
-                    <p style="font-size: 12px; font-weight: bold; color: rgba(0, 0, 0, 0.4);">Pending Tickets</p>
-                </div>
-            </div>
+                        <!-- Category Dropdown -->
+                        <div style="margin-left: 15px;">
+                            <select name="categoryId" style="width: 137px; height: 29px; border: 1px solid #E68D4F; border-radius: 5px;">
+                                <option disabled>Category</option>
+                                <option value="0" selected="@(Model.CategoryId == 0 ? "selected" : null)">All</option>
+                                @foreach (var category in Model.Categories)
+                                {
+                                    <option value="@category.CategoryId" selected="@(category.CategoryId == Model.CategoryId ? "selected" : null)">
+                                        @category.CategoryType
+                                    </option>
+                                }
+                            </select>
+                        </div>
 
-            <div style="flex: 1; background-color: #F1F1F1; height: 63px; margin-right: 20px; border-radius: 10px; display: flex; justify-content: start; align-items: start;">
-                <div style="display: flex; flex-direction: row; padding: 10px">
-                    <img src="~/img/closed.svg" style="width: 34px;" alt="logo" />
-                    <p style="font-size: 12px; font-weight: bold; color: rgba(0, 0, 0, 0.4);">Closed Tickets</p>
-                </div>
-            </div>
+                        <!-- Status Dropdown -->
+                        <div style="margin-left: 15px;">
+                            <select name="statusId" style="width: 137px; height: 29px; border: 1px solid #E68D4F; border-radius: 5px;">
+                                <option disabled>Status</option>
+                                <option value="0" selected="@(Model.StatusId == 0 ? "selected" : null)">All</option>
+                                @foreach (var status in Model.Statuses)
+                                {
+                                    <option value="@status.StatusId" selected="@(status.StatusId == Model.StatusId ? "selected" : null)">
+                                        @status.StatusType
+                                    </option>
+                                }
+                            </select>
+                        </div>
 
-            <div style="flex: 1; background-color: #F1F1F1; height: 63px; border-radius: 10px; display: flex; justify-content: start; align-items: start;">
-                <div style="display: flex; flex-direction: row; padding: 10px">
-                    <img src="~/img/trash.svg" style="width: 34px;" alt="logo" />
-                    <p style="font-size: 12px; font-weight: bold; color: rgba(0, 0, 0, 0.4);">Deleted Tickets</p>
-                </div>
-            </div>
-        </div>
-        <div style="margin-top: 30px; border-bottom: 1px solid #e0e0e0; width: 100%;"></div>
-        <div style="margin-top: 30px; padding-left: 20px; padding-right: 20px;">
-            <div style="display: flex; flex-direction:row; align-items: start;">
-                <img src="~/img/sort.svg" style="width: 19px; height: auto;" alt="logo" />
-                <p style="font-size: 20px; font-weight: bold; margin-left: 10px; line-height: 1;">Sort by:</p>
-                    <div style="margin-left:15px;">
-                        <select style="width:137px; height:29px; border: 1px solid #E68D4F; border-radius:5px;">
-                            <option disabled selected value="">Category</option>
-                            @foreach (var category in Model.Categories)
-                            {
-                                <option value="@category.CategoryId">@category.CategoryType</option>
-                            }
-                        </select>
+                        <!-- Priority Dropdown -->
+                        <div style="margin-left: 15px;">
+                            <select name="priorityId" style="width: 137px; height: 29px; border: 1px solid #E68D4F; border-radius: 5px;">
+                                <option disabled>Priority</option>
+                                <option value="0" selected="@(Model.PriorityId == 0 ? "selected" : null)">All</option>
+                                @foreach (var priority in Model.Priorities)
+                                {
+                                    <option value="@priority.PriorityId" selected="@(priority.PriorityId == Model.PriorityId ? "selected" : null)">
+                                        @priority.PriorityType
+                                    </option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- Submit and Reset Buttons -->
+                        <button type="submit" class="btn btn-warning" style="margin-left: 15px;">Apply Filters</button>
+                        <a href="@Url.Action("Tickets", "Admin")" class="btn btn-outline-secondary" style="margin-left: 15px;">Reset Filters</a>
                     </div>
-                    <div style="margin-left:15px;">
-                        <select style="width:137px; height:29px; border: 1px solid #E68D4F; border-radius:5px;">
-                            <option disabled selected value="">Status</option>
-                            @foreach (var category in Model.Statuses)
-                            {
-                                <option value="@category.StatusId">@category.StatusType</option>
-                            }
-                        </select>
-                    </div>
-                    <div style="margin-left:15px;">
-                        <select style="width:137px; height:29px; border: 1px solid #E68D4F; border-radius:5px;">
-                            <option disabled selected value="">Priority</option>
-                            @foreach (var category in Model.Priorities)
-                            {
-                                <option value="@category.PriorityId">@category.PriorityType</option>
-                            }
-                        </select>
-                    </div>
-            </div>
-            <table style="width: 100%; margin-top: 20px; border-collapse: collapse;">
-                <thead>
-                    <tr style="background-color: #E68D4F; font-weight: bold; text-align: center;">
-                        <th style="padding: 10px; border-bottom: 1px solid #ddd;">ID</th>
-                        <th style="padding: 10px; border-bottom: 1px solid #ddd;">Request By</th>
-                        <th style="padding: 10px; border-bottom: 1px solid #ddd;">Subject</th>
-                        <th style="padding: 10px; border-bottom: 1px solid #ddd;">Assignee</th>
-                        <th style="padding: 10px; border-bottom: 1px solid #ddd;">Priority</th>
-                        <th style="padding: 10px; border-bottom: 1px solid #ddd;">Category</th>
-                        <th style="padding: 10px; border-bottom: 1px solid #ddd;">Status</th>
-                        <th style="padding: 10px; border-bottom: 1px solid #ddd;">Date Created</th>
-                        <th style="padding: 10px; border-bottom: 1px solid #ddd;">Action</th>
-                    </tr>
-                </thead>
+                </form>
+
+
+                <table style="width: 100%; margin-top: 20px; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background-color: #E68D4F; font-weight: bold; text-align: center;">
+                            <th style="padding: 10px; border-bottom: 1px solid #ddd;">ID</th>
+                            <th style="padding: 10px; border-bottom: 1px solid #ddd;">Request By</th>
+                            <th style="padding: 10px; border-bottom: 1px solid #ddd;">Subject</th>
+                            <th style="padding: 10px; border-bottom: 1px solid #ddd;">Assignee</th>
+                            <th style="padding: 10px; border-bottom: 1px solid #ddd;">Priority</th>
+                            <th style="padding: 10px; border-bottom: 1px solid #ddd;">Category</th>
+                            <th style="padding: 10px; border-bottom: 1px solid #ddd;">Status</th>
+                            <th style="padding: 10px; border-bottom: 1px solid #ddd;">Date Created</th>
+                            <th style="padding: 10px; border-bottom: 1px solid #ddd;">Action</th>
+                        </tr>
+                    </thead>
                     <tbody>
                         @foreach (var ticket in Model.Tickets)
                         {
@@ -134,12 +127,12 @@
                             </tr>
                         }
                     </tbody>
-            </table>
+                </table>
+            </div>
         </div>
     </div>
 </div>
-</div>
 
 @section Styles {
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
 }

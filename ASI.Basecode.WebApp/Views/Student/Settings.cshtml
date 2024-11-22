@@ -36,10 +36,21 @@
             <h5 class="mb-3 fw-semibold">Ticket View Preferences</h5>
             <form>
                 <div class="row mb-3">
+                    <label class="col-sm-3 col-form-label">Category Filter:</label>
+                    <div class="col-sm-9">
+                        <select class="form-select">
+                            <option>Enrolment</option>
+                            <option>Grades</option>
+                            <option>Organizational</option>
+                            <option>Inquiry</option>
+                            <option>Miscellaneous</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row mb-3">
                     <label class="col-sm-3 col-form-label">Status Filter:</label>
                     <div class="col-sm-9">
                         <select class="form-select">
-                            <option>All</option>
                             <option>Open</option>
                             <option>In Progress</option>
                             <option>Resolved</option>
@@ -51,27 +62,14 @@
                     <label class="col-sm-3 col-form-label">Priority Filter:</label>
                     <div class="col-sm-9">
                         <select class="form-select">
-                            <option>All</option>
+                            <option>General</option>
                             <option>High</option>
                             <option>Medium</option>
                             <option>Low</option>
-                            <option>General</option>
                         </select>
                     </div>
                 </div>
-                <div class="row mb-3">
-                    <label class="col-sm-3 col-form-label">Category Filter:</label>
-                    <div class="col-sm-9">
-                        <select class="form-select">
-                            <option>All</option>
-                            <option>Enrolment</option>
-                            <option>Grades</option>
-                            <option>Organizational</option>
-                            <option>Inquiry</option>
-                            <option>Miscellaneous</option>
-                        </select>
-                    </div>
-                </div>
+                
 
                 <div class="d-flex justify-content-start mt-4">
                     <button type="reset" class="btn btn-outline-secondary me-2" style="margin-right: 10px;">Cancel</button>
