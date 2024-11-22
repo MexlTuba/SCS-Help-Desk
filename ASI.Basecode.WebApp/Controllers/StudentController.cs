@@ -18,14 +18,16 @@ namespace ASI.Basecode.WebApp.Controllers
         private readonly IPriorityService _priorityService;
         private readonly IStatusService _statusService;
         private readonly IUserService _userService;         // To get current user information
+        private readonly IUserPreferencesService _userPreferencesService;
 
-        public StudentController(ITicketService ticketService, ITicketRepository ticketRepository, ICategoryService categoryService, IUserService userService, IPriorityService priorityService, IStatusService statusService)
+        public StudentController(ITicketService ticketService, ITicketRepository ticketRepository, ICategoryService categoryService, IUserPreferencesService userPreferencesService, IUserService userService, IPriorityService priorityService, IStatusService statusService)
         {
             _ticketRepository = ticketRepository;
             _categoryService = categoryService;
             _priorityService = priorityService;
             _statusService = statusService;
             _userService = userService;
+            _userPreferencesService = userPreferencesService;
             _ticketService = ticketService;
         }
 
@@ -70,9 +72,9 @@ namespace ASI.Basecode.WebApp.Controllers
             }
         }
 
-        public IActionResult MyTickets()
+        public IActionResult MyTickets(int? categoryId = null, int? statusId = null, int? priorityId = null)
         {
-            // Retrieve the logged-in user's UserId from claims
+            // Retrieve the logged-in user's UserId
             var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
 
             if (string.IsNullOrEmpty(userIdClaim))
@@ -81,17 +83,23 @@ namespace ASI.Basecode.WebApp.Controllers
                 return RedirectToAction("StudentDashboard");
             }
 
-            // Fetch the User entity using the UserId from the claim
-            var user = _userService.GetUserById(userIdClaim);
-            if (user == null)
-            {
-                TempData["ErrorMessage"] = "User not found.";
-                return RedirectToAction("StudentDashboard");
-            }
+            // Fetch user preferences for defaults
+            var preferences = _userPreferencesService.GetPreferencesByUserId(userIdClaim);
+            var defaultCategoryId = preferences?.DefaultCategoryId ?? 1; 
+            var defaultPriorityId = preferences?.DefaultPriorityId ?? 4;
+            var defaultStatusId = preferences?.DefaultStatusId ?? 1;
 
-            // Fetch tickets created by the logged-in user
+            // Resolve filter values
+            var appliedCategoryId = categoryId == null ? defaultCategoryId : categoryId.Value;
+            var appliedStatusId = statusId == null ? defaultStatusId : statusId.Value;
+            var appliedPriorityId = priorityId == null ? defaultPriorityId : priorityId.Value;
+
+            // Fetch and filter tickets
             var tickets = _ticketService.GetTickets()
-                .Where(ticket => ticket.CreatedBy == user.UserId) // Filter tickets by the logged-in UserId
+                .Where(ticket => ticket.CreatedBy == userIdClaim) // Only user's tickets
+                .Where(ticket => appliedCategoryId == 0 || ticket.CategoryId == appliedCategoryId) // Include all if 0
+                .Where(ticket => appliedStatusId == 0 || ticket.StatusId == appliedStatusId)
+                .Where(ticket => appliedPriorityId == 0 || ticket.PriorityId == appliedPriorityId)
                 .Select(ticket => new TicketViewModel
                 {
                     TicketId = ticket.TicketId,
@@ -102,21 +110,28 @@ namespace ASI.Basecode.WebApp.Controllers
                     PriorityId = ticket.PriorityId,
                     StatusId = ticket.StatusId,
                     DateCreated = ticket.DateCreated,
-                    DateClosed = ticket.DateClosed,
+                    DateClosed = ticket.DateClosed
                 })
                 .ToList();
 
-            // Create the wrapper view model with both tickets and filter options
+            // Prepare the view model
             var model = new MyTicketsViewModel
             {
                 Tickets = tickets,
                 Categories = _categoryService.GetAllCategories(),
                 Statuses = _statusService.GetAllStatuses(),
-                Priorities = _priorityService.GetAllPriorities()
+                Priorities = _priorityService.GetAllPriorities(),
+                CategoryId = categoryId ?? defaultCategoryId, // Persist selected filter or fallback to defaults
+                PriorityId = priorityId ?? defaultPriorityId,
+                StatusId = statusId ?? defaultStatusId
             };
 
-            return View(model); // Pass the model to the view
+            return View(model);
         }
+
+
+
+
 
         public IActionResult StudentDashboard()
         {
@@ -130,8 +145,40 @@ namespace ASI.Basecode.WebApp.Controllers
 
         public IActionResult Settings()
         {
-            
-            return View();
+            // Retrieve UserId from session
+            var userId = HttpContext.Session.GetString("UserId");
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return RedirectToAction("Login", "Account"); // Redirect to login if session expired
+            }
+
+            // Fetch user preferences using the service
+            var preferences = _userPreferencesService.GetPreferencesByUserId(userId);
+
+            if (preferences == null)
+            {
+                // Handle case where preferences do not exist (e.g., initialize defaults)
+                preferences = new UserPreferences
+                {
+                    UserId = userId,
+                    DefaultCategoryId = 1,
+                    DefaultStatusId = 1,
+                    DefaultPriorityId = 4
+                };
+                _userPreferencesService.AddPreferences(preferences);
+            }
+
+            // Map preferences to ViewModel
+            var model = new UserPreferencesViewModel
+            {
+                UserId = preferences.UserId,
+                DefaultCategoryId = preferences.DefaultCategoryId,
+                DefaultStatusId = preferences.DefaultStatusId,
+                DefaultPriorityId = preferences.DefaultPriorityId
+            };
+
+            return View(model);
         }
 
         // GET: StudentController/Delete/5

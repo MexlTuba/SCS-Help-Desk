@@ -81,13 +81,13 @@ namespace ASI.Basecode.WebApp.Controllers
             switch (role)
             {
                 case "Super Admin":
-                    return RedirectToAction("SuperAdminDashboard", "SuperAdmin");
+                    return RedirectToAction("Tickets", "SuperAdmin");
                 case "Admin":
                     return RedirectToAction("Tickets", "Admin");
                 case "Support Agent":
-                    return RedirectToAction("SupportAgentDashboard", "SupportAgent");
+                    return RedirectToAction("Tickets", "SupportAgent");
                 case "Student":
-                    return RedirectToAction("StudentDashboard", "Student");
+                    return RedirectToAction("MyTickets", "Student");
                 default:
                     return RedirectToAction("Login", "Account"); // Fallback for unexpected roles
             }

@@ -15,5 +15,8 @@ namespace ASI.Basecode.Services.ServiceModels
         public IEnumerable<CategoryViewModel> Categories { get; set; }
         public IEnumerable<StatusViewModel> Statuses { get; set; }
         public IEnumerable<PriorityViewModel> Priorities { get; set; }
+        public int CategoryId { get; set; }
+        public int StatusId { get; set; }
+        public int PriorityId { get; set; }
     }
 }

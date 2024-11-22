@@ -1,49 +1,22 @@
 ﻿@model ASI.Basecode.Services.ServiceModels.MyTicketsViewModel
+
 @{
     ViewData["Title"] = "SCS Help Desk";
-    // Dictionaries for mapping IDs to types
-    var categoryMap = new Dictionary<int, string>
-    {
-        { 1, "Enrollment" },
-        { 2, "Grades" },
-        { 3, "Organizational" },
-        { 4, "Inquiry" },
-        { 5, "Miscellaneous" }
-    };
-
-    var priorityMap = new Dictionary<int, string>
-    {
-        { 1, "High" },
-        { 2, "Medium" },
-        { 3, "Low" },
-        { 4, "General" }
-    };
-
-    var statusMap = new Dictionary<int, string>
-    {
-        { 1, "Open" },
-        { 2, "In Progress" },
-        { 3, "Resolved" },
-        { 4, "Closed" }
-    };
-}
-@section styles {
-    <link rel="stylesheet" href="~/css/myTickets.css" />
 }
 
 <!DOCTYPE html>
-
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
-    <title>@ViewBag.Title</title>
+    <title>@ViewData["Title"]</title>
     <script>
         function confirmDelete(ticketId) {
             if (confirm("Are you sure you want to delete this ticket?")) {
-                window.location.href = '@Url.Action("DeleteTicket", "Student")?id=' + ticketId;
+                window.location.href = '@Url.Action("Delete", "Student")?id=' + ticketId;
             }
         }
     </script>
+    <link rel="stylesheet" href="~/css/myTickets.css" />
 </head>
 <body>
     <div>
@@ -51,10 +24,9 @@
             <a class="navbar-brand" href="#">
                 <img src="~/img/scsHelpDeskLogo.svg" alt="Bootstrap" class="scsLogo">
             </a>
-
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                <a href="@Url.Action("StudentDashboard", "Student")" class="btn btn-custom me-md-2 mr-5" type="button">Back to Homepage</a>
-                <a asp-action="SignOutUser" asp-controller="Account" class="btn btn-danger logout-btn shadow-lg" type="button">Logout</a>
+                <a href="@Url.Action("StudentDashboard", "Student")" class="btn btn-custom me-md-2 mr-5">Back to Homepage</a>
+                <a asp-action="SignOutUser" asp-controller="Account" class="btn btn-danger logout-btn shadow-lg">Logout</a>
             </div>
         </nav>
 
@@ -64,46 +36,65 @@
                     <div class="headers d-flex align-items-center">
                         <h1 class="custom-card-title flex-grow-1">My Tickets</h1>
                         <div class="container-sm my-2 mr-3">
-                            <div class="row align-items-center bg-light rounded shadow-sm py-3">
-                                <div class="col-md">
-                                    <button class="btn btn-primary">Clear Filters</button>
+                            <form method="get" asp-action="MyTickets" asp-controller="Student">
+                                <div class="row align-items-center bg-light rounded shadow-sm py-3">
+                                    <div class="col-md">
+                                        <a href="@Url.Action("MyTickets", "Student")" class="btn btn-secondary">Clear Filters</a>
+                                    </div>
+                                    <div class="col-auto">
+                                        <span class="fw-bold text-muted">Sort by:</span>
+                                    </div>
+
+                                    <!-- Category Filter -->
+                                    <div class="col-md">
+                                        <select name="CategoryId" class="form-control form-select">
+                                            <option disabled>Category</option>
+                                            <option value="0" selected="@(Model.CategoryId == 0 ? "selected" : null)">All</option>
+                                            @foreach (var category in Model.Categories)
+                                            {
+                                                <option value="@category.CategoryId" selected="@(category.CategoryId == Model.CategoryId ? "selected" : null)">
+                                                    @category.CategoryType
+                                                </option>
+                                            }
+                                        </select>
+                                    </div>
+
+                                    <!-- Status Filter -->
+                                    <div class="col-md">
+                                        <select name="StatusId" class="form-control form-select">
+                                            <option disabled>Status</option>
+                                            <option value="0" selected="@(Model.StatusId == 0 ? "selected" : null)">All</option>
+                                            @foreach (var status in Model.Statuses)
+                                            {
+                                                <option value="@status.StatusId" selected="@(status.StatusId == Model.StatusId ? "selected" : null)">
+                                                    @status.StatusType
+                                                </option>
+                                            }
+                                        </select>
+                                    </div>
+
+                                    <!-- Priority Filter -->
+                                    <div class="col-md">
+                                        <select name="PriorityId" class="form-control form-select">
+                                            <option disabled>Priority</option>
+                                            <option value="0" selected="@(Model.PriorityId == 0 ? "selected" : null)">All</option>
+                                            @foreach (var priority in Model.Priorities)
+                                            {
+                                                <option value="@priority.PriorityId" selected="@(priority.PriorityId == Model.PriorityId ? "selected" : null)">
+                                                    @priority.PriorityType
+                                                </option>
+                                            }
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md">
+                                        <button type="submit" class="btn btn-primary">Apply Filters</button>
+                                    </div>
                                 </div>
-                                <div class="col-auto">
-                                    <span class="fw-bold text-muted">Sort by:</span>
-                                </div>
-                                <div class="col-md">
-                                    <!-- Category Dropdown -->
-                                    <select name="CategoryId" class="form-control form-select" aria-label="Category">
-                                        <option disabled selected value="">Category</option>
-                                        @foreach (var category in Model.Categories)
-                                        {
-                                            <option value="@category.CategoryId">@category.CategoryType</option>
-                                        }
-                                    </select>
-                                </div>
-                                <div class="col-md">
-                                    <!-- Status Dropdown -->
-                                    <select name="StatusId" class="form-control form-select" aria-label="Status">
-                                        <option disabled selected value="">Status</option>
-                                        @foreach (var status in Model.Statuses)
-                                        {
-                                            <option value="@status.StatusId">@status.StatusType</option>
-                                        }
-                                    </select>
-                                </div>
-                                <div class="col-md">
-                                    <!-- Priority Dropdown -->
-                                    <select name="PriorityId" class="form-control form-select" aria-label="Priority">
-                                        <option disabled selected value="">Priority</option>
-                                        @foreach (var priority in Model.Priorities)
-                                        {
-                                            <option value="@priority.PriorityId">@priority.PriorityType</option>
-                                        }
-                                    </select>
-                                </div>
-                            </div>
+                            </form>
                         </div>
                     </div>
+
                     <!-- Ticket Table -->
                     <div class="table-responsive mt-4">
                         <table class="table table-striped table-bordered">
@@ -117,7 +108,7 @@
                                     <th scope="col">Status</th>
                                     <th scope="col">Date Created</th>
                                     <th scope="col">Date Closed</th>
-                                    <th></th>
+                                    <th scope="col">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -129,23 +120,16 @@
                                             <td>@ticket.TicketId</td>
                                             <td>@ticket.Title</td>
                                             <td>@(ticket.AssignedTo.HasValue ? ticket.AssignedTo.ToString() : "(Not yet assigned)")</td>
-                                            <td>@(categoryMap.TryGetValue(ticket.CategoryId, out var categoryName) ? categoryName : "Unknown")</td>
-                                            <td>@(priorityMap.TryGetValue(ticket.PriorityId, out var priorityName) ? priorityName : "Unknown")</td>
-                                            <td>@(statusMap.TryGetValue(ticket.StatusId, out var statusName) ? statusName : "Unknown")</td>
+                                            <td>@(Model.Categories.FirstOrDefault(c => c.CategoryId == ticket.CategoryId)?.CategoryType ?? "Unknown")</td>
+                                            <td>@(Model.Priorities.FirstOrDefault(p => p.PriorityId == ticket.PriorityId)?.PriorityType ?? "Unknown")</td>
+                                            <td>@(Model.Statuses.FirstOrDefault(s => s.StatusId == ticket.StatusId)?.StatusType ?? "Unknown")</td>
                                             <td>@ticket.DateCreated.ToString("yyyy-MM-dd")</td>
                                             <td>@(ticket.DateClosed.HasValue ? ticket.DateClosed.Value.ToString("yyyy-MM-dd") : "(Not yet closed)")</td>
                                             <td>
                                                 <a href="@Url.Action("Edit", "Student", new { id = ticket.TicketId })" class="btn btn-primary btn-sm">Edit</a>
-                                                <a href="@Url.Action("Delete", "Student", new { id = ticket.TicketId })"
-                                                   class="btn btn-danger"
-                                                   onclick="return confirm('Are you sure you want to delete this ticket?');">
-                                                    Delete
-                                                </a>
+                                                <button onclick="confirmDelete(@ticket.TicketId)" class="btn btn-danger btn-sm">Delete</button>
                                             </td>
-
-
                                         </tr>
-
                                     }
                                 }
                                 else
@@ -163,4 +147,3 @@
     </div>
 </body>
 </html>
-

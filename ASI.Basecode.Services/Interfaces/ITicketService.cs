@@ -7,6 +7,8 @@ namespace ASI.Basecode.Services.Interfaces
     public interface ITicketService
     {
         List<TicketServiceModel> GetAllTickets();
+        List<Ticket> GetTickets();
+
         List<TicketServiceModel> GetFilteredTickets(int? categoryId, int? priorityId, int? statusId);
         Ticket GetTicketById(int id);
 
@@ -16,7 +18,6 @@ namespace ASI.Basecode.Services.Interfaces
         int GetTicketCountByStatus(string statusType);
 
         void AddTicket(TicketViewModel model, string userName);
-        List<Ticket> GetTickets();
         void DeleteTicket(int ticketId);
 
     }
