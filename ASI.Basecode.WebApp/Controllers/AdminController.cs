@@ -79,15 +79,12 @@ namespace ASI.Basecode.WebApp.Controllers
                 Statuses = _statusService.GetAllStatuses(),
                 CategoryId = categoryId ?? defaultCategoryId, // Preserve selected filter or fallback to user default
                 PriorityId = priorityId ?? defaultPriorityId,
-                StatusId = statusId ?? defaultStatusId
+                StatusId = statusId ?? defaultStatusId,
                 TotalTickets = totalTickets,
                 PendingTickets = pendingTickets,
                 ClosedTickets = closedTickets,
                 DeletedTickets = deletedTickets,
-                Tickets = _ticketService.GetAllTickets(),
-                Categories = _categoryService.GetAllCategories(),  // Load categories for dropdown
-                Priorities = _priorityService.GetAllPriorities(),  // Load priorities for dropdown
-                Statuses = _statusService.GetAllStatuses()    //Load statuses for dropdown
+                //Tickets = _ticketService.GetAllTickets(),  //Load statuses for dropdown
             };
 
             return View(model);
