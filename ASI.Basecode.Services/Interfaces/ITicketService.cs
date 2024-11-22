@@ -10,6 +10,11 @@ namespace ASI.Basecode.Services.Interfaces
 
         Ticket GetTicketById(int id);
 
+        void UpdateTicket(Ticket ticket);
+
+        int GetTicketCount();
+        int GetTicketCountByStatus(string statusType);
+
         void AddTicket(TicketViewModel model, string userName);
         List<Ticket> GetTickets();
         void DeleteTicket(int ticketId);

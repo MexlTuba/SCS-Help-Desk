@@ -62,12 +62,15 @@ namespace ASI.Basecode.Services.Services
                            join priority in _context.Priorities on ticket.PriorityId equals priority.PriorityId
                            join category in _context.Categories on ticket.CategoryId equals category.CategoryId
                            join status in _context.Statuses on ticket.StatusId equals status.StatusId
+                           join user in _context.Users on ticket.AssignedTo.ToString() equals user.UserId into userJoin
+                           from assignedUser in userJoin.DefaultIfEmpty() 
                            select new TicketServiceModel
                            {
                                TicketId = ticket.TicketId,
                                CreatedBy = ticket.CreatedBy,
                                Title = ticket.Title,
-                               AssignedTo = ticket.AssignedTo,
+                               AssignedTo = ticket.AssignedTo, 
+                               AssignedToName = assignedUser != null ? assignedUser.Name : "Unassigned", 
                                PriorityType = priority.PriorityType,
                                CategoryType = category.CategoryType,
                                StatusType = status.StatusType,
@@ -84,10 +87,31 @@ namespace ASI.Basecode.Services.Services
         }
 
         // Direct-context GetTicketById method
+
         public Ticket GetTicketById(int id)
         {
             return _context.Ticket.FirstOrDefault(t => t.TicketId == id);
         }
+
+        public int GetTicketCount()
+        {
+            return _context.Ticket.Count();
+        }
+
+        public int GetTicketCountByStatus(string statusType)
+        {
+            return _context.Ticket
+                           .Include(t => t.Status)
+                           .Count(t => t.Status.StatusType == statusType);
+        }
+
+
+        public void UpdateTicket(Ticket ticket)
+        {
+            _context.Ticket.Update(ticket);
+            _context.SaveChanges();
+        }
+
 
         // Empty DeleteTicket method
         public void DeleteTicket(int ticketId)
