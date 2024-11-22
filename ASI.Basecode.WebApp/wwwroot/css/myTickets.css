@@ -7,6 +7,16 @@
     height: 60px;
 }
 
+.ticketNavBar {
+    background-color: white;
+}
+
+.formContent {
+    width: 95%;
+    height: 80vh;
+    border-radius: 20px;
+}
+
 .btn-custom {
     background-color: #f4a261;
     border: none;
@@ -16,7 +26,38 @@
     transition: background-color 0.2s ease;
 }
 
-    .btn-custom:hover {
-        background-color: #e18f4f;
-        color: white;
+.btn-custom:hover {
+    background-color: #e18f4f;
+    color: white;
+}
+
+.custom-dropdown {
+    position: absolute;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    width: 120px;
+    z-index: 1000;
+    padding: 5px 0;
+    display: none;
+    margin-left: -10px; /* Shift left by 10px */
+}
+
+
+    .custom-dropdown .dropdown-item {
+        padding: 8px 12px;
+        cursor: pointer;
+        text-decoration: none;
+        color: #333;
+        display: block;
     }
+
+        .custom-dropdown .dropdown-item:hover {
+            background-color: #f2f2f2;
+        }
+
+        .custom-dropdown .dropdown-item.text-danger {
+            color: #dc3545;
+        }
+

@@ -9,6 +9,10 @@ namespace ASI.Basecode.Data.Models
 {
     public class Ticket
     {
+        public Ticket()
+        {
+
+        }
         [Key]
         public int TicketId { get; set; }             // Primary Key
 

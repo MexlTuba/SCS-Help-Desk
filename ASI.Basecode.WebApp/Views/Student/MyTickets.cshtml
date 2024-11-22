@@ -1,5 +1,31 @@
-﻿@{
+﻿@model ASI.Basecode.Services.ServiceModels.MyTicketsViewModel
+@{
     ViewData["Title"] = "SCS Help Desk";
+    // Dictionaries for mapping IDs to types
+    var categoryMap = new Dictionary<int, string>
+    {
+        { 1, "Enrollment" },
+        { 2, "Grades" },
+        { 3, "Organizational" },
+        { 4, "Inquiry" },
+        { 5, "Miscellaneous" }
+    };
+
+    var priorityMap = new Dictionary<int, string>
+    {
+        { 1, "High" },
+        { 2, "Medium" },
+        { 3, "Low" },
+        { 4, "General" }
+    };
+
+    var statusMap = new Dictionary<int, string>
+    {
+        { 1, "Open" },
+        { 2, "In Progress" },
+        { 3, "Resolved" },
+        { 4, "Closed" }
+    };
 }
 @section styles {
     <link rel="stylesheet" href="~/css/myTickets.css" />
@@ -11,20 +37,130 @@
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>@ViewBag.Title</title>
+    <script>
+        function confirmDelete(ticketId) {
+            if (confirm("Are you sure you want to delete this ticket?")) {
+                window.location.href = '@Url.Action("DeleteTicket", "Student")?id=' + ticketId;
+            }
+        }
+    </script>
 </head>
 <body>
     <div>
-        <nav class="navbar bg-body-tertiary shadow-lg">
+        <nav class="ticketNavBar navbar bg-body-tertiary shadow-lg">
             <a class="navbar-brand" href="#">
                 <img src="~/img/scsHelpDeskLogo.svg" alt="Bootstrap" class="scsLogo">
             </a>
 
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                <button class="btn btn-custom me-md-2 mr-5" type="button">Back to Homepage</button>
+                <a href="@Url.Action("StudentDashboard", "Student")" class="btn btn-custom me-md-2 mr-5" type="button">Back to Homepage</a>
                 <a asp-action="SignOutUser" asp-controller="Account" class="btn btn-danger logout-btn shadow-lg" type="button">Logout</a>
             </div>
-
         </nav>
+
+        <div class="d-flex justify-content-center vh-90 mt-3">
+            <div class="formContent card shadow-lg">
+                <div class="card-body">
+                    <div class="headers d-flex align-items-center">
+                        <h1 class="custom-card-title flex-grow-1">My Tickets</h1>
+                        <div class="container-sm my-2 mr-3">
+                            <div class="row align-items-center bg-light rounded shadow-sm py-3">
+                                <div class="col-md">
+                                    <button class="btn btn-primary">Clear Filters</button>
+                                </div>
+                                <div class="col-auto">
+                                    <span class="fw-bold text-muted">Sort by:</span>
+                                </div>
+                                <div class="col-md">
+                                    <!-- Category Dropdown -->
+                                    <select name="CategoryId" class="form-control form-select" aria-label="Category">
+                                        <option disabled selected value="">Category</option>
+                                        @foreach (var category in Model.Categories)
+                                        {
+                                            <option value="@category.CategoryId">@category.CategoryType</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-md">
+                                    <!-- Status Dropdown -->
+                                    <select name="StatusId" class="form-control form-select" aria-label="Status">
+                                        <option disabled selected value="">Status</option>
+                                        @foreach (var status in Model.Statuses)
+                                        {
+                                            <option value="@status.StatusId">@status.StatusType</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-md">
+                                    <!-- Priority Dropdown -->
+                                    <select name="PriorityId" class="form-control form-select" aria-label="Priority">
+                                        <option disabled selected value="">Priority</option>
+                                        @foreach (var priority in Model.Priorities)
+                                        {
+                                            <option value="@priority.PriorityId">@priority.PriorityType</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Ticket Table -->
+                    <div class="table-responsive mt-4">
+                        <table class="table table-striped table-bordered">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th scope="col">Ticket ID</th>
+                                    <th scope="col">Title</th>
+                                    <th scope="col">Assigned to</th>
+                                    <th scope="col">Category</th>
+                                    <th scope="col">Priority</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Date Created</th>
+                                    <th scope="col">Date Closed</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Tickets != null && Model.Tickets.Any())
+                                {
+                                    @foreach (var ticket in Model.Tickets)
+                                    {
+                                        <tr>
+                                            <td>@ticket.TicketId</td>
+                                            <td>@ticket.Title</td>
+                                            <td>@(ticket.AssignedTo.HasValue ? ticket.AssignedTo.ToString() : "(Not yet assigned)")</td>
+                                            <td>@(categoryMap.TryGetValue(ticket.CategoryId, out var categoryName) ? categoryName : "Unknown")</td>
+                                            <td>@(priorityMap.TryGetValue(ticket.PriorityId, out var priorityName) ? priorityName : "Unknown")</td>
+                                            <td>@(statusMap.TryGetValue(ticket.StatusId, out var statusName) ? statusName : "Unknown")</td>
+                                            <td>@ticket.DateCreated.ToString("yyyy-MM-dd")</td>
+                                            <td>@(ticket.DateClosed.HasValue ? ticket.DateClosed.Value.ToString("yyyy-MM-dd") : "(Not yet closed)")</td>
+                                            <td>
+                                                <a href="@Url.Action("Edit", "Student", new { id = ticket.TicketId })" class="btn btn-primary btn-sm">Edit</a>
+                                                <a href="@Url.Action("Delete", "Student", new { id = ticket.TicketId })"
+                                                   class="btn btn-danger"
+                                                   onclick="return confirm('Are you sure you want to delete this ticket?');">
+                                                    Delete
+                                                </a>
+                                            </td>
+
+
+                                        </tr>
+
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="9" class="text-center">No tickets available</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </body>
 </html>
+

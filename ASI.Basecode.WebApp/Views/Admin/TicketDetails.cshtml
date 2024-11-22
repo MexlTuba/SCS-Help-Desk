@@ -1,5 +1,29 @@
 ﻿@{
     ViewData["Title"] = "Ticket List - SCS Help Desk";
+    var categoryMap = new Dictionary<int, string>
+    {
+        { 1, "Enrollment" },
+        { 2, "Grades" },
+        { 3, "Organizational" },
+        { 4, "Inquiry" },
+        { 5, "Miscellaneous" }
+    };
+
+    var priorityMap = new Dictionary<int, string>
+    {
+        { 1, "High" },
+        { 2, "Medium" },
+        { 3, "Low" },
+        { 4, "General" }
+    };
+
+    var statusMap = new Dictionary<int, string>
+    {
+        { 1, "Open" },
+        { 2, "In Progress" },
+        { 3, "Resolved" },
+        { 4, "Closed" }
+    };
 }
 
 <div style="display: flex; min-height: 100vh;">
@@ -48,48 +72,67 @@
                 <h2 style="margin-top:10px; color:#E68D4F; font-size:30px; font-weight:bold;">@ViewBag.Ticket.Title</h2>
                 <h6 style="margin-top:20px; font-size:15px; font-weight:bold;">Date Created: @ViewBag.Ticket.DateCreated.ToShortDateString()</h6>
                 <h6 style="margin-top:20px; font-size:15px; font-weight:bold;">Ticket ID: @ViewBag.Ticket.TicketId</h6>
-                <h6 style="margin-top:20px; font-size:15px; font-weight:bold;">Requested By: @ViewBag.Ticket.CreatedBy</h6>
-                <h6 style="margin-top:20px; font-size:15px; font-weight:bold;">Cateory: @ViewBag.Ticket.CategoryId</h6>
-                <h6 style="margin-top:20px; font-size:15px; font-weight:bold;">Status: @ViewBag.Ticket.StatusId</h6>
-                <h6 style="margin-top:20px; font-size:15px; font-weight:bold;">Priority: @ViewBag.Ticket.PriorityId</h6>
+                <h6 style="margin-top:15px; font-size:15px; font-weight:bold;">Requested By: @ViewBag.Ticket.CreatedBy</h6>
+                <div style="display:flex; flex-direction: row; align-items:center;">
+                    <p style="font-size:15px; font-weight:bold;">Cateory: </p>
+                    <p style="margin-left: 10px; padding:5px; width:220px; height:29px; border:none; background-color: #F1F1F1; border-radius:20px; text-align:center;">
+                        @(categoryMap.ContainsKey(@ViewBag.Ticket.CategoryId) ? categoryMap[@ViewBag.Ticket.CategoryId] : "Unknown")
+                    </p>
+                </div>
+                <div style="display:flex; flex-direction: row; align-items:center;">
+                    <p style="font-size:15px; font-weight:bold;">Status: </p>
+                    <p style="margin-left: 20px; padding:5px; width:220px; height:29px; border:none; background-color: #B8E8A5; border-radius:20px; color:#3FC10C; text-align:center;">
+                        @(statusMap.ContainsKey(@ViewBag.Ticket.StatusId) ? statusMap[@ViewBag.Ticket.StatusId] : "Unknown")
+                    </p>
+                </div>
+                <div style="display:flex; flex-direction: row; align-items:center;">
+                    <p style="font-size:15px; font-weight:bold;">Priority: </p>
+                    <p style="margin-left: 15px; padding:5px; width:220px; height:29px; border:none; background-color: #F1F1F1; border-radius:20px; text-align:center;">
+                        @(priorityMap.ContainsKey(@ViewBag.Ticket.PriorityId) ? priorityMap[@ViewBag.Ticket.PriorityId] : "Unknown")
+                    </p>
+                </div>
                 <div style="margin-top: 10px; border-bottom: 2px solid #e0e0e0; width: 100%;"></div>
                 <p style="margin-top:15px; font-size:20px; font-weight:bold; color: #6D6D6D;">Make Changes:</p>
-                <div style="display: flex; flex-direction:row; margin-top: 20px;">
-                    <p style="font-size:15px; font-weight:bold;">Assignee:</p>
-                    <div style="margin-left:15px;">
-                        <select style="padding:2px; width:225px; height:29px; border:none; background-color: #FFD98F; border-radius:20px;">
-                            <option disabled selected value="">Assignee</option>
-                            @foreach (var agent in ViewBag.SupportAgents as SelectList)
-                            {
-                                <option value="@agent.Value">@agent.Text</option>
-                            }
-                        </select>
+                <form asp-action="UpdateTicket" asp-controller="Admin" method="post">
+                    <div style="display: flex; flex-direction:row; margin-top: 20px;">
+                        <p style="font-size:15px; font-weight:bold;">Assignee:</p>
+                        <div style="margin-left:15px;">
+                            <select name="AssignedTo" style="padding:2px; width:225px; height:29px; border:none; background-color: #FFD98F; border-radius:20px; text-align:center;">
+                                <option disabled selected value="">Assignee</option>
+                                @foreach (var agent in ViewBag.SupportAgents as SelectList)
+                                {
+                                    <option value="@agent.Value">@agent.Text</option>
+                                }
+                            </select>
+                        </div>
                     </div>
-                </div>
+                    <input type="hidden" name="TicketId" value="@ViewBag.Ticket.TicketId" />
 
-                <!-- Action Buttons -->
-                <div style="display: flex; justify-content: space-between; margin-top: 25px;">
-                    <button style="padding: 10px 20px; background-color: #fff; border: 2px solid #E68D4F; border-radius: 5px; font-weight:bold; cursor: pointer;">Cancel</button>
-                    <button style="padding: 10px 10px; background-color: #E68D4F; color: #000; border: none; border-radius: 5px; font-weight:bold; cursor: pointer;">Save Changes</button>
-                </div>
+                    <!-- Action Buttons -->
+                    <div style="display: flex; justify-content: space-between; margin-top: 25px;">
+                        <button onclick="window.history.back()" style="padding: 10px 20px; background-color: #fff; border: 2px solid #E68D4F; border-radius: 5px; font-weight:bold; cursor: pointer;">Cancel</button>
+                        <button type="submit" style="padding: 10px 10px; background-color: #E68D4F; color: #000; border: none; border-radius: 5px; font-weight:bold; cursor: pointer;">Save Changes</button>
+                    </div>
+                </form>
+
             </div>
             <!-- Other Additional Content -->
             <div style="display:flex; flex-direction: column;">
-                <div style="background-color: #fff; width:350px; height:330px; border: 1px solid #e0e0e0; border-radius: 10px; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                <div style="background-color: #fff; width:350px; height:335px; border: 1px solid #e0e0e0; border-radius: 10px; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
                     <div style="display:flex; flex-direction: row; align-items:start;">
                         <img src="~/img/issue.svg" style="width: 19px; height: auto;" alt="logo"/>
                         <p style="margin-left:15px; font-size:20px; font-weight:bold; color: #E68D4F;">Issue Description</p>
                     </div>
                     <p style="font: 18px;">@ViewBag.Ticket.Description</p>
                 </div>
-                <div style="margin-top: 20px; background-color: #fff; width:350px; height:153px; border: 1px solid #e0e0e0; border-radius: 10px; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                <div style="margin-top: 20px; background-color: #fff; width:350px; height:175px; border: 1px solid #e0e0e0; border-radius: 10px; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
                     <div style="display:flex; flex-direction: row; align-items:start;">
                         <img src="~/img/file.svg" style="width: 19px; height: auto;" alt="logo" />
                         <p style="margin-left:15px; font-size:20px; font-weight:bold; color: #E68D4F;">Attachment</p>
                     </div>
                 </div>
             </div>
-            <div style="background-color: #fff; width:300px; height:500px; border: 1px solid #e0e0e0; border-radius: 10px; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+            <div style="background-color: #fff; width:300px; height:530px; border: 1px solid #e0e0e0; border-radius: 10px; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
                 <div style="display:flex; flex-direction: row;">
                     <img src="~/img/activity.svg" style="margin-bottom:10px; width: 21px; height: auto;" alt="logo" />
                     <p style="margin-left:15px; font-size:20px; font-weight:bold; color: #E68D4F;">Ticket Activity</p>

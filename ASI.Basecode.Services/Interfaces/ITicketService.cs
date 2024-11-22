@@ -9,5 +9,15 @@ namespace ASI.Basecode.Services.Interfaces
         List<TicketServiceModel> GetAllTickets();
         List<TicketServiceModel> GetFilteredTickets(int? categoryId, int? priorityId, int? statusId);
         Ticket GetTicketById(int id);
+
+        void UpdateTicket(Ticket ticket);
+
+        int GetTicketCount();
+        int GetTicketCountByStatus(string statusType);
+
+        void AddTicket(TicketViewModel model, string userName);
+        List<Ticket> GetTickets();
+        void DeleteTicket(int ticketId);
+
     }
 }
