@@ -74,6 +74,34 @@ namespace ASI.Basecode.Services.Services
                                PriorityType = priority.PriorityType,
                                CategoryType = category.CategoryType,
                                StatusType = status.StatusType,
+                               DateCreated = ticket.DateCreated,
+
+                               CategoryId = ticket.CategoryId,
+                               StatusId = ticket.StatusId,
+                               PriorityId = ticket.PriorityId
+                           }).ToList();
+
+            return tickets;
+        }
+
+        public List<TicketServiceModel> GetFilteredTickets(int? categoryId, int? statusId, int? priorityId)
+        {
+            var tickets = (from ticket in _context.Ticket
+                           join priority in _context.Priorities on ticket.PriorityId equals priority.PriorityId
+                           join category in _context.Categories on ticket.CategoryId equals category.CategoryId
+                           join status in _context.Statuses on ticket.StatusId equals status.StatusId
+                           where ticket.CategoryId == categoryId &&
+                                 ticket.StatusId == statusId &&
+                                 ticket.PriorityId == priorityId
+                           select new TicketServiceModel
+                           {
+                               TicketId = ticket.TicketId,
+                               CreatedBy = ticket.CreatedBy,
+                               Title = ticket.Title,
+                               AssignedTo = ticket.AssignedTo,
+                               PriorityType = priority.PriorityType,
+                               CategoryType = category.CategoryType,
+                               StatusType = status.StatusType,
                                DateCreated = ticket.DateCreated
                            }).ToList();
 
@@ -87,6 +115,7 @@ namespace ASI.Basecode.Services.Services
         }
 
         // Direct-context GetTicketById method
+
 
         public Ticket GetTicketById(int id)
         {

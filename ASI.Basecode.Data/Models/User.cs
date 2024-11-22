@@ -18,5 +18,7 @@ namespace ASI.Basecode.Data.Models
         public DateTime UpdatedTime { get; set; }
         public String Role{ get; set; }
         public string Email { get; set; }
+
+        public virtual UserPreferences UserPreferences { get; set; }
     }
 }
