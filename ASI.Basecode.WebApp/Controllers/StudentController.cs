@@ -139,23 +139,12 @@ namespace ASI.Basecode.WebApp.Controllers
         {
             try
             {
-                var ticket = _ticketRepository.GetTickets().FirstOrDefault(t => t.TicketId == id);
-                if (ticket == null)
-                {
-                    TempData["ErrorMessage"] = "Ticket not found.";
-                    return RedirectToAction(nameof(MyTickets));
-                }
-
-                // Perform the deletion
-                _ticketRepository.DeleteTicket(ticket);
-
-                TempData["SuccessMessage"] = "Ticket deleted successfully!";
+                _ticketService.DeleteTicket(id);
                 return RedirectToAction(nameof(MyTickets));
             }
-            catch (Exception)
+            catch
             {
-                TempData["ErrorMessage"] = "An error occurred while deleting the ticket.";
-                return RedirectToAction(nameof(MyTickets));
+                return View();
             }
         }
 
@@ -166,19 +155,14 @@ namespace ASI.Basecode.WebApp.Controllers
         {
             try
             {
-                var ticket = _ticketRepository.GetTickets().FirstOrDefault(t => t.TicketId == id);
-                if (ticket != null)
-                {
-                    _ticketRepository.DeleteTicket(ticket);
-                    TempData["SuccessMessage"] = "Ticket deleted successfully!";
-                }
                 return RedirectToAction(nameof(MyTickets));
             }
             catch
             {
-                TempData["ErrorMessage"] = "An error occurred while deleting the ticket.";
-                return RedirectToAction(nameof(MyTickets));
+                return View();
             }
         }
+
+
     }
 }
