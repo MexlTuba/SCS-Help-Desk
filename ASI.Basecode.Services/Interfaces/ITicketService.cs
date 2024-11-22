@@ -18,7 +18,6 @@ namespace ASI.Basecode.Services.Interfaces
         void AddTicket(TicketViewModel model, string userName);
         List<Ticket> GetTickets();
         void DeleteTicket(int ticketId);
-        void UpdateTicket(Ticket ticket);
 
     }
 }

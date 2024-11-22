@@ -125,11 +125,5 @@ namespace ASI.Basecode.Services.Services
             }
         }
 
-
-        // Empty UpdateTicket method
-        public void UpdateTicket(Ticket ticket)
-        {
-            // Add implementation here if needed
-        }
     }
 }
