@@ -18,14 +18,16 @@ namespace ASI.Basecode.WebApp.Controllers
         private readonly IPriorityService _priorityService;
         private readonly IStatusService _statusService;
         private readonly IUserService _userService;         // To get current user information
+        private readonly IUserPreferencesService _userPreferencesService;
 
-        public StudentController(ITicketService ticketService, ITicketRepository ticketRepository, ICategoryService categoryService, IUserService userService, IPriorityService priorityService, IStatusService statusService)
+        public StudentController(ITicketService ticketService, ITicketRepository ticketRepository, ICategoryService categoryService, IUserPreferencesService userPreferencesService, IUserService userService, IPriorityService priorityService, IStatusService statusService)
         {
             _ticketRepository = ticketRepository;
             _categoryService = categoryService;
             _priorityService = priorityService;
             _statusService = statusService;
             _userService = userService;
+            _userPreferencesService = userPreferencesService;
             _ticketService = ticketService;
         }
 
@@ -106,7 +108,6 @@ namespace ASI.Basecode.WebApp.Controllers
                 })
                 .ToList();
 
-            // Create the wrapper view model with both tickets and filter options
             var model = new MyTicketsViewModel
             {
                 Tickets = tickets,
@@ -130,8 +131,40 @@ namespace ASI.Basecode.WebApp.Controllers
 
         public IActionResult Settings()
         {
-            
-            return View();
+            // Retrieve UserId from session
+            var userId = HttpContext.Session.GetString("UserId");
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return RedirectToAction("Login", "Account"); // Redirect to login if session expired
+            }
+
+            // Fetch user preferences using the service
+            var preferences = _userPreferencesService.GetPreferencesByUserId(userId);
+
+            if (preferences == null)
+            {
+                // Handle case where preferences do not exist (e.g., initialize defaults)
+                preferences = new UserPreferences
+                {
+                    UserId = userId,
+                    DefaultCategoryId = 1,
+                    DefaultStatusId = 1,
+                    DefaultPriorityId = 4
+                };
+                _userPreferencesService.AddPreferences(preferences);
+            }
+
+            // Map preferences to ViewModel
+            var model = new UserPreferencesViewModel
+            {
+                UserId = preferences.UserId,
+                DefaultCategoryId = preferences.DefaultCategoryId,
+                DefaultStatusId = preferences.DefaultStatusId,
+                DefaultPriorityId = preferences.DefaultPriorityId
+            };
+
+            return View(model);
         }
 
         // GET: StudentController/Delete/5
