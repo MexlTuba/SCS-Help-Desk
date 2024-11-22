@@ -40,7 +40,6 @@ namespace ASI.Basecode.Data.Repositories
 
         public void DeleteTicket(Ticket ticket)
         {
-
             this.GetDbSet<Ticket>().Remove(ticket);
             UnitOfWork.SaveChanges();
         }

@@ -115,6 +115,7 @@ namespace ASI.Basecode.WebApp
             services.AddScoped<IStatusService, StatusService>();
             services.AddScoped<ITicketService, TicketService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<ITicketService, TicketService>();
 
             // DI Services AutoMapper(Add Profile)
             this.ConfigureAutoMapper();
