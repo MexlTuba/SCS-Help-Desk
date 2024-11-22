@@ -12,6 +12,7 @@ namespace ASI.Basecode.Services.ServiceModels
         public string CreatedBy { get; set; }
         public string Title { get; set; }
         public int? AssignedTo { get; set; }
+        public string AssignedToName { get; set; }
         public string PriorityType { get; set; }
         public string CategoryType { get; set; }
         public string StatusType { get; set; }
