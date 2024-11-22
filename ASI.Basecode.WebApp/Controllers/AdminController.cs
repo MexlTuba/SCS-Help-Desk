@@ -31,7 +31,7 @@ namespace ASI.Basecode.WebApp.Controllers
         // GET: UsersController
         public ActionResult UserList()
         {
-            var users = _userService.GetAllUsers(); // Fetch users from the service
+            var users = _userService.GetAllUsers().Where(u => u.Role != "Super Admin" && u.Role != "Admin").ToList();
             return View(users);
         }
 

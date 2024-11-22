@@ -10,6 +10,7 @@ using ASI.Basecode.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using ASI.Basecode.Services.Manager;
+using System.Linq;
 
 namespace ASI.Basecode.WebApp.Controllers
 {
@@ -29,7 +30,7 @@ namespace ASI.Basecode.WebApp.Controllers
         // GET: UsersController
         public ActionResult UserList()
         {
-            var users = _userService.GetAllUsers();
+            var users = _userService.GetAllUsers().Where(u => u.Role != "Super Admin").ToList();
             return View(users);
         }
 
