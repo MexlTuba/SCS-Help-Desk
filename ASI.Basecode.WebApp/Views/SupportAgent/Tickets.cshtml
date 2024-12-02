@@ -119,10 +119,66 @@
                                 <td style="padding: 10px; border-bottom: 1px solid #ddd;">@ticket.TicketId</td>
                                 <td style="padding: 10px; border-bottom: 1px solid #ddd;">@ticket.CreatedBy</td>
                                 <td style="padding: 10px; border-bottom: 1px solid #ddd;">@ticket.Title</td>
-                                <td style="padding: 10px; border-bottom: 1px solid #ddd;">@ticket.AssignedToName</td>
-                                <td style="padding: 10px; border-bottom: 1px solid #ddd;">@ticket.PriorityType</td>
-                                <td style="padding: 10px; border-bottom: 1px solid #ddd;">@ticket.CategoryType</td>
-                                <td style="padding: 10px; border-bottom: 1px solid #ddd;">@ticket.StatusType</td>
+                                <!-- Assignee -->
+                                <td style="padding: 10px; border-bottom: 1px solid #ddd;">
+                                    <span style="background-color: #FFD98F; border-radius: 10px; padding: 5px 10px; font-weight: bold; color: black;">
+                                        @ticket.AssignedToName
+                                    </span>
+                                </td>
+                                <!-- Priority -->
+                                <td style="padding: 10px; border-bottom: 1px solid #ddd;">
+                                    @if (ticket.PriorityType == "High")
+                                    {
+                                        <span style="background-color: #FFCCCC; color: red; border-radius: 10px; padding: 5px 10px; font-weight: bold;">
+                                            <i class="bi bi-circle-fill" style="font-size: 10px; margin-right: 5px;"></i> High
+                                        </span>
+                                    }
+                                    else if (ticket.PriorityType == "Medium")
+                                    {
+                                        <span style="background-color: #FFEDCC; color: #E68D4F; border-radius: 10px; padding: 5px 10px; font-weight: bold;">
+                                            Medium
+                                        </span>
+                                    }
+                                    else if (ticket.PriorityType == "Low")
+                                    {
+                                        <span style="background-color: #D9FFD9; color: green; border-radius: 10px; padding: 5px 10px; font-weight: bold;">
+                                            Low
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span style="background-color:#F1F1F1; color: black; border-radius: 10px; padding: 5px 10px; font-weight: bold;">
+                                            General
+                                        </span>
+                                    }
+                                </td>
+                                <!-- Category -->
+                                <td style="padding: 10px; border-bottom: 1px solid #ddd;">
+                                    <span style="background-color: #F1F1F1; border-radius: 10px; padding: 5px 10px; font-weight: bold; color: black;">
+                                        @ticket.CategoryType
+                                    </span>
+                                </td>
+                                <!-- Status -->
+                                <td style="padding: 10px; border-bottom: 1px solid #ddd;">
+                                    @if (ticket.StatusType == "Open")
+                                    {
+                                        <span style="background-color: #D9FFD9; color: green; border-radius: 10px; padding: 5px 10px; font-weight: bold;">
+                                            Open
+                                        </span>
+                                    }
+                                    else if (ticket.StatusType == "Closed")
+                                    {
+                                        <span style="background-color: #FFCCCC; color: red; border-radius: 10px; padding: 5px 10px; font-weight: bold;">
+                                            Closed
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span style="background-color: #FFEDCC; color: #E68D4F; border-radius: 10px; padding: 5px 10px; font-weight: bold;">
+                                            In Progress
+                                        </span>
+                                    }
+                                </td>
                                 <td style="padding: 10px; border-bottom: 1px solid #ddd;">@ticket.DateCreated.ToShortDateString()</td>
                                 <td style="padding: 10px; border-bottom: 1px solid #ddd;">
                                     <a href="@Url.Action("TicketDetails", "SupportAgent", new { id = ticket.TicketId })">
