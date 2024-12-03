@@ -32,8 +32,17 @@ namespace ASI.Basecode.WebApp.Controllers
         // GET: List of Tickets
         public ActionResult Tickets()
         {
+            var totalTickets = _ticketService.GetTicketCount();
+            var pendingTickets = _ticketService.GetTicketCountByStatus("In Progress");
+            var closedTickets = _ticketService.GetTicketCountByStatus("Closed");
+            var deletedTickets = _ticketService.GetTicketCountByStatus("Deleted");
+
             var model = new TicketViewModel
             {
+                TotalTickets = totalTickets,
+                PendingTickets = pendingTickets,
+                ClosedTickets = closedTickets,
+                DeletedTickets = deletedTickets,
                 Tickets = _ticketService.GetAllTickets(),
                 Categories = _categoryService.GetAllCategories(),  // Load categories for dropdown
                 Priorities = _priorityService.GetAllPriorities(),  // Load priorities for dropdown
@@ -58,19 +67,6 @@ namespace ASI.Basecode.WebApp.Controllers
                                             .ToList();
 
             ViewBag.SupportAgents = new SelectList(supportAgents, "UserId", "Name");
-
-            var statuses = _statusService.GetAllStatuses();
-            if (statuses != null && statuses.Any())
-            {
-                ViewBag.StatusList = new SelectList(statuses, "StatusId", "StatusType");
-            }
-
-            var priorities = _priorityService.GetAllPriorities();
-            if (priorities != null && priorities.Any())
-            {
-                ViewBag.PriorityList = new SelectList(priorities, "ProirityId", "PriorityType");
-            }
-
             ViewBag.Ticket = ticket;
             return View();
         }
@@ -112,10 +108,10 @@ namespace ASI.Basecode.WebApp.Controllers
 
             if (ticket.StatusId == 1) // Assuming 1 is the default status
             {
-                ticket.StatusId = 1;
+                ticket.StatusId = 2;
             }
 
-            _ticketService.UpdateTicket(ticket);
+            _ticketService.UpdateStatus(ticket);
 
             TempData["Success"] = $"Ticket assigned to {assignee.Name} successfully!";
             return RedirectToAction("TicketDetails", new { id = ticketId });
@@ -123,7 +119,7 @@ namespace ASI.Basecode.WebApp.Controllers
 
         // POST: Update Ticket Details (Priority, Status, Assignee)
         [HttpPost]
-        public IActionResult UpdateTicket(int ticketId, int? assignedTo, int? statusId, int? priorityId)
+        public IActionResult UpdateStatus(int ticketId, int? assignedTo, int? statusId, int? priorityId)
         {
             // Retrieve the ticket by ID
             var ticket = _ticketService.GetTicketById(ticketId);
@@ -140,7 +136,7 @@ namespace ASI.Basecode.WebApp.Controllers
                     ticket.PriorityId = priorityId.Value;
 
                 // Save changes
-                _ticketService.UpdateTicket(ticket);
+                _ticketService.UpdateStatus(ticket);
             }
 
             return RedirectToAction("Tickets", "SupportAgent");

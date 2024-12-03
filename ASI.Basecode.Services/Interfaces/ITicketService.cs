@@ -10,7 +10,7 @@ namespace ASI.Basecode.Services.Interfaces
 
         Ticket GetTicketById(int id);
 
-        void UpdateTicket(Ticket ticket);
+        void UpdateStatus(Ticket ticket);
 
         int GetTicketCount();
         int GetTicketCountByStatus(string statusType);

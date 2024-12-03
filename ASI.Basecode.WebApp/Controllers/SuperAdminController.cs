@@ -110,18 +110,18 @@ namespace ASI.Basecode.WebApp.Controllers
             ticket.AssignedTo = int.Parse(assignee.UserId);
             if (ticket.StatusId == 1)
             {
-                ticket.StatusId = 1;
+                ticket.StatusId = 2;
             }
 
-            _ticketService.UpdateTicket(ticket);
+            _ticketService.UpdateStatus(ticket);
 
             TempData["Success"] = $"Ticket assigned to {assignee.Name} successfully!";
-            return RedirectToAction("TicketDetails", new { id = ticketId });
+            return RedirectToAction("Tickets", new { id = ticketId });
         }
 
 
         [HttpPost]
-        public IActionResult UpdateTicket(int TicketId, string AssignedTo)
+        public IActionResult UpdateStatus(int TicketId, string AssignedTo)
         {
             var ticket = _ticketService.GetTicketById(TicketId);
 
@@ -131,7 +131,7 @@ namespace ASI.Basecode.WebApp.Controllers
                 {
                     ticket.AssignedTo = assignedToId;
 
-                    _ticketService.UpdateTicket(ticket);
+                    _ticketService.UpdateStatus(ticket);
 
                     TempData["Success"] = "Ticket assignment updated successfully!";
                 }

@@ -93,15 +93,15 @@
                 </div>
                 <div style="margin-top: 10px; border-bottom: 2px solid #e0e0e0; width: 100%;"></div>
                 <p style="margin-top:15px; font-size:20px; font-weight:bold; color: #6D6D6D;">Make Changes:</p>
-                <form asp-action="UpdateTicket" asp-controller="Admin" method="post">
+                <form asp-action="UpdateStatus" asp-controller="Admin" method="post">
                     <div style="display: flex; flex-direction:row; margin-top: 20px;">
                         <p style="font-size:15px; font-weight:bold;">Assignee:</p>
                         <div style="margin-left:15px;">
-                            <select name="AssignedTo" style="padding:2px; width:225px; height:29px; border:none; background-color: #FFD98F; border-radius:20px; text-align:center;">
-                                <option disabled selected value="">Assignee</option>
+                            <select name="AssignedTo" style="padding: 2px; width: 225px; height: 29px; border: none; background-color: #FFD98F; border-radius: 20px; text-align: center;">
+                                <option disabled value="">Assignee</option>
                                 @foreach (var agent in ViewBag.SupportAgents as SelectList)
                                 {
-                                    <option value="@agent.Value">@agent.Text</option>
+                                    <option value="@agent.Value" selected="@(agent.Value == ViewBag.Ticket.AssignedTo.ToString() ? "selected" : null)">@agent.Text</option>
                                 }
                             </select>
                         </div>

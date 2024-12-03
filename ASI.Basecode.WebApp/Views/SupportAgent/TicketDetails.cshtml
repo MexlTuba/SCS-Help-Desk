@@ -59,7 +59,7 @@
     </div>
     <!-- Main Content -->
     <div style="flex: 1; padding: 20px; background-color: #D9D9D9;">
-        <div style="background-color: #fff; padding: 20px; border: 1px solid #e0e0e0; border-radius: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+        <div style="margin-right:5px; background-color: #fff; padding: 20px; border: 1px solid #e0e0e0; border-radius: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
             <h2 style="margin: 0; font-weight: bold; font-size: 30px;">TICKET DETAILS</h2>
             <a href="@Url.Action("Tickets", "SupportAgent")" style="text-decoration: none;">
                 <div style="width: 103px; height: 45px; background-color: #E68D4F; border-radius: 5px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); display: flex; align-items: center; justify-content: center;">
@@ -83,15 +83,15 @@
                 </div>
                 <div style="margin-top: 10px; border-bottom: 2px solid #e0e0e0; width: 100%;"></div>
                 <p style="margin-top:15px; font-size:20px; font-weight:bold; color: #6D6D6D;">Make Changes:</p>
-                <form asp-action="UpdateTicket" asp-controller="SupportAgent" method="post">
+                <form asp-action="UpdateStatus" asp-controller="SupportAgent" method="post">
                     <div style="display: flex; flex-direction: row; align-items: center; margin-bottom: 15px;">
                         <p style="font-size: 15px; font-weight: bold;">Status:</p>
-                        <div style="margin-left: 15px;">
+                        <div style="margin-left: 35px;">
                             <select name="StatusId" style="padding: 2px; width: 225px; height: 29px; border: none; background-color: #FFD98F; border-radius: 20px; text-align: center;">
-                                <option disabled selected value="">Status</option>
+                                <option disabled value="">Status</option>
                                 @foreach (var status in statusMap)
                                 {
-                                    <option value="@status.Key">@status.Value</option>
+                                    <option value="@status.Key" selected="@(status.Key == ViewBag.Ticket.StatusId ? "selected" : null)">@status.Value</option>
                                 }
                             </select>
                         </div>
@@ -99,12 +99,12 @@
 
                     <div style="display: flex; flex-direction: row; align-items: center; margin-bottom: 15px;">
                         <p style="font-size: 15px; font-weight: bold;">Priority:</p>
-                        <div style="margin-left: 15px;">
+                        <div style="margin-left: 30px;">
                             <select name="PriorityId" style="padding: 2px; width: 225px; height: 29px; border: none; background-color: #FFD98F; border-radius: 20px; text-align: center;">
-                                <option disabled selected value="">Priority</option>
+                                <option disabled value="">Priority</option>
                                 @foreach (var priority in priorityMap)
                                 {
-                                    <option value="@priority.Key">@priority.Value</option>
+                                    <option value="@priority.Key" selected="@(priority.Key == ViewBag.Ticket.PriorityId ? "selected" : null)">@priority.Value</option>
                                 }
                             </select>
                         </div>
@@ -112,11 +112,11 @@
                     <div style="display: flex; flex-direction:row;">
                         <p style="font-size:15px; font-weight:bold;">Assignee:</p>
                         <div style="margin-left:15px;">
-                            <select name="AssignedTo" style="padding:2px; width:225px; height:29px; border:none; background-color: #FFD98F; border-radius:20px; text-align:center;">
-                                <option disabled selected value="">Assignee</option>
+                            <select name="AssignedTo" style="padding: 2px; width: 225px; height: 29px; border: none; background-color: #FFD98F; border-radius: 20px; text-align: center;">
+                                <option disabled value="">Assignee</option>
                                 @foreach (var agent in ViewBag.SupportAgents as SelectList)
                                 {
-                                    <option value="@agent.Value">@agent.Text</option>
+                                    <option value="@agent.Value" selected="@(agent.Value == ViewBag.Ticket.AssignedTo.ToString() ? "selected" : null)">@agent.Text</option>
                                 }
                             </select>
                         </div>
@@ -133,21 +133,21 @@
             </div>
             <!-- Other Additional Content -->
             <div style="display:flex; flex-direction: column;">
-                <div style="background-color: #fff; width:350px; height:335px; border: 1px solid #e0e0e0; border-radius: 10px; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                <div style="background-color: #fff; width:330px; height:335px; border: 1px solid #e0e0e0; border-radius: 10px; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
                     <div style="display:flex; flex-direction: row; align-items:start;">
                         <img src="~/img/issue.svg" style="width: 19px; height: auto;" alt="logo" />
                         <p style="margin-left:15px; font-size:20px; font-weight:bold; color: #E68D4F;">Issue Description</p>
                     </div>
                     <p style="font: 18px;">@ViewBag.Ticket.Description</p>
                 </div>
-                <div style="margin-top: 20px; background-color: #fff; width:350px; height:175px; border: 1px solid #e0e0e0; border-radius: 10px; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                <div style="margin-top: 20px; background-color: #fff; width:330px; height:185px; border: 1px solid #e0e0e0; border-radius: 10px; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
                     <div style="display:flex; flex-direction: row; align-items:start;">
                         <img src="~/img/file.svg" style="width: 19px; height: auto;" alt="logo" />
                         <p style="margin-left:15px; font-size:20px; font-weight:bold; color: #E68D4F;">Attachment</p>
                     </div>
                 </div>
             </div>
-            <div style="background-color: #fff; width:300px; height:530px; border: 1px solid #e0e0e0; border-radius: 10px; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+            <div style="background-color: #fff; width:300px; height:540px; border: 1px solid #e0e0e0; border-radius: 10px; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
                 <div style="display:flex; flex-direction: row;">
                     <img src="~/img/activity.svg" style="margin-bottom:10px; width: 21px; height: auto;" alt="logo" />
                     <p style="margin-left:15px; font-size:20px; font-weight:bold; color: #E68D4F;">Ticket Activity</p>

@@ -61,7 +61,7 @@ namespace ASI.Basecode.Services
         }
 
 
-        public void UpdateTicket(Ticket ticket)
+        public void UpdateStatus(Ticket ticket)
         {
             _context.Ticket.Update(ticket);
             _context.SaveChanges();
