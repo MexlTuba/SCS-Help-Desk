@@ -13,6 +13,7 @@ using ASI.Basecode.Services.Manager;
 using ASI.Basecode.Services;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Linq;
+using System.Data.Entity;
 
 namespace ASI.Basecode.WebApp.Controllers
 {
@@ -40,10 +41,17 @@ namespace ASI.Basecode.WebApp.Controllers
         }
 
         // GET: UsersController
-        public ActionResult UserList()
+        public IActionResult UserList(string role)
         {
-            var users = _userService.GetAllUsers().Where(u => u.Role != "Super Admin").ToList();
-            return View(users);
+            var users = _userService.GetAllUsers().ToList();
+
+            if (!string.IsNullOrEmpty(role))
+            {
+                users = users.Where(u => u.Role == role).ToList();
+            }
+
+            var model = users.ToList();
+            return View(model);
         }
 
         public ActionResult Tickets(int? categoryId = null, int? statusId = null, int? priorityId = null)
