@@ -14,6 +14,7 @@ using ASI.Basecode.Services;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Linq;
 using System.Data.Entity;
+using ASI.Basecode.Services.ServiceModels;
 
 namespace ASI.Basecode.WebApp.Controllers
 {
@@ -40,8 +41,8 @@ namespace ASI.Basecode.WebApp.Controllers
             return View();
         }
 
-        // GET: UsersController
-        public IActionResult UserList(string role)
+        // GET: UserList
+        public IActionResult UserList(string role, int page = 1, int pageSize = 10)
         {
             var users = _userService.GetAllUsers().ToList();
 
@@ -50,7 +51,19 @@ namespace ASI.Basecode.WebApp.Controllers
                 users = users.Where(u => u.Role == role).ToList();
             }
 
-            var model = users.ToList();
+            var totalUsers = users.Count();
+            var totalPages = (int)Math.Ceiling(totalUsers / (double)pageSize);
+
+            var paginatedUsers = users.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+            var model = new UserListViewModel
+            {
+                Users = paginatedUsers,
+                CurrentPage = page,
+                TotalPages = totalPages,
+                Role = role
+            };
+
             return View(model);
         }
 
