@@ -205,7 +205,7 @@ namespace ASI.Basecode.WebApp.Controllers
             {
                 TempData["ErrorMessage"] = Resources.Messages.Errors.ServerError;
             }
-            return View();
+            return RedirectToAction("UserAdd", "SuperAdmin");
         }
 
         [HttpPost]
@@ -223,7 +223,7 @@ namespace ASI.Basecode.WebApp.Controllers
                 _userService.AddUser(model);
 
                 // Redirect to UserList after successful registration
-                return RedirectToAction("UserList", "SuperAdmin");
+                return RedirectToAction("UserList", "Admin");
             }
             catch (InvalidDataException ex)
             {
@@ -233,7 +233,7 @@ namespace ASI.Basecode.WebApp.Controllers
             {
                 TempData["ErrorMessage"] = Resources.Messages.Errors.ServerError;
             }
-            return View();
+            return RedirectToAction("UserAdd", "Admin");
         }
 
         /// <summary>
