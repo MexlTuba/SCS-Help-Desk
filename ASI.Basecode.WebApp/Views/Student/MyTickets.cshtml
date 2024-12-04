@@ -15,6 +15,42 @@
                 window.location.href = '@Url.Action("Delete", "Student")?id=' + ticketId;
             }
         }
+        
+        function openDeleteModal(ticketId) {
+            // Set the ticket ID in the hidden input field
+            document.getElementById('ticketIdToDelete').value = ticketId;
+
+            // Update the modal body content to display the specific ticket ID
+            document.getElementById('deleteTicketMessage').textContent = `Are you sure you want to delete Ticket ID #${ticketId}?`;
+
+            console.log('Opening delete modal for Ticket ID:', ticketId);
+
+            // Show the modal
+            var modal = new bootstrap.Modal(document.getElementById('deleteTicketModal'));
+            modal.show();
+        }
+
+        function closeModal() {
+            var modalElement = document.getElementById('deleteTicketModal');
+            if (modalElement) {
+                modalElement.classList.remove('show');
+                modalElement.setAttribute('aria-hidden', 'true');
+                modalElement.style.display = 'none';
+                document.body.classList.remove('modal-open');
+                var backdrop = document.querySelector('.modal-backdrop'); 
+                if (backdrop) {
+                    backdrop.parentNode.removeChild(backdrop);
+                }
+            }
+        }
+
+
+
+
+        // Debugging form submission for delete functionality
+        document.getElementById('deleteTicketForm').addEventListener('submit', function (event) {
+            console.log('Submitting the delete form with ticket ID:', document.getElementById('ticketIdToDelete').value);
+        });
     </script>
     <link rel="stylesheet" href="~/css/myTickets.css" />
 </head>
@@ -119,15 +155,17 @@
                                         <tr>
                                             <td>@ticket.TicketId</td>
                                             <td>@ticket.Title</td>
-                                            <td>@(ticket.AssignedTo.HasValue ? ticket.AssignedTo.ToString() : "(Not yet assigned)")</td>
+                                            <td>@(string.IsNullOrEmpty(ticket.AssignedToName) ? "Unassigned" : ticket.AssignedToName)</td>
                                             <td>@(Model.Categories.FirstOrDefault(c => c.CategoryId == ticket.CategoryId)?.CategoryType ?? "Unknown")</td>
                                             <td>@(Model.Priorities.FirstOrDefault(p => p.PriorityId == ticket.PriorityId)?.PriorityType ?? "Unknown")</td>
                                             <td>@(Model.Statuses.FirstOrDefault(s => s.StatusId == ticket.StatusId)?.StatusType ?? "Unknown")</td>
                                             <td>@ticket.DateCreated.ToString("yyyy-MM-dd")</td>
                                             <td>@(ticket.DateClosed.HasValue ? ticket.DateClosed.Value.ToString("yyyy-MM-dd") : "(Not yet closed)")</td>
                                             <td>
-                                                <a href="@Url.Action("Edit", "Student", new { id = ticket.TicketId })" class="btn btn-primary btn-sm">Edit</a>
-                                                <button onclick="confirmDelete(@ticket.TicketId)" class="btn btn-danger btn-sm">Delete</button>
+                                                <div class="btn-group" role="group" aria-label="Ticket Actions">
+                                                    <a href="@Url.Action("DetailsTicket", "Student", new { id = ticket.TicketId })" class="btn btn-primary btn-sm">View Details</a>
+                                                    <button type="button" class="btn btn-danger btn-sm" onclick="openDeleteModal(@ticket.TicketId)">Delete</button>
+                                                </div>
                                             </td>
                                         </tr>
                                     }
@@ -141,7 +179,58 @@
                             </tbody>
                         </table>
                     </div>
+                    <!-- Pagination Controls -->
+                    <nav>
+                        <ul class="pagination justify-content-center">
+                            @if (Model.CurrentPage > 1)
+                            {
+                                <li class="page-item">
+                                    <a class="page-link" href="@Url.Action("MyTickets", new { page = Model.CurrentPage - 1, categoryId = Model.CategoryId, statusId = Model.StatusId, priorityId = Model.PriorityId })">Previous</a>
+                                </li>
+                            }
+
+                            @for (int i = 1; i <= Model.TotalPages; i++)
+                            {
+                                <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                                    <a class="page-link" href="@Url.Action("MyTickets", new { page = i, categoryId = Model.CategoryId, statusId = Model.StatusId, priorityId = Model.PriorityId })">@i</a>
+                                </li>
+                            }
+
+                            @if (Model.CurrentPage < Model.TotalPages)
+                            {
+                                <li class="page-item">
+                                    <a class="page-link" href="@Url.Action("MyTickets", new { page = Model.CurrentPage + 1, categoryId = Model.CategoryId, statusId = Model.StatusId, priorityId = Model.PriorityId })">Next</a>
+                                </li>
+                            }
+                        </ul>
+                    </nav>
+
+
+
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteTicketModal" tabindex="-1" aria-labelledby="deleteTicketModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- Form to handle deletion -->
+                <form id="deleteTicketForm" method="post" asp-action="Delete" asp-controller="Student" method="post">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteTicketModalLabel">Confirm Deletion</h5>
+                    </div>
+                    <div class="modal-body">
+                        <p id="deleteTicketMessage">Are you sure you want to delete this ticket?</p>
+                        <!-- Hidden field to pass the ticket ID -->
+                        <input type="hidden" id="ticketIdToDelete" name="id" />
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal()">No</button>
+                        <button type="submit" class="btn btn-danger">Yes</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

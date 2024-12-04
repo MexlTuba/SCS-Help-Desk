@@ -44,7 +44,7 @@ namespace ASI.Basecode.Services.Services
                 Title = model.Title,
                 Description = model.Description,
                 CategoryId = model.CategoryId,
-                Attatchment = model.Attatchment,
+                AttachmentPath = model.AttachmentPath,
                 PriorityId = 4,      // Default to "General" priority
                 StatusId = 1,        // Default to "Open" status
                 CreatedBy = user.UserId, // User ID of the logged-in user
@@ -153,6 +153,26 @@ namespace ASI.Basecode.Services.Services
                 _repository.DeleteTicket(ticket); 
             }
         }
+
+        public void EditDetailsTicket(Ticket ticket)
+        {
+            var existingTicket = _repository.GetTickets().FirstOrDefault(t => t.TicketId == ticket.TicketId);
+
+            if (existingTicket != null)
+            {
+                existingTicket.Title = ticket.Title;
+                existingTicket.Description = ticket.Description;
+
+                // Save changes
+                _repository.UpdateTicket(existingTicket);
+            }
+            else
+            {
+                throw new Exception("Ticket not found");
+            }
+        }
+
+
 
     }
 }

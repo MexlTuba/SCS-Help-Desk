@@ -6,6 +6,7 @@ using ASI.Basecode.Services.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.IO;
 using System.Linq;
 
 namespace ASI.Basecode.WebApp.Controllers
@@ -51,18 +52,43 @@ namespace ASI.Basecode.WebApp.Controllers
                 if (ModelState.IsValid)
                 {
                     var userName = User.Identity.Name; // Retrieve the logged-in username
+
+                    // File upload handling
+                    string filePath = null;
+                    if (model.Attachment != null)
+                    {
+                        var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Attachments");
+                        if (!Directory.Exists(uploadsFolder))
+                        {
+                            Directory.CreateDirectory(uploadsFolder);
+                        }
+
+                        var uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(model.Attachment.FileName);
+                        filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            model.Attachment.CopyTo(stream);
+                        }
+
+                        // Convert file path to a relative path for database storage
+                        filePath = Path.Combine("Attachments", uniqueFileName);
+
+                        // Normalize to use forward slashes
+                        filePath = filePath.Replace("\\", "/");
+                    }
+
+                    // Map ViewModel to ServiceModel and include the normalized file path
+                    model.AttachmentPath = filePath;
+
+                    // Pass the updated model and userName to the service
                     _ticketService.AddTicket(model, userName);
 
-                    // Set a success message in TempData
                     TempData["SuccessMessage"] = "Ticket created successfully!";
                     return RedirectToAction("MyTickets", "Student");
                 }
 
-                // Repopulate categories for the dropdown if model validation fails
                 model.Categories = _categoryService.GetAllCategories();
-                model.Statuses = _statusService.GetAllStatuses();
-                model.Priorities = _priorityService.GetAllPriorities();
-
                 return View(model);
             }
             catch (Exception ex)
@@ -72,7 +98,10 @@ namespace ASI.Basecode.WebApp.Controllers
             }
         }
 
-        public IActionResult MyTickets(int? categoryId = null, int? statusId = null, int? priorityId = null)
+
+
+
+        public IActionResult MyTickets(int? categoryId = null, int? statusId = null, int? priorityId = null, int page = 1, int pageSize = 5)
         {
             // Retrieve the logged-in user's UserId
             var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
@@ -85,7 +114,7 @@ namespace ASI.Basecode.WebApp.Controllers
 
             // Fetch user preferences for defaults
             var preferences = _userPreferencesService.GetPreferencesByUserId(userIdClaim);
-            var defaultCategoryId = preferences?.DefaultCategoryId ?? 1; 
+            var defaultCategoryId = preferences?.DefaultCategoryId ?? 1;
             var defaultPriorityId = preferences?.DefaultPriorityId ?? 4;
             var defaultStatusId = preferences?.DefaultStatusId ?? 1;
 
@@ -95,22 +124,41 @@ namespace ASI.Basecode.WebApp.Controllers
             var appliedPriorityId = priorityId == null ? defaultPriorityId : priorityId.Value;
 
             // Fetch and filter tickets
-            var tickets = _ticketService.GetTickets()
+            var ticketsQuery = _ticketService.GetTickets()
                 .Where(ticket => ticket.CreatedBy == userIdClaim) // Only user's tickets
                 .Where(ticket => appliedCategoryId == 0 || ticket.CategoryId == appliedCategoryId) // Include all if 0
                 .Where(ticket => appliedStatusId == 0 || ticket.StatusId == appliedStatusId)
-                .Where(ticket => appliedPriorityId == 0 || ticket.PriorityId == appliedPriorityId)
-                .Select(ticket => new TicketViewModel
+                .Where(ticket => appliedPriorityId == 0 || ticket.PriorityId == appliedPriorityId);
+
+            // Pagination
+            var totalTickets = ticketsQuery.Count();
+            var totalPages = (int)Math.Ceiling(totalTickets / (double)pageSize);
+
+            var tickets = ticketsQuery
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .Select(ticket =>
                 {
-                    TicketId = ticket.TicketId,
-                    Title = ticket.Title,
-                    AssignedTo = ticket.AssignedTo,
-                    Description = ticket.Description,
-                    CategoryId = ticket.CategoryId,
-                    PriorityId = ticket.PriorityId,
-                    StatusId = ticket.StatusId,
-                    DateCreated = ticket.DateCreated,
-                    DateClosed = ticket.DateClosed
+                    string assignedToName = null;
+                    if (ticket.AssignedTo.HasValue)
+                    {
+                        var assignedUser = _userService.GetUserById(ticket.AssignedTo.Value.ToString());
+                        assignedToName = assignedUser?.Name;
+                    }
+
+                    return new TicketViewModel
+                    {
+                        TicketId = ticket.TicketId,
+                        Title = ticket.Title,
+                        AssignedTo = ticket.AssignedTo,
+                        AssignedToName = assignedToName, // Include name of assigned user
+                        Description = ticket.Description,
+                        CategoryId = ticket.CategoryId,
+                        PriorityId = ticket.PriorityId,
+                        StatusId = ticket.StatusId,
+                        DateCreated = ticket.DateCreated,
+                        DateClosed = ticket.DateClosed
+                    };
                 })
                 .ToList();
 
@@ -123,12 +171,51 @@ namespace ASI.Basecode.WebApp.Controllers
                 Priorities = _priorityService.GetAllPriorities(),
                 CategoryId = categoryId ?? defaultCategoryId, // Persist selected filter or fallback to defaults
                 PriorityId = priorityId ?? defaultPriorityId,
-                StatusId = statusId ?? defaultStatusId
+                StatusId = statusId ?? defaultStatusId,
+                CurrentPage = page,
+                TotalPages = totalPages
             };
 
             return View(model);
         }
 
+
+        [HttpGet]
+        public IActionResult DetailsTicket(int id)
+        {
+            var ticket = _ticketService.GetTicketById(id);
+            if (ticket == null)
+            {
+                TempData["ErrorMessage"] = "Ticket not found.";
+                return RedirectToAction("MyTickets", "Student");
+            }
+
+            // Fetch the assigned user's name
+            string assignedToName = null;
+            if (ticket.AssignedTo.HasValue)
+            {
+                // Convert AssignedTo (int?) to string before passing it
+                var assignedUser = _userService.GetUserById(ticket.AssignedTo.Value.ToString());
+                assignedToName = assignedUser?.Name; // Assuming UserService provides a method to fetch user details
+            }
+
+            var model = new TicketViewModel
+            {
+                TicketId = ticket.TicketId,
+                Title = ticket.Title,
+                Description = ticket.Description,
+                DateCreated = ticket.DateCreated,
+                CategoryId = ticket.CategoryId,
+                PriorityId = ticket.PriorityId,
+                StatusId = ticket.StatusId,
+                AttachmentPath = ticket.AttachmentPath,
+                AssignedTo = ticket.AssignedTo,
+                AssignedToName = assignedToName, // Set the user's name
+                Categories = _categoryService.GetAllCategories()
+            };
+
+            return View(model);
+        }
 
 
 
@@ -187,7 +274,7 @@ namespace ASI.Basecode.WebApp.Controllers
             try
             {
                 _ticketService.DeleteTicket(id);
-                return RedirectToAction(nameof(MyTickets));
+                return RedirectToAction("MyTickets", "Student");
             }
             catch
             {
@@ -202,13 +289,73 @@ namespace ASI.Basecode.WebApp.Controllers
         {
             try
             {
-                return RedirectToAction(nameof(MyTickets));
+                _ticketService.DeleteTicket(id);
+                return RedirectToAction("MyTickets", "Student");
             }
             catch
             {
                 return View();
             }
         }
+
+        [HttpGet]
+        public IActionResult EditTicket(int id)
+        {
+            var ticket = _ticketService.GetTicketById(id);
+            if (ticket == null)
+            {
+                TempData["ErrorMessage"] = "Ticket not found.";
+                return RedirectToAction("MyTickets", "Student");
+            }
+
+            // Map the ticket data to the ViewModel
+            var model = new TicketViewModel
+            {
+                TicketId = ticket.TicketId,
+                Title = ticket.Title,
+                Description = ticket.Description,
+                CategoryId = ticket.CategoryId,
+                PriorityId = ticket.PriorityId,
+                StatusId = ticket.StatusId
+            };
+
+            return View(model); // Pass the model to the Edit view
+        }
+
+        [HttpPost]
+        public IActionResult EditTicket(TicketViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                TempData["ErrorMessage"] = "Invalid data. Please try again.";
+                return RedirectToAction("DetailsTicket", new { id = model.TicketId });
+            }
+
+            try
+            {
+                var ticket = _ticketService.GetTicketById(model.TicketId);
+                if (ticket == null)
+                {
+                    TempData["ErrorMessage"] = "Ticket not found.";
+                    return RedirectToAction("MyTickets");
+                }
+
+                ticket.Title = model.Title;
+                ticket.Description = model.Description;
+
+                _ticketService.UpdateTicket(ticket);
+
+                TempData["SuccessMessage"] = "Ticket updated successfully!";
+                return RedirectToAction("DetailsTicket", new { id = model.TicketId });
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "An error occurred while updating the ticket. Please try again.";
+                return RedirectToAction("DetailsTicket", new { id = model.TicketId });
+            }
+        }
+
+
 
 
     }
