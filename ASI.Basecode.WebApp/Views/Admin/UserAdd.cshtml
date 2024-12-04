@@ -1,11 +1,14 @@
-﻿@{
+﻿@using ASI.Basecode.Services.ServiceModels
+@model UserViewModel
+
+@{
+    ViewBag.LoginView = true;
     ViewData["Title"] = "Admin Add User - SCS Help Desk";
 }
 
-<div style="display: flex; min-height: 100vh; width: 100vw;">
+<div style="display: flex; min-height: 100vh;">
         <!-- Sidebar -->
-        <div style="width: 250px; background-color: #f8f9fa;">
-            <div style="width: 250px; background-color: #f8f9fa; ">
+        <div style="width: 250px; background-color: #f8f9fa; ">
                 <div style="padding: 15px;">
                     <img src="~/img/SCS-Logo.png" alt="SCS Logo" style="max-width: 50px; margin-bottom: 10px;">
                     <h5 style="margin-bottom: 20px;">SCS HELP DESK</h5>
@@ -40,34 +43,30 @@
                     <a href="javascript:history.back()" style="padding: 8px 20px; background-color: #f4a460; color: black; text-decoration: none; border-radius: 5px;">Back</a>
                 </div>
 
-                <form method="post" action="@Url.Action("RegisterFromUserAdd", "Account")">
+                <form method="post" action="@Url.Action("RegisterFromUserAddAdmin", "Account")">
                     <div style="display: flex;">
                         <!-- Form Fields -->
-                        <div style="flex: 1; margin-right: 40px;">
-                            <div style="margin-bottom: 20px;">
-                                <label style="display: block; margin-bottom: 5px; font-weight: bold;">ID Number</label>
-                                <input type="text" name="UserId" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; background-color: #f0f0f0;">
-                            </div>
+                    <div style="flex: 1; margin-right: 40px;">
+                        <div class="form-outline mb-4">
+                            <label class="form-label" for="userId">ID Number</label>
+                            <input type="text" id="userId" class="form-control"
+                                   asp-for="UserId" placeholder="Enter ID Number" />
+                            <span asp-validation-for="UserId" class="text-danger"></span>
+                        </div>
 
-                            <div style="margin-bottom: 20px;">
-                                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Full Name</label>
-                                <input type="text" name="Name" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; background-color: #f0f0f0;">
-                            </div>
+                        <div class="form-outline mb-4">
+                            <label class="form-label" for="name">Name</label>
+                            <input type="text" id="name" class="form-control"
+                                   asp-for="Name" placeholder="Enter name" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
 
-                            <div style="margin-bottom: 20px;">
-                                <label style="display: block; margin-bottom: 5px; font-weight: bold;">School Email</label>
-                                <input type="email" name="Email" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; background-color: #f0f0f0;">
-                            </div>
-
-                            <div style="margin-bottom: 20px;">
-                                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Password</label>
-                                <input type="password" name="Password" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; background-color: #f0f0f0;">
-                            </div>
-
-                            <div style="margin-bottom: 20px;">
-                                <label style="display: block; margin-bottom: 5px; font-weight: bold;">Confirm Password</label>
-                                <input type="password" name="ConfirmPassword" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; background-color: #f0f0f0;">
-                            </div>
+                        <div class="form-outline mb-4">
+                            <label class="form-label" for="email">School Email</label>
+                            <input type="text" id="email" class="form-control"
+                                   asp-for="Email" placeholder="Enter School Email" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
 
                             <div style="margin-bottom: 20px;">
                                 <label style="display: block; margin-bottom: 5px; font-weight: bold;">Role:</label>
