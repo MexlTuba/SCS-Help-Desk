@@ -40,15 +40,16 @@
 
                 <div class="row mb-4">
                     <div class="col-md-4">
-                        <div class="input-group">
-                            <span class="input-group-text" style="background-color: #f8f9fa; border: none;">
-                                <i class="bi bi-search"></i>
-                            </span>
-                            <input type="text" class="form-control" placeholder="Search ID" style="background-color: #f8f9fa; border: none;">
-                        </div>
+                    <form method="get" action="@Url.Action("UserList", "SuperAdmin")">
+                    <div class="input-group">
+                        <span class="input-group-text" style="background-color: #f8f9fa; border: none;">
+                            <i class="bi bi-search"></i>
+                        </span>
+                        <input type="text" class="form-control" placeholder="Search ID" name="searchId" value="@ViewBag.SearchId" style="background-color: #f8f9fa; border: none;">
                     </div>
-                    <div class="col-md-4">
-                        <form method="get" action="@Url.Action("UserList", "SuperAdmin")">
+
+                    <div class="row-md-4">
+                        
                             <select name="role" class="form-select" style="border: none;">
                                 <option value="">All</option>
                                 <option value="Admin">Admin</option>
@@ -58,7 +59,8 @@
                             <button type="submit" class="btn btn-primary" style="background-color: white; color: #E68D4F; border: 2px solid #E68D4F; margin-left: 10px;">
                                 Apply Filter
                             </button>
-                        </form>
+                    </div>
+                    </form>
                     </div>
                     <div class="col-md-4 d-flex justify-content-end align-items-start">
                         <a href="@Url.Action("UserAdd", "SuperAdmin")" class="btn btn-primary" style="background-color: #E68D4F; color: black;">
