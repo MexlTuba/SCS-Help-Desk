@@ -13,6 +13,8 @@ using ASI.Basecode.Services.Manager;
 using ASI.Basecode.Services;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Linq;
+using System.Data.Entity;
+using ASI.Basecode.Services.ServiceModels;
 
 namespace ASI.Basecode.WebApp.Controllers
 {
@@ -39,11 +41,36 @@ namespace ASI.Basecode.WebApp.Controllers
             return View();
         }
 
-        // GET: UsersController
-        public ActionResult UserList()
+        // GET: UserList
+        public IActionResult UserList(string role, string searchId, int page = 1, int pageSize = 10)
         {
             var users = _userService.GetAllUsers().Where(u => u.Role != "Super Admin").ToList();
-            return View(users);
+
+            if (!string.IsNullOrEmpty(role))
+            {
+                users = users.Where(u => u.Role == role).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(searchId))
+            {
+                users = users.Where(u => u.UserId.Contains(searchId)).ToList();
+                ViewBag.SearchId = searchId; // Preserve the search query in the view
+            }
+
+            var totalUsers = users.Count();
+            var totalPages = (int)Math.Ceiling(totalUsers / (double)pageSize);
+
+            var paginatedUsers = users.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+            var model = new UserListViewModel
+            {
+                Users = paginatedUsers,
+                CurrentPage = page,
+                TotalPages = totalPages,
+                Role = role
+            };
+
+            return View(model);
         }
 
         public ActionResult Tickets(int? categoryId = null, int? statusId = null, int? priorityId = null)
