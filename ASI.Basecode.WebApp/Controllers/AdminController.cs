@@ -129,7 +129,7 @@ namespace ASI.Basecode.WebApp.Controllers
                 return NotFound();
             }
             var supportAgents = _userService.GetAllUsers()
-                                            .Where(u => u.Role == "Support Agent") 
+                                            .Where(u => u.Role == "SupportAgent") 
                                             .Select(u => new { u.UserId, u.Name })
                                             .ToList();
 

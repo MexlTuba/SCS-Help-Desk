@@ -44,5 +44,17 @@ namespace ASI.Basecode.Data.Repositories
             UnitOfWork.SaveChanges();
         }
 
+        public void EditDetailsTicket(Ticket ticket)
+        {
+            var existingTicket = this.GetDbSet<Ticket>().FirstOrDefault(t => t.TicketId == ticket.TicketId);
+            if (existingTicket != null)
+            {
+                existingTicket.Title = ticket.Title;
+                existingTicket.Description = ticket.Description;
+                UnitOfWork.SaveChanges(); // Save the changes to the database
+            }
+        }
+
+
     }
 }

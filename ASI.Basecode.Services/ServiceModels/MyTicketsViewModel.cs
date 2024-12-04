@@ -18,5 +18,7 @@ namespace ASI.Basecode.Services.ServiceModels
         public int CategoryId { get; set; }
         public int StatusId { get; set; }
         public int PriorityId { get; set; }
+        public int CurrentPage { get; set; }
+        public int TotalPages { get; set; }
     }
 }

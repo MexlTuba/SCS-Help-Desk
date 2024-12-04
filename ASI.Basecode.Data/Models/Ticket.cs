@@ -23,7 +23,7 @@ namespace ASI.Basecode.Data.Models
         [Required]
         public string Description { get; set; }       // Detailed description of the issue
 
-        public string Attatchment { get; set; }       // file path of attatchment
+        public string AttachmentPath { get; set; }
 
         public int CategoryId { get; set; }           // Foreign Key to Category
         public int PriorityId { get; set; }           // Foreign Key to Priority

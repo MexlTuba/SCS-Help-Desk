@@ -14,5 +14,7 @@ namespace ASI.Basecode.Data.Interfaces
         void AddTicket(Ticket ticket);
         void UpdateTicket(Ticket ticket);
         void DeleteTicket(Ticket ticket);
+
+        void EditDetailsTicket(Ticket ticket);
     }
 }
