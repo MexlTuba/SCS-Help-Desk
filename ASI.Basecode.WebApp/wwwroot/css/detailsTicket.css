@@ -60,3 +60,36 @@
         .custom-dropdown .dropdown-item.text-danger {
             color: #dc3545;
         }
+
+#feedbackModal .rating-stars {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    gap: 5px;
+}
+
+    #feedbackModal .rating-stars .star {
+        display: none;
+    }
+
+    #feedbackModal .rating-stars .star-label {
+        font-size: 2rem;
+        color: #ddd;
+        cursor: pointer;
+        transition: color 0.2s ease-in-out;
+    }
+
+        #feedbackModal .rating-stars .star:checked ~ .star-label,
+        #feedbackModal .rating-stars .star-label:hover,
+        #feedbackModal .rating-stars .star-label:hover ~ .star-label {
+            color: #f39c12;
+        }
+
+body.modal-open {
+    padding-right: 0 !important; /* Disable the padding adjustment */
+}
+
+.modal-backdrop {
+    overflow: hidden; /* Ensure the backdrop doesn't cause layout issues */
+}
+

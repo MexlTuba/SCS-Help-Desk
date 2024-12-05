@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.IO;
 using System.Linq;
+using System.Security.AccessControl;
 
 namespace ASI.Basecode.WebApp.Controllers
 {
@@ -20,8 +21,10 @@ namespace ASI.Basecode.WebApp.Controllers
         private readonly IStatusService _statusService;
         private readonly IUserService _userService;         // To get current user information
         private readonly IUserPreferencesService _userPreferencesService;
+        private readonly IFeedbackService _feedbackService;
+        private readonly IFeedbackRepository _feedbackRepository;
 
-        public StudentController(ITicketService ticketService, ITicketRepository ticketRepository, ICategoryService categoryService, IUserPreferencesService userPreferencesService, IUserService userService, IPriorityService priorityService, IStatusService statusService)
+        public StudentController(ITicketService ticketService, ITicketRepository ticketRepository, ICategoryService categoryService, IUserPreferencesService userPreferencesService, IUserService userService, IPriorityService priorityService, IStatusService statusService, IFeedbackRepository feedbackRepository, IFeedbackService feedbackService)
         {
             _ticketRepository = ticketRepository;
             _categoryService = categoryService;
@@ -30,6 +33,8 @@ namespace ASI.Basecode.WebApp.Controllers
             _userService = userService;
             _userPreferencesService = userPreferencesService;
             _ticketService = ticketService;
+            _feedbackRepository = feedbackRepository;
+            _feedbackService = feedbackService;
         }
 
         [HttpGet]
@@ -190,32 +195,37 @@ namespace ASI.Basecode.WebApp.Controllers
                 return RedirectToAction("MyTickets", "Student");
             }
 
-            // Fetch the assigned user's name
-            string assignedToName = null;
-            if (ticket.AssignedTo.HasValue)
-            {
-                // Convert AssignedTo (int?) to string before passing it
-                var assignedUser = _userService.GetUserById(ticket.AssignedTo.Value.ToString());
-                assignedToName = assignedUser?.Name; // Assuming UserService provides a method to fetch user details
-            }
+            var feedback = _feedbackService.GetFeedbackByTicketId(id);
+            var feedbackExists = _feedbackService.GetFeedbackByTicketId(id) != null;
 
-            var model = new TicketViewModel
+            var model = new DetailsTicketViewModel
             {
                 TicketId = ticket.TicketId,
                 Title = ticket.Title,
                 Description = ticket.Description,
                 DateCreated = ticket.DateCreated,
+                HasFeedback = feedbackExists,
+                AttachmentPath = ticket.AttachmentPath,
                 CategoryId = ticket.CategoryId,
                 PriorityId = ticket.PriorityId,
                 StatusId = ticket.StatusId,
-                AttachmentPath = ticket.AttachmentPath,
-                AssignedTo = ticket.AssignedTo,
-                AssignedToName = assignedToName, // Set the user's name
-                Categories = _categoryService.GetAllCategories()
+                AssignedToName = ticket.AssignedTo.HasValue
+                    ? _userService.GetUserById(ticket.AssignedTo.Value.ToString())?.Name
+                    : "Unassigned",
+                TicketRating = feedback?.TicketRating,
+                TicketComment = feedback?.TicketComment,
+                AgentRating = feedback?.AgentRating,
+                AgentComment = feedback?.AgentComment,
+                UserId = feedback?.UserId,
+                Categories = _categoryService.GetAllCategories().ToList(),
+                Priorities = _priorityService.GetAllPriorities().ToList(),
+                Statuses = _statusService.GetAllStatuses().ToList()
             };
 
             return View(model);
         }
+
+
 
 
 
@@ -351,6 +361,40 @@ namespace ASI.Basecode.WebApp.Controllers
             catch (Exception ex)
             {
                 TempData["ErrorMessage"] = "An error occurred while updating the ticket. Please try again.";
+                return RedirectToAction("DetailsTicket", new { id = model.TicketId });
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult AddFeedback(FeedbackViewModel model)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    TempData["ErrorMessage"] = "Invalid feedback. Please check your inputs.";
+                    return RedirectToAction("DetailsTicket", new { id = model.TicketId });
+                }
+
+                var userName = User.Identity.Name;
+                Console.WriteLine($"Feedback TicketId: {model.TicketId}");
+
+
+              
+                _feedbackService.AddFeedback(model, userName);
+
+                TempData["SuccessMessage"] = "Feedback submitted successfully!";
+
+                return RedirectToAction("DetailsTicket", new { id = model.TicketId });
+            }
+            catch (Exception ex)
+            {
+                
+                TempData["ErrorMessage"] = $"An error occurred while submitting feedback: {ex}";
+               
+                Console.WriteLine($"Error in AddFeedback: {ex.Message}");
+
                 return RedirectToAction("DetailsTicket", new { id = model.TicketId });
             }
         }

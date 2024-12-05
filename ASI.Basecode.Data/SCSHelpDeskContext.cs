@@ -23,6 +23,7 @@ namespace ASI.Basecode.Data
         public virtual DbSet<Priority> Priorities { get; set; }
         public virtual DbSet<Status> Statuses { get; set; }
         public virtual DbSet<Ticket> Ticket { get; set; }
+        public virtual DbSet<Feedback> Feedback { get; set; }
         public virtual DbSet<UserPreferences> UserPreferences { get; set; } // Add DbSet for UserPreferences
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

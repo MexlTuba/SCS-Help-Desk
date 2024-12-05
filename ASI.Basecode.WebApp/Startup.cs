@@ -110,12 +110,14 @@ namespace ASI.Basecode.WebApp
 
             // Additional Service Registrations
             services.AddScoped<ITicketRepository, TicketRepository>();
+            services.AddScoped<IFeedbackRepository, FeedbackRepository>();
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IPriorityService, PriorityService>();
             services.AddScoped<IStatusService, StatusService>();
             services.AddScoped<ITicketService, TicketService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ITicketService, TicketService>();
+            services.AddScoped<IFeedbackService, FeedbackService>();
             services.AddScoped<IUserPreferencesRepository, UserPreferencesRepository>();
             services.AddScoped<IUserPreferencesService, UserPreferencesService>();
 
