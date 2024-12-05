@@ -28,9 +28,80 @@ namespace ASI.Basecode.WebApp.Controllers
             _ticketService = ticketService;
             _userPreferencesService = userPreferencesService;
         }
-        public IActionResult SupportAgentDashboard()
+        public IActionResult SupportAgentDashboard(int? categoryId = null, int? statusId = null, int? priorityId = null)
         {
-            return View();
+            var userId = HttpContext.Session.GetString("UserId");
+            if (string.IsNullOrEmpty(userId))
+            {
+                return RedirectToAction("Login", "Account"); // Redirect if session expired
+            }
+
+            // Get user preferences
+            var preferences = _userPreferencesService.GetPreferencesByUserId(userId);
+            var defaultCategoryId = preferences?.DefaultCategoryId ?? 1;
+            var defaultPriorityId = preferences?.DefaultPriorityId ?? 4;
+            var defaultStatusId = preferences?.DefaultStatusId ?? 1;
+
+            // Use user preferences as defaults if no filter is selected or "All" (0) is selected
+            var appliedCategoryId = categoryId == 0 || categoryId == null ? defaultCategoryId : categoryId.Value;
+            var appliedStatusId = statusId == 0 || statusId == null ? defaultStatusId : statusId.Value;
+            var appliedPriorityId = priorityId == 0 || priorityId == null ? defaultPriorityId : priorityId.Value;
+
+            // Filter tickets
+            var tickets = _ticketService.GetAllTickets()
+                                        .Where(t => (categoryId == 0 || t.CategoryId == appliedCategoryId) &&
+                                                    (statusId == 0 || t.StatusId == appliedStatusId) &&
+                                                    (priorityId == 0 || t.PriorityId == appliedPriorityId))
+                                        .ToList();
+
+            // Prepare the view model
+            var totalTickets = _ticketService.GetTicketCount();
+            var openTickets = _ticketService.GetTicketCountByStatus("Open");
+            var pendingTickets = _ticketService.GetTicketCountByStatus("In Progress");
+            var resolvedTickets = _ticketService.GetTicketCountByStatus("Resolved");
+            var closedTickets = _ticketService.GetTicketCountByStatus("Closed");
+            var deletedTickets = _ticketService.GetTicketCountByStatus("Deleted");
+
+            var enrollmentTickets = _ticketService.GetTicketCountByCategory("Enrollment");
+            var gradesTickets = _ticketService.GetTicketCountByCategory("Grades");
+            var organizationalTickets = _ticketService.GetTicketCountByCategory("Organizational");
+            var inquiryTickets = _ticketService.GetTicketCountByCategory("Inquiry");
+            var miscellaneousTickets = _ticketService.GetTicketCountByCategory("Miscellaneous");
+
+            var highTickets = _ticketService.GetTicketCountByPriority("High");
+            var mediumTickets = _ticketService.GetTicketCountByPriority("Medium");
+            var lowTickets = _ticketService.GetTicketCountByPriority("Low");
+            var generalTickets = _ticketService.GetTicketCountByPriority("General");
+
+            var model = new TicketViewModel
+            {
+                Tickets = tickets,
+                Categories = _categoryService.GetAllCategories(),
+                Priorities = _priorityService.GetAllPriorities(),
+                Statuses = _statusService.GetAllStatuses(),
+                CategoryId = categoryId ?? defaultCategoryId, // Preserve selected filter or fallback to user default
+                PriorityId = priorityId ?? defaultPriorityId,
+                StatusId = statusId ?? defaultStatusId,
+                TotalTickets = totalTickets,
+                PendingTickets = pendingTickets,
+                ClosedTickets = closedTickets,
+                DeletedTickets = deletedTickets,
+                OpenTickets = openTickets,
+                ResolvedTickets = resolvedTickets,
+                EnrollmentTickets = enrollmentTickets,
+                GradesTickets = gradesTickets,
+                OrganizationalTickets = organizationalTickets,
+                InquiryTickets = inquiryTickets,
+                MiscellaneousTickets = miscellaneousTickets,
+                HighTickets = highTickets,
+                MediumTickets = mediumTickets,
+                LowTickets = lowTickets,
+                GeneralTickets = generalTickets
+
+                //Tickets = _ticketService.GetAllTickets(),  //Load statuses for dropdown
+            };
+
+            return View(model);
         }
 
         public ActionResult Tickets(int? categoryId = null, int? statusId = null, int? priorityId = null)
