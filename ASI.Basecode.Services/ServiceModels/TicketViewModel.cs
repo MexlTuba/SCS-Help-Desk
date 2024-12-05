@@ -41,6 +41,18 @@ namespace ASI.Basecode.Services.ServiceModels
         public int PendingTickets { get; set; }
         public int ClosedTickets { get; set; }
         public int DeletedTickets { get; set; }
+        public int OpenTickets { get; set; }
+        public int ResolvedTickets { get; set; }
+        public int EnrollmentTickets { get; set; }
+        public int GradesTickets { get; set; }
+        public int OrganizationalTickets { get; set; }
+        public int InquiryTickets { get; set; }
+        public int MiscellaneousTickets { get; set; }
+
+        public int HighTickets { get; set; }
+        public int MediumTickets { get; set; }
+        public int LowTickets { get; set; }
+        public int GeneralTickets { get; set; }
 
         public List<TicketServiceModel> Tickets { get; set; }
         public int CurrentPage { get; set; }

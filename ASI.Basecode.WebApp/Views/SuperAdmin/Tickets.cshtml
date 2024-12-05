@@ -102,7 +102,7 @@
                             <select name="statusId" style="width: 137px; height: 29px; border: 1px solid #E68D4F; border-radius: 5px;">
                                 <option disabled>Status</option>
                                 <option value="0" selected="@(Model.StatusId == 0 ? "selected" : null)">All</option>
-                                @foreach (var status in Model.Statuses)
+                                @foreach (var status in Model.Statuses.Where(s => s.StatusType != "Deleted"))
                                 {
                                     <option value="@status.StatusId" selected="@(status.StatusId == Model.StatusId ? "selected" : null)">
                                         @status.StatusType
@@ -126,7 +126,7 @@
                         </div>
 
                         <!-- Submit and Reset Buttons -->
-                        <button type="submit" class="btn btn-warning" style="margin-left: 15px;">Apply Filters</button>
+                        <button type="submit" class="btn btn-warning" style="margin-left: 15px;background-color: #E68D4F; color:white">Apply Filters</button>
                         <a href="@Url.Action("Tickets", "SuperAdmin")" class="btn btn-outline-secondary" style="margin-left: 15px;">Reset Filters</a>
                     </div>
                 </form>

@@ -23,7 +23,10 @@ namespace ASI.Basecode.Data
         public virtual DbSet<Priority> Priorities { get; set; }
         public virtual DbSet<Status> Statuses { get; set; }
         public virtual DbSet<Ticket> Ticket { get; set; }
+        public virtual DbSet<Feedback> Feedback { get; set; }
         public virtual DbSet<UserPreferences> UserPreferences { get; set; } // Add DbSet for UserPreferences
+        public virtual DbSet<Knowledgebase> Knowledgebase { get; set; }
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -74,7 +77,7 @@ namespace ASI.Basecode.Data
                 new Status { StatusId = 2, StatusType = "In Progress" },
                 new Status { StatusId = 3, StatusType = "Resolved" },
                 new Status { StatusId = 4, StatusType = "Closed" },
-                new Status { StatusId = 5, StatusType = "Archived" }
+                new Status { StatusId = 5, StatusType = "Deleted" }
             );
 
             // Configure UserPreferences Table

@@ -16,6 +16,9 @@ namespace ASI.Basecode.Services.Interfaces
 
         int GetTicketCount();
         int GetTicketCountByStatus(string statusType);
+        int GetTicketCountByCategory(string categoryType);
+        int GetTicketCountByPriority(string priorityType);
+
 
         int GetDeletedTicketCount();
 

@@ -1,4 +1,5 @@
-﻿@{
+﻿@model ASI.Basecode.Services.ServiceModels.DetailsTicketViewModel
+@{
     ViewData["Title"] = "Ticket List - SCS Help Desk";
     var categoryMap = new Dictionary<int, string>
     {
@@ -159,11 +160,22 @@
                     }
                 </div>
             </div>
-            <div style="background-color: #fff; width:300px; height:540px; border: 1px solid #e0e0e0; border-radius: 10px; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+            <div style="background-color: #fff; width:300px; height:530px; border: 1px solid #e0e0e0; border-radius: 10px; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
                 <div style="display:flex; flex-direction: row;">
-                    <img src="~/img/activity.svg" style="margin-bottom:10px; width: 21px; height: auto;" alt="logo" />
-                    <p style="margin-left:15px; font-size:20px; font-weight:bold; color: #E68D4F;">Ticket Activity</p>
+                    <img src="~/img/info.svg" style="margin-bottom:10px; width: 21px; height: auto;" alt="logo" />
+                    <p style="margin-left:15px; font-size:20px; font-weight:bold; color: #E68D4F;">Ticket FeedBack</p>
                 </div>
+                @if (Model.TicketRating.HasValue || !string.IsNullOrEmpty(Model.TicketComment))
+                {
+                    <p><strong>Ticket Rating:</strong> @Model.TicketRating/5</p>
+                    <p><strong>Ticket Comment:</strong> @Model.TicketComment</p>
+                    <p><strong>Agent Rating:</strong> @Model.AgentRating/5</p>
+                    <p><strong>Agent Comment:</strong> @Model.AgentComment</p>
+                }
+                else
+                {
+                    <p>No feedback submitted for this ticket.</p>
+                }
             </div>
         </div>
     </div>

@@ -62,13 +62,15 @@ namespace ASI.Basecode.Services.Services
                            join priority in _context.Priorities on ticket.PriorityId equals priority.PriorityId
                            join category in _context.Categories on ticket.CategoryId equals category.CategoryId
                            join status in _context.Statuses on ticket.StatusId equals status.StatusId
-                           join user in _context.Users on ticket.AssignedTo.ToString() equals user.UserId into userJoin
+                           join userAssigned in _context.Users on ticket.AssignedTo.ToString() equals userAssigned.UserId into userJoin
                            from assignedUser in userJoin.DefaultIfEmpty()
-                           where ticket.StatusId != 5 // Exclude archived tickets
+                           join createdByUser in _context.Users on ticket.CreatedBy equals createdByUser.UserId into createdByJoin
+                           from creator in createdByJoin.DefaultIfEmpty()
+                           where ticket.StatusId != 5 // Exclude Deleted tickets
                            select new TicketServiceModel
                            {
                                TicketId = ticket.TicketId,
-                               CreatedBy = ticket.CreatedBy,
+                               CreatedBy = creator != null ? creator.Name : "Unknown", // Get name of the user who created the ticket
                                Title = ticket.Title,
                                AssignedTo = ticket.AssignedTo,
                                AssignedToName = assignedUser != null ? assignedUser.Name : "Unassigned",
@@ -85,6 +87,7 @@ namespace ASI.Basecode.Services.Services
 
             return tickets;
         }
+
 
         public List<TicketServiceModel> GetFilteredTickets(int? categoryId, int? statusId, int? priorityId)
         {
@@ -126,16 +129,73 @@ namespace ASI.Basecode.Services.Services
 
         public int GetTicketCount()
         {
-            return _context.Ticket.Count();
+            // Get the StatusId for "Deleted"
+            var DeletedStatus = _context.Statuses
+                                          .FirstOrDefault(s => s.StatusId == 5);
+
+            if (DeletedStatus == null)
+            {
+                return _context.Ticket.Count();  // If no "Deleted" status found, count all tickets
+            }
+
+            var DeletedStatusId = DeletedStatus.StatusId;
+
+            // Count tickets excluding the "Deleted" status
+            return _context.Ticket
+                           .Where(t => t.StatusId != DeletedStatusId)
+                           .Count();
         }
 
         public int GetTicketCountByStatus(string statusType)
         {
             return _context.Ticket
                            .Include(t => t.Status)
+                           .Where(t => t.Status.StatusType == statusType && t.Status.StatusType != "Deleted")
                            .Count(t => t.Status.StatusType == statusType);
         }
 
+        public int GetTicketCountByCategory(string categoryType)
+        {
+            var DeletedStatus = _context.Statuses
+                                          .FirstOrDefault(s => s.StatusId == 5);
+            if (DeletedStatus == null)
+            {
+                return _context.Ticket
+                           .Include(t => t.Category)
+                           .Count(t => t.Category.CategoryType == categoryType);
+            }
+            var DeletedStatusId = DeletedStatus.StatusId;
+
+            // Count tickets by priority excluding "Deleted" status
+            return _context.Ticket
+                           .Include(t => t.Category)
+                           .Where(t => t.Category.CategoryType == categoryType && t.StatusId != DeletedStatusId)
+                           .Count();
+
+        }
+
+        public int GetTicketCountByPriority(string priorityType)
+        {
+            // Fetch the StatusId for "Deleted"
+            var DeletedStatus = _context.Statuses
+                                          .FirstOrDefault(s => s.StatusId == 5);
+
+            if (DeletedStatus == null)
+            {
+                // If no "Deleted" status is found, count tickets by priority
+                return _context.Ticket
+                               .Include(t => t.Priority)
+                               .Count(t => t.Priority.PriorityType == priorityType);
+            }
+
+            var DeletedStatusId = DeletedStatus.StatusId;
+
+            // Count tickets by priority excluding "Deleted" status
+            return _context.Ticket
+                           .Include(t => t.Priority)
+                           .Where(t => t.Priority.PriorityType == priorityType && t.StatusId != DeletedStatusId)
+                           .Count();
+        }
         public int GetDeletedTicketCount()
         {
             return _context.Ticket.Count(t => t.StatusId == 5);
@@ -161,7 +221,7 @@ namespace ASI.Basecode.Services.Services
                 _context.Ticket.Update(ticket);
                 _context.SaveChanges();
 
-                // Optionally, hard delete after marking archived
+                // Optionally, hard delete after marking Deleted
                 //_repository.DeleteTicket(ticket);
             }
         }

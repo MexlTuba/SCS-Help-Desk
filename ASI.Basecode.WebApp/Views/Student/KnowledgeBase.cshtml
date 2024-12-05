@@ -1,30 +1,34 @@
-﻿@{
-    ViewData["Title"] = "SCS Help Desk";
+﻿@model IEnumerable<ASI.Basecode.Services.ServiceModels.KnowledgeBaseViewModel>
+
+@{
+    ViewData["Title"] = "Knowledge Base Articles";
 }
-@section styles {
-    <link rel="stylesheet" href="~/css/knowledgeBase.css" />
-}
 
-<!DOCTYPE html>
+<h1>Knowledge Base</h1>
 
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>@ViewBag.Title</title>
-</head>
-<body>
-    <div>
-        <nav class="navbar bg-body-tertiary shadow-lg">
-            <a class="navbar-brand" href="#">
-                <img src="~/img/scsHelpDeskLogo.svg" alt="Bootstrap" class="scsLogo">
-            </a>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Category</th>
+            <th>Created At</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var article in Model)
+        {
+            <tr>
+                <td>@article.Title</td>
+                <td>@article.CategoryName</td>
+                <td>@article.CreatedAt.ToString("g")</td>
+                <td>
+                    <a asp-action="EditKnowledgebase" asp-route-id="@article.ArticleId" class="btn btn-primary">Edit</a>
+                    <a asp-action="DeleteKnowledgebase" asp-route-id="@article.ArticleId" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
 
-            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                <button class="btn btn-custom me-md-2 mr-5" type="button">Back to Homepage</button>
-                <a asp-action="SignOutUser" asp-controller="Account" class="btn btn-danger logout-btn shadow-lg" type="button">Logout</a>
-            </div>
-
-        </nav>
-    </div>
-</body>
-</html>
+<a asp-action="CreateKnowledgebase" class="btn btn-success">Create New Article</a>

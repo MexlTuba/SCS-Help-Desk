@@ -182,14 +182,16 @@ namespace ASI.Basecode.WebApp.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public IActionResult RegisterFromUserAdd(UserViewModel model)
+        public IActionResult RegisterFromUserAddSuperAdmin(UserViewModel model)
         {
             try
             {
+                
                 if (string.IsNullOrEmpty(model.Role))
                 {
                     model.Role = "Student";
                 }
+                model.Password = "Temp_123";
                 _userService.AddUser(model);
 
                 // Redirect to UserList after successful registration
@@ -203,9 +205,36 @@ namespace ASI.Basecode.WebApp.Controllers
             {
                 TempData["ErrorMessage"] = Resources.Messages.Errors.ServerError;
             }
-            return View("UserAdd"); // Stay on the UserAdd page if there's an error
+            return RedirectToAction("UserAdd", "SuperAdmin");
         }
 
+        [HttpPost]
+        [AllowAnonymous]
+        public IActionResult RegisterFromUserAddAdmin(UserViewModel model)
+        {
+            try
+            {
+
+                if (string.IsNullOrEmpty(model.Role))
+                {
+                    model.Role = "Student";
+                }
+                model.Password = "Temp_123";
+                _userService.AddUser(model);
+
+                // Redirect to UserList after successful registration
+                return RedirectToAction("UserList", "Admin");
+            }
+            catch (InvalidDataException ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = Resources.Messages.Errors.ServerError;
+            }
+            return RedirectToAction("UserAdd", "Admin");
+        }
 
         /// <summary>
         /// Sign Out current account and return login view.
