@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Linq;
+using System.Security.Claims;
 
 namespace ASI.Basecode.WebApp.Controllers
 {
@@ -201,6 +202,39 @@ namespace ASI.Basecode.WebApp.Controllers
             };
 
             return View(model);
+        }
+
+        public IActionResult Password()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // Retrieve the logged-in user's ID
+            var model = new UserViewModel
+            {
+                UserId = userId
+            };
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult ChangePassword(UserViewModel model)
+        {
+
+            try
+            {
+                if (model.Password == model.ConfirmPassword)
+                {
+                    _userService.ResetPassword(model.UserId, model.Password);
+                    return RedirectToAction("Settings", "SupportAgent");
+                }
+                else
+                {
+                    return View(model);
+                }
+            }
+            catch
+            {
+                TempData["Error"] = "An error occurred while changing the password.";
+                return RedirectToAction("Password", "SupportAgent");
+            }
         }
     }
 }
