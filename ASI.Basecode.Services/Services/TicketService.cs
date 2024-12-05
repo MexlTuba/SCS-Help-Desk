@@ -134,6 +134,19 @@ namespace ASI.Basecode.Services.Services
                            .Count(t => t.Status.StatusType == statusType);
         }
 
+        public int GetTicketCountByCategory(string categoryType)
+        {
+            return _context.Ticket
+                           .Include(t => t.Category)
+                           .Count(t => t.Category.CategoryType == categoryType);
+        }
+
+        public int GetTicketCountByPriority(string priorityType)
+        {
+            return _context.Ticket
+                           .Include(t => t.Priority)
+                           .Count(t => t.Priority.PriorityType == priorityType);
+        }
 
         public void UpdateTicket(Ticket ticket)
         {

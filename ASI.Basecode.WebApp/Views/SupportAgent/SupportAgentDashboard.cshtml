@@ -1,4 +1,6 @@
-﻿@{
+﻿@model ASI.Basecode.Services.ServiceModels.TicketViewModel
+
+@{
     ViewData["Title"] = "Support Agent Dashboard - SCS Help Desk";
 }
 
@@ -27,40 +29,89 @@
             </a>
         </div>
     </div>
-<div style="flex: 1; padding: 20px;">
-    <div style="background-color: white; border-radius: 15px; padding: 30px;">
-        <!-- Ticket Summary Section -->
-        <div style="margin-bottom: 40px;">
-            <h2 style="margin-bottom: 20px;">TICKET SUMMARY</h2>
-            <div style="display: flex; align-items: center; margin-bottom: 20px;">
-                <span style="margin-right: 10px;"> Sort by:</span>
-                <select style="padding: 5px; border: 1px solid #ddd; border-radius: 4px;">
-                    <option>Last 7 days</option>
-                    <option>Last 30 days</option>
-                    <option>Last 90 days</option>
-                </select>
+    <!-- Main Content -->
+    <div style="flex: 1; padding: 20px; background-color: #f8f9fa;">
+        <div style="background-color: white; border-radius: 15px; padding: 30px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+            <!-- Ticket Summary Section -->
+            <h2 style="margin-bottom: 20px; text-align: center; font-weight: bold;">Ticket Summary</h2>
+
+            <!-- Category Section -->
+            <h3 style="margin-bottom: 10px; text-align: center;">Category</h3>
+            <div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; margin-bottom: 30px;">
+                @foreach (var category in new[] {
+                new { Icon = Url.Content("~/img/tickets.svg"), Count = Model.EnrollmentTickets, Label = "Enrollment Tickets" },
+                new { Icon = Url.Content("~/img/tickets.svg"), Count = Model.GradesTickets, Label = "Grades Tickets" },
+                new { Icon = Url.Content("~/img/tickets.svg"), Count = Model.OrganizationalTickets, Label = "Organizational Tickets" },
+                new { Icon = Url.Content("~/img/tickets.svg"), Count = Model.InquiryTickets, Label = "Inquiry Tickets" },
+                new { Icon = Url.Content("~/img/tickets.svg"), Count = Model.MiscellaneousTickets, Label = "Miscellaneous Tickets" }
+                })
+                {
+                    <div style="flex: 1; min-width: 200px; max-width: 220px; background-color: #F1F1F1; padding: 20px; border-radius: 10px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: transform 0.2s, box-shadow 0.2s;">
+                        <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 10px;gap:8px">
+                            <h3 style="font-size: 40px; color: #E68D4F; margin: 0;">@category.Count</h3>
+                            <img src="@category.Icon" alt="@category.Label Icon" style="width: 40px; height: 40px;">
+                        </div>
+                        <p style="font-size: 14px; font-weight: bold; color: #6c757d; margin: 0;">@category.Label</p>
+                    </div>
+                }
             </div>
 
-            <!-- Chart Area -->
-            <div style="width: 100%; height: 300px; background-color: #fff; border: 1px solid #e0e0e0; margin-bottom: 40px;">
-            </div>
-        </div>
 
-        <!-- Feedback Section -->
-        <div>
-            <h2 style="margin-bottom: 20px;">CUSTOMER FEEDBACK</h2>
-            <!-- Feedback Cards should be placed here-->
-            <div style="margin-bottom: 20px;">
-                <div style="background-color: #f8f9fa; border-radius: 5px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-                    <div style="height: 100px;"></div>
-                </div>
-                <div style="background-color: #f8f9fa; border-radius: 5px; padding: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-                    <div style="height: 100px;"></div>
+            <!-- Status Section -->
+            <h3 style="margin-bottom: 10px; text-align: center;">Status</h3>
+            <div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; margin-bottom: 30px;">
+                @foreach (var status in new[] {
+                new { Icon = Url.Content("~/img/pending.svg"), Count = Model.OpenTickets, Label = "Open Tickets" },
+                new { Icon = Url.Content("~/img/pending.svg"), Count = Model.PendingTickets, Label = "In Progress Tickets" },
+                new { Icon = Url.Content("~/img/pending.svg"), Count = Model.ResolvedTickets, Label = "Resolved Tickets" },
+                new { Icon = Url.Content("~/img/pending.svg"), Count = Model.ClosedTickets, Label = "Closed Tickets" }
+                })
+                {
+                    <div style="flex: 1; min-width: 200px; max-width: 220px; background-color: #F1F1F1; padding: 20px; border-radius: 10px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: transform 0.2s, box-shadow 0.2s;">
+                        <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 10px;gap:8px">
+                            <h3 style="font-size: 40px; color: #E68D4F; margin: 0;">@status.Count</h3>
+                            <img src="@status.Icon" alt="@status.Label Icon" style="width: 40px; height: 40px;">
+                        </div>
+                        <p style="font-size: 14px; font-weight: bold; color: #6c757d; margin: 0;">@status.Label</p>
+                    </div>
+                }
+            </div>
+
+
+            <!-- Priority Section -->
+            <h3 style="margin-bottom: 10px; text-align: center;">Priority</h3>
+            <div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; margin-bottom: 30px;">
+                @foreach (var priority in new[] {
+                new { Icon = Url.Content("~/img/closed.svg"), Count = Model.HighTickets, Label = "High Priority" },
+                new { Icon = Url.Content("~/img/closed.svg"), Count = Model.MediumTickets, Label = "Medium Priority" },
+                new { Icon = Url.Content("~/img/closed.svg"), Count = Model.LowTickets, Label = "Low Priority" },
+                new { Icon = Url.Content("~/img/closed.svg"), Count = Model.GeneralTickets, Label = "General Tickets" }
+                })
+                {
+                    <div style="flex: 1; min-width: 200px; max-width: 220px; background-color: #F1F1F1; padding: 20px; border-radius: 10px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: transform 0.2s, box-shadow 0.2s;">
+                        <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 10px; gap:8px">
+                            <h3 style="font-size: 40px; color: #E68D4F; margin: 0;">@priority.Count</h3>
+                            <img src="@priority.Icon" alt="@priority.Label Icon" style="width: 40px; height: 40px;">
+                        </div>
+                        <p style="font-size: 14px; font-weight: bold; color: #6c757d; margin: 0;">@priority.Label</p>
+                    </div>
+                }
+            </div>
+            <!-- Feedback Section -->
+            <div>
+                <h2 style="margin-bottom: 20px; text-align:center">CUSTOMER FEEDBACK</h2>
+                <!-- Feedback Cards should be placed here-->
+                <div style="margin-bottom: 20px;">
+                    <div style="background-color: #f8f9fa; border-radius: 5px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                        <div style="height: 100px;"></div>
+                    </div>
+                    <div style="background-color: #f8f9fa; border-radius: 5px; padding: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                        <div style="height: 100px;"></div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 </div>
 
 @section Styles {

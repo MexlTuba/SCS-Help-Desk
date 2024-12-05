@@ -1,4 +1,4 @@
-﻿@model List<ASI.Basecode.Data.Models.User>
+﻿@model ASI.Basecode.Services.ServiceModels.UserListViewModel
 
 @{
     ViewData["Title"] = "Super Admin User List - SCS Help Desk";
@@ -33,38 +33,47 @@
         </div>
     </div>
 
-<div style="flex: 1; padding: 20px;">
     <!-- Main Content -->
-    <div style="background-color: white; border-radius: 15px; padding: 30px;">
-        <div class="card">
-            <div class="card-body">
+        <div style="flex: 1; background: #D9D9D9; padding: 20px;">
+            <div style="background-color: white; border-radius: 15px; padding: 30px; margin: 0 20px;">
                 <h2 class="card-title mb-4">USER LIST</h2>
 
                 <div class="row mb-4">
                     <div class="col-md-4">
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="bi bi-search"></i></span>
-                            <input type="text" class="form-control" placeholder="Search user">
-                        </div>
+                    <form method="get" action="@Url.Action("UserList", "SuperAdmin")">
+                    <div class="input-group">
+                        <span class="input-group-text" style="background-color: #f8f9fa; border: none;">
+                            <i class="bi bi-search"></i>
+                        </span>
+                        <input type="text" class="form-control" placeholder="Search ID" name="searchId" value="@ViewBag.SearchId" style="background-color: #f8f9fa; border: none;">
                     </div>
-                    <div class="col-md-4">
-                        <select class="form-select">
-                            <option selected>Role: All</option>
-                            <option>Admin</option>
-                            <option>User</option>
-                            <option>Support</option>
-                        </select>
+
+                    <div class="row-md-4">
+                        
+                            <select name="role" class="form-select" style="border: none;">
+                                <option value="">All</option>
+                                <option value="Admin">Admin</option>
+                                <option value="Support Agent">Support Agent</option>
+                                <option value="Student">Student</option>
+                            </select>
+                            <button type="submit" class="btn btn-primary" style="background-color: white; color: #E68D4F; border: 2px solid #E68D4F; margin-left: 10px;">
+                                Apply Filter
+                            </button>
                     </div>
-                    <div class="col-md-4 text-end">
-                        <a href="@Url.Action("UserAdd", "SuperAdmin")" class="btn btn-warning">
+                    </form>
+                    </div>
+                    <div class="col-md-4 d-flex justify-content-end align-items-start">
+                        <a href="@Url.Action("UserAdd", "SuperAdmin")" class="btn btn-primary" style="background-color: #E68D4F; color: black;">
                             <i class="bi bi-plus"></i> Add User
                         </a>
                     </div>
                 </div>
 
+                <hr style="border: 1px solid black;">
+
                 <div class="table-responsive">
                     <table class="table">
-                        <thead class="table-warning">
+                        <thead style="background-color: #E68D4F; color: black;">
                             <tr>
                                 <th>Name</th>
                                 <th>Role</th>
@@ -74,7 +83,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var user in Model)
+                            @foreach (var user in Model.Users)
                             {
                                 <tr>
                                     <td>@user.Name</td>
@@ -82,28 +91,41 @@
                                     <td>@user.UserId</td>
                                     <td>@user.Email</td>
                                     <td>
-                                        <a href="@Url.Action("Edit", "SuperAdmin", new { id = user.UserId })" class="btn btn-primary">Edit</a>
-                                        <a href="#" class="btn btn-danger" onclick="confirmDelete('@user.UserId')">Delete</a>
+                                        <div class="btn-group" role="group" style="box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                                            <a href="@Url.Action("Edit", "SuperAdmin", new { id = user.UserId })" class="btn btn-sm" style="background-color: #EBEBEB; color: #E68D4F; padding: 12px; font-size: 20px;"><i class="bi bi-pencil"></i></a>
+                                            <a href="#" class="btn btn-sm" style="background-color: #EBEBEB; color: #E68D4F; padding: 12px; font-size: 20px;" onclick="confirmDelete('@user.UserId')"><i class="bi bi-trash"></i></a>
+                                        </div>
                                     </td>
                                 </tr>
                             }
                         </tbody>
                     </table>
                 </div>
-            </div>
-        </div>
-    </div>
-</div>
 
-@section Scripts {
-    <script>
-        function confirmDelete(userId) {
-            if (confirm("Are you sure you want to delete this user?")) {
-                window.location.href = '@Url.Action("Delete", "SuperAdmin")?id=' + userId;
+                <div class="d-flex justify-content-center mt-4">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination">
+                            @for (int i = 1; i <= Model.TotalPages; i++)
+                            {
+                                <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                                    <a class="page-link" href="@Url.Action("UserList", new { role = Model.Role, page = i })" style="color: @(i == Model.CurrentPage ? "white" : "#E68D4F"); background-color: @(i == Model.CurrentPage ? "#E68D4F" : "white"); border-color: #E68D4F;">@i</a>
+                                </li>
+                            }
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+
+            @section Scripts {
+                <script>
+                    function confirmDelete(userId) {
+                        if (confirm("Are you sure you want to delete this user?")) {
+                            window.location.href = '@Url.Action("Delete", "SuperAdmin")?id=' + userId;
+                        }
+                    }
+                </script>
             }
-        }
-    </script>
-}
+
 @section Styles {
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
     }
