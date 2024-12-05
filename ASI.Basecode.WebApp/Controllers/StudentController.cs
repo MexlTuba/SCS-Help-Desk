@@ -24,8 +24,9 @@ namespace ASI.Basecode.WebApp.Controllers
         private readonly IUserPreferencesService _userPreferencesService;
         private readonly IFeedbackService _feedbackService;
         private readonly IFeedbackRepository _feedbackRepository;
+        private readonly IKnowledgebaseService _knowledgebaseService;
 
-        public StudentController(ITicketService ticketService, ITicketRepository ticketRepository, ICategoryService categoryService, IUserPreferencesService userPreferencesService, IUserService userService, IPriorityService priorityService, IStatusService statusService, IFeedbackRepository feedbackRepository, IFeedbackService feedbackService)
+        public StudentController(ITicketService ticketService, ITicketRepository ticketRepository, ICategoryService categoryService, IUserPreferencesService userPreferencesService, IUserService userService, IPriorityService priorityService, IStatusService statusService, IFeedbackRepository feedbackRepository, IFeedbackService feedbackService, IKnowledgebaseService knowledgebaseService)
         {
             _ticketRepository = ticketRepository;
             _categoryService = categoryService;
@@ -34,6 +35,7 @@ namespace ASI.Basecode.WebApp.Controllers
             _userService = userService;
             _userPreferencesService = userPreferencesService;
             _ticketService = ticketService;
+            _knowledgebaseService = knowledgebaseService;
             _feedbackRepository = feedbackRepository;
             _feedbackService = feedbackService;
         }
@@ -229,16 +231,15 @@ namespace ASI.Basecode.WebApp.Controllers
 
 
 
-
-
         public IActionResult StudentDashboard()
         {
             return View();
         }
 
-        public IActionResult KnowledgeBase()
+        public IActionResult ListArticles()
         {
-            return View();
+            var articles = _knowledgebaseService.GetAllArticles();
+            return View(articles);
         }
 
         public IActionResult Settings()

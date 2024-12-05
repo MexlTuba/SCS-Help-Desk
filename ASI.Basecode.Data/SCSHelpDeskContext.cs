@@ -25,6 +25,8 @@ namespace ASI.Basecode.Data
         public virtual DbSet<Ticket> Ticket { get; set; }
         public virtual DbSet<Feedback> Feedback { get; set; }
         public virtual DbSet<UserPreferences> UserPreferences { get; set; } // Add DbSet for UserPreferences
+        public virtual DbSet<Knowledgebase> Knowledgebase { get; set; }
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

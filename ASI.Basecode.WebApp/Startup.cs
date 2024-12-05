@@ -88,13 +88,15 @@ namespace ASI.Basecode.WebApp
             services.AddMemoryCache();
             services.AddScoped<IUserService, UserService>();
 
+            //debugmode
             // Register SQL database configuration context as services.
             services.AddDbContext<SCSHelpDeskContext>(options =>
-            {
+            
                 options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection"),
-                    sqlServerOptions => sqlServerOptions.CommandTimeout(120));
-            });
+                    Configuration.GetConnectionString("DefaultConnection")).EnableSensitiveDataLogging()
+
+                    //sqlServerOptions => sqlServerOptions.CommandTimeout(120));
+            );
 
             services.AddControllersWithViews();
             services.AddRazorPages().AddRazorRuntimeCompilation();
@@ -120,6 +122,10 @@ namespace ASI.Basecode.WebApp
             services.AddScoped<IFeedbackService, FeedbackService>();
             services.AddScoped<IUserPreferencesRepository, UserPreferencesRepository>();
             services.AddScoped<IUserPreferencesService, UserPreferencesService>();
+            services.AddScoped<IKnowledgebaseService, KnowledgebaseService>();
+            services.AddScoped<IKnowledgebaseRepository, KnowledgebaseRepository>();
+
+
 
 
             // DI Services AutoMapper(Add Profile)

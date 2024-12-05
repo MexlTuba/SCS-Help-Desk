@@ -21,7 +21,8 @@ namespace ASI.Basecode.WebApp.Controllers
         private readonly IPriorityService _priorityService; 
         private readonly IStatusService _statusService;
         private readonly ITicketService _ticketService;
-        public AdminController(IUserService userService, IUserPreferencesService userPreferencesService, ICategoryService categoryService, IPriorityService priorityService, IStatusService statusService, ITicketService ticketService)
+        private readonly IKnowledgebaseService _knowledgebaseService;
+        public AdminController(IUserService userService, IUserPreferencesService userPreferencesService, ICategoryService categoryService, IPriorityService priorityService, IStatusService statusService, ITicketService ticketService, IKnowledgebaseService knowledgebaseService)
         {
             _userService = userService;
             _userPreferencesService = userPreferencesService;
@@ -29,6 +30,7 @@ namespace ASI.Basecode.WebApp.Controllers
             _priorityService = priorityService;
             _statusService = statusService;
             _ticketService = ticketService;
+            _knowledgebaseService = knowledgebaseService;
         }
         public IActionResult AdminDashboard(int? categoryId = null, int? statusId = null, int? priorityId = null)
         {
@@ -188,10 +190,6 @@ namespace ASI.Basecode.WebApp.Controllers
             return View(model);
         }
 
-
-
-
-
         public ActionResult TicketDetails(int id)
         {
             var ticket = _ticketService.GetTicketById(id);
@@ -274,7 +272,111 @@ namespace ASI.Basecode.WebApp.Controllers
 
             return RedirectToAction("TicketDetails", new { id = TicketId });
         }
-        
+
+        // List Articles
+        public IActionResult ListArticles()
+        {
+            var articles = _knowledgebaseService.GetAllArticles();
+            return View(articles);
+        }
+
+        public IActionResult CreateKnowledgebase()
+        {
+            var model = new KnowledgeBaseViewModel
+            {
+                Categories = _categoryService.GetAllCategories(),
+            };
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult CreateKnowledgebase(KnowledgeBaseViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                _knowledgebaseService.CreateKnowledgebase(new Knowledgebase
+                {
+                    Title = model.Title,
+                    Content = model.Content,
+                    CategoryId = model.CategoryId,
+                    CreatedBy = User.Identity.Name,
+                    CreatedAt = DateTime.Now
+                }, User.Identity.Name);
+                TempData["SuccessMessage"] = "Article created successfully!";
+                return RedirectToAction("ListArticles");
+            }
+            model.Categories = _categoryService.GetAllCategories();
+            return View(model);
+        }
+
+        public IActionResult EditKnowledgebase(int id)
+        {
+            var article = _knowledgebaseService.GetArticleById(id);
+            if (article == null)
+            {
+                TempData["ErrorMessage"] = "Article not found!";
+                return RedirectToAction("ListArticles");
+            }
+            var model = new KnowledgeBaseViewModel
+            {
+                ArticleId = article.ArticleId,
+                Title = article.Title,
+                Content = article.Content,
+                CategoryId = article.CategoryId,
+                CategoryName = article.CategoryName,
+                CreatedBy = article.CreatedBy,
+                CreatedAt = article.CreatedAt,
+                Categories = _categoryService.GetAllCategories()
+            };
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult EditKnowledgebase(KnowledgeBaseViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                _knowledgebaseService.UpdateKnowledgebase(model, User.Identity.Name);
+                TempData["SuccessMessage"] = "Article updated successfully!";
+                return RedirectToAction("ListArticles");
+            }
+            model.Categories = _categoryService.GetAllCategories();
+            return View(model);
+        }
+
+        // Delete Knowledgebase
+        public IActionResult DeleteKnowledgebase(int id)
+        {
+            var article = _knowledgebaseService.GetArticleById(id);
+            if (article == null)
+            {
+                TempData["ErrorMessage"] = "Article not found!";
+                return RedirectToAction("ListArticles");
+            }
+            var model = new KnowledgeBaseViewModel
+            {
+                ArticleId = article.ArticleId,
+                Title = article.Title,
+                CategoryName = article.CategoryName
+            };
+            return View(model);
+        }
+
+        [HttpPost, ActionName("DeleteKnowledgebase")]
+        public IActionResult DeleteKnowledgebaseConfirm(int id)
+        {
+            try
+            {
+                _knowledgebaseService.DeleteKnowledgebase(id);
+                TempData["SuccessMessage"] = "Article deleted successfully!";
+            }
+            catch
+            {
+                TempData["ErrorMessage"] = "Error deleting article!";
+            }
+            return RedirectToAction("ListArticles");
+        }
+
         // GET: UsersController/UserAdd
         public ActionResult UserAdd()
         {
@@ -446,4 +548,6 @@ namespace ASI.Basecode.WebApp.Controllers
             }
         }
     }
+
+
 }
