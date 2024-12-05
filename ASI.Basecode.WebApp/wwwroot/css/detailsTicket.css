@@ -26,10 +26,10 @@
     transition: background-color 0.2s ease;
 }
 
-.btn-custom:hover {
-    background-color: #e18f4f;
-    color: white;
-}
+    .btn-custom:hover {
+        background-color: #e18f4f;
+        color: white;
+    }
 
 .custom-dropdown {
     position: absolute;
@@ -60,4 +60,3 @@
         .custom-dropdown .dropdown-item.text-danger {
             color: #dc3545;
         }
-

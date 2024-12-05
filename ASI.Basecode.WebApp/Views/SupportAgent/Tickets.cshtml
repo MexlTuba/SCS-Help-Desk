@@ -1,8 +1,10 @@
-﻿@{
+﻿@model ASI.Basecode.Services.ServiceModels.TicketViewModel
+
+@{
     ViewData["Title"] = "Ticket List - SCS Help Desk";
 }
 
-<div style="display: flex; max-height:auto; overflow-y: auto;">
+<div style="display: flex; min-height:140vh; overflow-y: auto;">
     <!-- Sidebar -->
     <div style="width: 250px; max-height:auto; background-color: #f8f9fa; ">
         <div style="padding: 15px;">
@@ -13,16 +15,13 @@
             <a href="@Url.Action("SupportAgentDashboard", "SupportAgent")" style="display: block; padding: 10px 15px; text-decoration: none; color: black;">
                 <i class="bi bi-grid"></i> DASHBOARD
             </a>
-            <a href="@Url.Action("UserList", "SupportAgent")" style="display: block; padding: 10px 15px; text-decoration: none; color: black;">
-                <i class="bi bi-person"></i> USER LIST
-            </a>
             <a href="@Url.Action("Knowledge", "SupportAgent")" style="display: block; padding: 10px 15px; text-decoration: none; color: black;">
                 <i class="bi bi-book"></i> KNOWLEDGE BASE
             </a>
             <a href="@Url.Action("Tickets", "SupportAgent")" style="display: block; padding: 10px 15px; text-decoration: none; color: white; background-color: #6c757d;">
                 <i class="bi bi-ticket"></i> TICKETS
             </a>
-            <a href="@Url.Action("Account", "SupportAgent")" style="display: block; padding: 10px 15px; text-decoration: none; color: black;">
+            <a href="@Url.Action("Settings", "SupportAgent")" style="display: block; padding: 10px 15px; text-decoration: none; color: black;">
                 <i class="bi bi-gear"></i> ACCOUNT SETTINGS
             </a>
             <a asp-action="SignOutUser" asp-controller="Account" style="display: block; padding: 10px 15px; text-decoration: none; color: black;">
@@ -30,8 +29,8 @@
             </a>
         </div>
     </div>
-    <div style="display: flex; max-height:auto; min-width:165vh; background-color: #D9D9D9; align-items: center;">
-        <div style="padding: 10px; width: 100%; height: auto; background-color: #fff; margin:20px; border: 1px solid #e0e0e0; border-radius:20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+    <div style="display: flex; min-height:140vh; min-width:165vh; background-color: #D9D9D9; align-items: start;">
+        <div style="padding: 10px; width: 100%; height: 140vh; background-color: #fff; margin:20px; border: 1px solid #e0e0e0; border-radius:20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
             <h2 style="margin-top: 32px; margin-left:23px; font-weight:bold; font-size:30px;">TICKETS</h2>
             <div style="display: flex; justify-content: space-between; margin-top: 30px;">
                 <div style="flex: 1; background-color: #F1F1F1; height: 63px; margin-right: 20px; border-radius: 10px; display: flex; justify-content: start; align-items: start;">
@@ -76,38 +75,61 @@
             </div>
             <div style="margin-top: 30px; border-bottom: 1px solid #e0e0e0; width: 100%;"></div>
             <div style="margin-top: 30px; padding-left: 20px; padding-right: 20px;">
-                <div style="display: flex; flex-direction:row; align-items: start;">
-                    <img src="~/img/sort.svg" style="width: 19px; height: auto;" alt="logo" />
-                    <p style="font-size: 20px; font-weight: bold; margin-left: 10px; line-height: 1;">Sort by:</p>
-                    <div style="margin-left:15px;">
-                        <select style="width:137px; height:29px; border: 1px solid #E68D4F; border-radius:5px;">
-                            <option disabled selected value="">Category</option>
-                            @foreach (var category in Model.Categories)
-                            {
-                                <option value="@category.CategoryId">@category.CategoryType</option>
-                            }
-                        </select>
+                <form method="get" asp-action="Tickets" asp-controller="SupportAgent">
+                    <div style="display: flex; flex-direction: row; align-items: start;">
+                        <img src="~/img/sort.svg" style="width: 19px; height: auto;" alt="logo" />
+                        <p style="font-size: 20px; font-weight: bold; margin-left: 10px; line-height: 1;">Sort by:</p>
+
+                        <!-- Category Dropdown -->
+                        <div style="margin-left: 15px;">
+                            <select name="categoryId" style="width: 137px; height: 29px; border: 1px solid #E68D4F; border-radius: 5px;">
+                                <option disabled>Category</option>
+                                <option value="0" selected="@(Model.CategoryId == 0 ? "selected" : null)">All</option>
+                                @foreach (var category in Model.Categories)
+                                {
+                                    <option value="@category.CategoryId" selected="@(category.CategoryId == Model.CategoryId ? "selected" : null)">
+                                        @category.CategoryType
+                                    </option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- Status Dropdown -->
+                        <div style="margin-left: 15px;">
+                            <select name="statusId" style="width: 137px; height: 29px; border: 1px solid #E68D4F; border-radius: 5px;">
+                                <option disabled>Status</option>
+                                <option value="0" selected="@(Model.StatusId == 0 ? "selected" : null)">All</option>
+                                @foreach (var status in Model.Statuses)
+                                {
+                                    <option value="@status.StatusId" selected="@(status.StatusId == Model.StatusId ? "selected" : null)">
+                                        @status.StatusType
+                                    </option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- Priority Dropdown -->
+                        <div style="margin-left: 15px;">
+                            <select name="priorityId" style="width: 137px; height: 29px; border: 1px solid #E68D4F; border-radius: 5px;">
+                                <option disabled>Priority</option>
+                                <option value="0" selected="@(Model.PriorityId == 0 ? "selected" : null)">All</option>
+                                @foreach (var priority in Model.Priorities)
+                                {
+                                    <option value="@priority.PriorityId" selected="@(priority.PriorityId == Model.PriorityId ? "selected" : null)">
+                                        @priority.PriorityType
+                                    </option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- Submit and Reset Buttons -->
+                        <button type="submit" class="btn btn-warning" style="margin-left: 15px;">Apply Filters</button>
+                        <a href="@Url.Action("Tickets", "SupportAgent")" class="btn btn-outline-secondary" style="margin-left: 15px;">Reset Filters</a>
                     </div>
-                    <div style="margin-left:15px;">
-                        <select style="width:137px; height:29px; border: 1px solid #E68D4F; border-radius:5px;">
-                            <option disabled selected value="">Status</option>
-                            @foreach (var category in Model.Statuses)
-                            {
-                                <option value="@category.StatusId">@category.StatusType</option>
-                            }
-                        </select>
-                    </div>
-                    <div style="margin-left:15px;">
-                        <select style="width:137px; height:29px; border: 1px solid #E68D4F; border-radius:5px;">
-                            <option disabled selected value="">Priority</option>
-                            @foreach (var category in Model.Priorities)
-                            {
-                                <option value="@category.PriorityId">@category.PriorityType</option>
-                            }
-                        </select>
-                    </div>
-                </div>
-                <table style="width: 100%; max-height:auto; margin-top: 20px; border-collapse: collapse;">
+                </form>
+
+
+                <table style="width: 100%; margin-top: 20px; border-collapse: collapse;">
                     <thead>
                         <tr style="background-color: #E68D4F; font-weight: bold; text-align: center;">
                             <th style="padding: 10px; border-bottom: 1px solid #ddd;">ID</th>
@@ -121,127 +143,129 @@
                             <th style="padding: 10px; border-bottom: 1px solid #ddd;">Action</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        @foreach (var ticket in Model.Tickets)
+                    <tbody style="text-align:center;">
+                        @if (Model.Tickets != null && Model.Tickets.Any())
+                        {
+                            @foreach (var ticket in Model.Tickets)
+                            {
+                                <tr>
+                                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">@ticket.TicketId</td>
+                                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">@ticket.CreatedBy</td>
+                                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">@ticket.Title</td>
+                                    <!-- Assignee -->
+                                    <td style="width:80%; padding: 10px; border-bottom: 1px solid #ddd;">
+                                        <span style="background-color: #FFD98F; border-radius: 10px; padding: 5px 10px; font-weight: bold; color: black;">
+                                            @ticket.AssignedToName
+                                        </span>
+                                    </td>
+                                    <!-- Priority -->
+                                    <td style="width: 50%; padding: 10px; border-bottom: 1px solid #ddd;">
+                                        @if (ticket.PriorityType == "High")
+                                        {
+                                            <span style="background-color: #FFCCCC; color: red; border-radius: 10px; padding: 5px 10px; font-weight: bold;">
+                                                <i class="bi bi-circle-fill" style="font-size: 10px; margin-right: 5px;"></i> High
+                                            </span>
+                                        }
+                                        else if (ticket.PriorityType == "Medium")
+                                        {
+                                            <span style="background-color: #FFEDCC; color: #E68D4F; border-radius: 10px; padding: 5px 10px; font-weight: bold;">
+                                                <i class="bi bi-circle-fill" style="font-size: 10px; margin-right: 5px;"></i> Medium
+                                            </span>
+                                        }
+                                        else if (ticket.PriorityType == "Low")
+                                        {
+                                            <span style="background-color: #D9FFD9; color: green; border-radius: 10px; padding: 5px 10px; font-weight: bold;">
+                                                <i class="bi bi-circle-fill" style="font-size: 10px; margin-right: 5px;"></i> Low
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span style="background-color:#F1F1F1; color: black; border-radius: 10px; padding: 5px 10px; font-weight: bold;">
+                                                General
+                                            </span>
+                                        }
+                                    </td>
+                                    <!-- Category -->
+                                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">
+                                        <span style="background-color: #F1F1F1; border-radius: 10px; padding: 5px 10px; font-weight: bold; color: black;">
+                                            @ticket.CategoryType
+                                        </span>
+                                    </td>
+                                    <!-- Status -->
+                                    <td style="width:100%; padding: 10px; border-bottom: 1px solid #ddd;">
+                                        @if (ticket.StatusType == "Open")
+                                        {
+                                            <span style="background-color: #D9FFD9; color: green; border-radius: 10px; padding: 5px 10px; font-weight: bold;">
+                                                Open
+                                            </span>
+                                        }
+                                        else if (ticket.StatusType == "Closed")
+                                        {
+                                            <span style="background-color: #FFCCCC; color: red; border-radius: 10px; padding: 5px 10px; font-weight: bold;">
+                                                Closed
+                                            </span>
+                                        }
+                                        else if (ticket.StatusType == "Resolved")
+                                        {
+                                            <span style="background-color: #62B0FF; color: blue; border-radius: 10px; padding: 5px 10px; font-weight: bold;">
+                                                Resolved
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span style="background-color: #FFEDCC; color: #E68D4F; border-radius: 10px; padding: 5px 10px; font-weight: bold;">
+                                                In Progress
+                                            </span>
+                                        }
+                                    </td>
+                                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">@ticket.DateCreated.ToShortDateString()</td>
+                                    <td style="padding: 10px; border-bottom: 1px solid #ddd;">
+                                        <a href="@Url.Action("TicketDetails", "SupportAgent", new { id = ticket.TicketId })">
+                                            <div style="width: 40px; height: 40px; background-color:grey; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                                <img src="~/img/action.svg" alt="icon" style="width: 20px;" />
+                                            </div>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
                         {
                             <tr>
-                                <td style="padding: 10px; border-bottom: 1px solid #ddd;">@ticket.TicketId</td>
-                                <td style="padding: 10px; border-bottom: 1px solid #ddd;">@ticket.CreatedBy</td>
-                                <td style="padding: 10px; border-bottom: 1px solid #ddd;">@ticket.Title</td>
-                                <!-- Assignee -->
-                                <td style="padding: 10px; border-bottom: 1px solid #ddd;">
-                                    <span style="background-color: #FFD98F; border-radius: 10px; padding: 5px 10px; font-weight: bold; color: black;">
-                                        @ticket.AssignedToName
-                                    </span>
-                                </td>
-                                <!-- Priority -->
-                                <td style="padding: 10px; border-bottom: 1px solid #ddd;">
-                                    @if (ticket.PriorityType == "High")
-                                    {
-                                        <span style="background-color: #FFCCCC; color: red; border-radius: 10px; padding: 5px 10px; font-weight: bold;">
-                                            <i class="bi bi-circle-fill" style="font-size: 10px; margin-right: 5px;"></i> High
-                                        </span>
-                                    }
-                                    else if (ticket.PriorityType == "Medium")
-                                    {
-                                        <span style="background-color: #FFEDCC; color: #E68D4F; border-radius: 10px; padding: 5px 10px; font-weight: bold;">
-                                            <i class="bi bi-circle-fill" style="font-size: 10px; margin-right: 5px;"></i> Medium
-                                        </span>
-                                    }
-                                    else if (ticket.PriorityType == "Low")
-                                    {
-                                        <span style="background-color: #D9FFD9; color: green; border-radius: 10px; padding: 5px 10px; font-weight: bold;">
-                                            <i class="bi bi-circle-fill" style="font-size: 10px; margin-right: 5px;"></i> Low
-                                        </span>
-                                    }
-                                    else
-                                    {
-                                        <span style="background-color:#F1F1F1; color: black; border-radius: 10px; padding: 5px 10px; font-weight: bold;">
-                                            General
-                                        </span>
-                                    }
-                                </td>
-                                <!-- Category -->
-                                <td style="padding: 10px; border-bottom: 1px solid #ddd;">
-                                    <span style="background-color: #F1F1F1; border-radius: 10px; padding: 5px 10px; font-weight: bold; color: black;">
-                                        @ticket.CategoryType
-                                    </span>
-                                </td>
-                                <!-- Status -->
-                                <td style="width:50%; padding: 10px; border-bottom: 1px solid #ddd;">
-                                    @if (ticket.StatusType == "Open")
-                                    {
-                                        <span style="background-color: #D9FFD9; color: green; border-radius: 10px; padding: 5px 10px; font-weight: bold;">
-                                            Open
-                                        </span>
-                                    }
-                                    else if (ticket.StatusType == "Closed")
-                                    {
-                                        <span style="background-color: #FFCCCC; color: red; border-radius: 10px; padding: 5px 10px; font-weight: bold;">
-                                            Closed
-                                        </span>
-                                    }
-                                    else if (ticket.StatusType == "Resolved")
-                                    {
-                                        <span style="background-color: #62B0FF; color: blue; border-radius: 10px; padding: 5px 10px; font-weight: bold;">
-                                            Resolved
-                                        </span>
-                                    }
-                                    else
-                                    {
-                                        <span style="background-color: #FFEDCC; color: #E68D4F; border-radius: 10px; padding: 5px 10px; font-weight: bold;">
-                                            In Progress
-                                        </span>
-                                    }
-                                </td>
-                                <td style="padding: 10px; border-bottom: 1px solid #ddd;">@ticket.DateCreated.ToShortDateString()</td>
-                                <td style="padding: 10px; border-bottom: 1px solid #ddd; position: relative;">
-                                    <button onclick="toggleActionsModal(@ticket.TicketId)"
-                                            style="padding:10px; background: grey; border: none; cursor: pointer; position: relative; border-radius: 5px;">
-                                        <img src="~/img/action.svg" alt="Action" style="width: 20px; height: 20px;" />
-                                    </button>
-                                    <div id="actions-modal-@ticket.TicketId"
-                                         style="display: none; position: absolute; top: 25px; right: 0; background: white; border: 1px solid #ddd; border-radius: 5px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); z-index: 1000;">
-                                        <div style="display:flex; flex-direction:row;">
-                                            <img src="~/img/info.svg" alt="SCS Logo" style="max-width: 20px; margin-left:5px;">
-                                             <a href="@Url.Action("TicketDetails", "SupportAgent", new { id = ticket.TicketId })"
-                                               style="display: block; width: 120px; text-align: left; padding: 5px; text-decoration: none; color: black; background: none; font-size:14px; font-weight:bold;">
-                                                View Ticket
-                                            </a>
-                                        </div>
-                                        <div style="display:flex; flex-direction:row;">
-                                            <img src="~/img/trash.svg" alt="SCS Logo" style="max-width: 20px; margin-left:5px;">
-                                            <button onclick="confirmDelete(@ticket.TicketId)"
-                                                    style="display: block; width: 100%; text-align: left; padding: 5px; background: none; border: none; cursor: pointer; color: black; font-size:14px; font-weight:bold;">
-                                                Delete Ticket
-                                            </button>
-                                        </div>
-                                    </div>
-                                </td>
+                                <td colspan="9" class="text-center">No tickets available</td>
                             </tr>
                         }
                     </tbody>
                 </table>
             </div>
+            <nav>
+                <ul class="pagination justify-content-center">
+                    @if (Model.CurrentPage > 1)
+                    {
+                        <li class="page-item" style="margin-top:15px;">
+                            <a class="page-link" href="@Url.Action("Tickets", new { pageNumber = Model.CurrentPage - 1, categoryId = Model.CategoryId, statusId = Model.StatusId, priorityId = Model.PriorityId, pageSize = Model.PageSize })">Previous</a>
+                        </li>
+                    }
+
+                    @for (int i = 1; i <= Model.TotalPages; i++)
+                    {
+                        <li class="page-item @(i == Model.CurrentPage ? "active" : "")" style="margin-top:15px;">
+                            <a class="page-link" href="@Url.Action("Tickets", new { pageNumber = i, categoryId = Model.CategoryId, statusId = Model.StatusId, priorityId = Model.PriorityId, pageSize = Model.PageSize })">@i</a>
+                        </li>
+                    }
+
+                    @if (Model.CurrentPage < Model.TotalPages)
+                    {
+                        <li class="page-item" style="margin-top:15px;">
+                            <a class="page-link" href="@Url.Action("Tickets", new { pageNumber = Model.CurrentPage + 1, categoryId = Model.CategoryId, statusId = Model.StatusId, priorityId = Model.PriorityId, pageSize = Model.PageSize })">Next</a>
+                        </li>
+                    }
+                </ul>
+            </nav>
         </div>
     </div>
 </div>
 
-<script>
-    function toggleActionsModal(ticketId) {
-        const modal = document.getElementById(`actions-modal-${ticketId}`);
-        modal.style.display = modal.style.display === "none" ? "block" : "none";
-    }
-
-    function confirmDelete(ticketId) {
-        const confirmDelete = confirm("Are you sure you want to delete this ticket?");
-        if (confirmDelete) {
-            window.location.href = `/Admin/Tickets`;
-        }
-    }
-</script>
-
 @section Styles {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 }

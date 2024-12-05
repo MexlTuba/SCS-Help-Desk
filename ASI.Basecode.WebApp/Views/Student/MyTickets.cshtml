@@ -1,30 +1,238 @@
-﻿@{
+﻿@model ASI.Basecode.Services.ServiceModels.MyTicketsViewModel
+
+@{
     ViewData["Title"] = "SCS Help Desk";
-}
-@section styles {
-    <link rel="stylesheet" href="~/css/myTickets.css" />
 }
 
 <!DOCTYPE html>
-
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
-    <title>@ViewBag.Title</title>
+    <title>@ViewData["Title"]</title>
+    <script>
+        function confirmDelete(ticketId) {
+            if (confirm("Are you sure you want to delete this ticket?")) {
+                window.location.href = '@Url.Action("Delete", "Student")?id=' + ticketId;
+            }
+        }
+        
+        function openDeleteModal(ticketId) {
+            // Set the ticket ID in the hidden input field
+            document.getElementById('ticketIdToDelete').value = ticketId;
+
+            // Update the modal body content to display the specific ticket ID
+            document.getElementById('deleteTicketMessage').textContent = `Are you sure you want to delete Ticket ID #${ticketId}?`;
+
+            console.log('Opening delete modal for Ticket ID:', ticketId);
+
+            // Show the modal
+            var modal = new bootstrap.Modal(document.getElementById('deleteTicketModal'));
+            modal.show();
+        }
+
+        function closeModal() {
+            var modalElement = document.getElementById('deleteTicketModal');
+            if (modalElement) {
+                modalElement.classList.remove('show');
+                modalElement.setAttribute('aria-hidden', 'true');
+                modalElement.style.display = 'none';
+                document.body.classList.remove('modal-open');
+                var backdrop = document.querySelector('.modal-backdrop'); 
+                if (backdrop) {
+                    backdrop.parentNode.removeChild(backdrop);
+                }
+            }
+        }
+
+
+
+
+        // Debugging form submission for delete functionality
+        document.getElementById('deleteTicketForm').addEventListener('submit', function (event) {
+            console.log('Submitting the delete form with ticket ID:', document.getElementById('ticketIdToDelete').value);
+        });
+    </script>
+    <link rel="stylesheet" href="~/css/myTickets.css" />
 </head>
 <body>
     <div>
-        <nav class="navbar bg-body-tertiary shadow-lg">
+        <nav class="ticketNavBar navbar bg-body-tertiary shadow-lg">
             <a class="navbar-brand" href="#">
                 <img src="~/img/scsHelpDeskLogo.svg" alt="Bootstrap" class="scsLogo">
             </a>
-
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                <button class="btn btn-custom me-md-2 mr-5" type="button">Back to Homepage</button>
-                <a asp-action="SignOutUser" asp-controller="Account" class="btn btn-danger logout-btn shadow-lg" type="button">Logout</a>
+                <a href="@Url.Action("StudentDashboard", "Student")" class="btn btn-custom me-md-2 mr-5">Back to Homepage</a>
+                <a asp-action="SignOutUser" asp-controller="Account" class="btn btn-danger logout-btn shadow-lg">Logout</a>
             </div>
-
         </nav>
+
+        <div class="d-flex justify-content-center vh-90 mt-3">
+            <div class="formContent card shadow-lg">
+                <div class="card-body">
+                    <div class="headers d-flex align-items-center">
+                        <h1 class="custom-card-title flex-grow-1">My Tickets</h1>
+                        <div class="container-sm my-2 mr-3">
+                            <form method="get" asp-action="MyTickets" asp-controller="Student">
+                                <div class="row align-items-center bg-light rounded shadow-sm py-3">
+                                    <div class="col-md">
+                                        <a href="@Url.Action("MyTickets", "Student")" class="btn btn-secondary">Clear Filters</a>
+                                    </div>
+                                    <div class="col-auto">
+                                        <span class="fw-bold text-muted">Sort by:</span>
+                                    </div>
+
+                                    <!-- Category Filter -->
+                                    <div class="col-md">
+                                        <select name="CategoryId" class="form-control form-select">
+                                            <option disabled>Category</option>
+                                            <option value="0" selected="@(Model.CategoryId == 0 ? "selected" : null)">All</option>
+                                            @foreach (var category in Model.Categories)
+                                            {
+                                                <option value="@category.CategoryId" selected="@(category.CategoryId == Model.CategoryId ? "selected" : null)">
+                                                    @category.CategoryType
+                                                </option>
+                                            }
+                                        </select>
+                                    </div>
+
+                                    <!-- Status Filter -->
+                                    <div class="col-md">
+                                        <select name="StatusId" class="form-control form-select">
+                                            <option disabled>Status</option>
+                                            <option value="0" selected="@(Model.StatusId == 0 ? "selected" : null)">All</option>
+                                            @foreach (var status in Model.Statuses.Where(s => s.StatusType != "Archived"))
+                                            {
+                                                <option value="@status.StatusId" selected="@(status.StatusId == Model.StatusId ? "selected" : null)">
+                                                    @status.StatusType
+                                                </option>
+                                            }
+                                        </select>
+                                    </div>
+
+                                    <!-- Priority Filter -->
+                                    <div class="col-md">
+                                        <select name="PriorityId" class="form-control form-select">
+                                            <option disabled>Priority</option>
+                                            <option value="0" selected="@(Model.PriorityId == 0 ? "selected" : null)">All</option>
+                                            @foreach (var priority in Model.Priorities)
+                                            {
+                                                <option value="@priority.PriorityId" selected="@(priority.PriorityId == Model.PriorityId ? "selected" : null)">
+                                                    @priority.PriorityType
+                                                </option>
+                                            }
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md">
+                                        <button type="submit" class="btn btn-primary">Apply Filters</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Ticket Table -->
+                    <div class="table-responsive mt-4">
+                        <table class="table table-striped table-bordered">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th scope="col">Ticket ID</th>
+                                    <th scope="col">Title</th>
+                                    <th scope="col">Assigned to</th>
+                                    <th scope="col">Category</th>
+                                    <th scope="col">Priority</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Date Created</th>
+                                    <th scope="col">Date Closed</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Tickets != null && Model.Tickets.Any())
+                                {
+                                    @foreach (var ticket in Model.Tickets)
+                                    {
+                                        <tr>
+                                            <td>@ticket.TicketId</td>
+                                            <td>@ticket.Title</td>
+                                            <td>@(string.IsNullOrEmpty(ticket.AssignedToName) ? "Unassigned" : ticket.AssignedToName)</td>
+                                            <td>@(Model.Categories.FirstOrDefault(c => c.CategoryId == ticket.CategoryId)?.CategoryType ?? "Unknown")</td>
+                                            <td>@(Model.Priorities.FirstOrDefault(p => p.PriorityId == ticket.PriorityId)?.PriorityType ?? "Unknown")</td>
+                                            <td>@(Model.Statuses.FirstOrDefault(s => s.StatusId == ticket.StatusId)?.StatusType ?? "Unknown")</td>
+                                            <td>@ticket.DateCreated.ToString("yyyy-MM-dd")</td>
+                                            <td>@(ticket.DateClosed.HasValue ? ticket.DateClosed.Value.ToString("yyyy-MM-dd") : "(Not yet closed)")</td>
+                                            <td>
+                                                <div class="btn-group" role="group" aria-label="Ticket Actions">
+                                                    <a href="@Url.Action("DetailsTicket", "Student", new { id = ticket.TicketId })" class="btn btn-primary btn-sm">View Details</a>
+                                                    <button type="button" class="btn btn-danger btn-sm" onclick="openDeleteModal(@ticket.TicketId)">Delete</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="9" class="text-center">No tickets available</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Pagination Controls -->
+                    <nav>
+                        <ul class="pagination justify-content-center">
+                            @if (Model.CurrentPage > 1)
+                            {
+                                <li class="page-item">
+                                    <a class="page-link" href="@Url.Action("MyTickets", new { page = Model.CurrentPage - 1, categoryId = Model.CategoryId, statusId = Model.StatusId, priorityId = Model.PriorityId })">Previous</a>
+                                </li>
+                            }
+
+                            @for (int i = 1; i <= Model.TotalPages; i++)
+                            {
+                                <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                                    <a class="page-link" href="@Url.Action("MyTickets", new { page = i, categoryId = Model.CategoryId, statusId = Model.StatusId, priorityId = Model.PriorityId })">@i</a>
+                                </li>
+                            }
+
+                            @if (Model.CurrentPage < Model.TotalPages)
+                            {
+                                <li class="page-item">
+                                    <a class="page-link" href="@Url.Action("MyTickets", new { page = Model.CurrentPage + 1, categoryId = Model.CategoryId, statusId = Model.StatusId, priorityId = Model.PriorityId })">Next</a>
+                                </li>
+                            }
+                        </ul>
+                    </nav>
+
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteTicketModal" tabindex="-1" aria-labelledby="deleteTicketModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- Form to handle deletion -->
+                <form id="deleteTicketForm" method="post" asp-action="Delete" asp-controller="Student" method="post">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteTicketModalLabel">Confirm Deletion</h5>
+                    </div>
+                    <div class="modal-body">
+                        <p id="deleteTicketMessage">Are you sure you want to delete this ticket?</p>
+                        <!-- Hidden field to pass the ticket ID -->
+                        <input type="hidden" id="ticketIdToDelete" name="id" />
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal()">No</button>
+                        <button type="submit" class="btn btn-danger">Yes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 </body>
 </html>

@@ -2,6 +2,7 @@
 using ASI.Basecode.Services.Interfaces;
 using ASI.Basecode.Services.Manager;
 using ASI.Basecode.Services.ServiceModels;
+using ASI.Basecode.Services.Services;
 using ASI.Basecode.WebApp.Authentication;
 using ASI.Basecode.WebApp.Models;
 using ASI.Basecode.WebApp.Mvc;
@@ -30,6 +31,7 @@ namespace ASI.Basecode.WebApp.Controllers
         private readonly TokenProviderOptionsFactory _tokenProviderOptionsFactory;
         private readonly IConfiguration _appConfiguration;
         private readonly IUserService _userService;
+        private readonly IUserPreferencesService _userPreferencesService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AccountController"/> class.
@@ -50,6 +52,7 @@ namespace ASI.Basecode.WebApp.Controllers
                             IConfiguration configuration,
                             IMapper mapper,
                             IUserService userService,
+                            IUserPreferencesService userPreferencesService,
                             TokenValidationParametersFactory tokenValidationParametersFactory,
                             TokenProviderOptionsFactory tokenProviderOptionsFactory) : base(httpContextAccessor, loggerFactory, configuration, mapper)
         {
@@ -59,6 +62,7 @@ namespace ASI.Basecode.WebApp.Controllers
             this._tokenValidationParametersFactory = tokenValidationParametersFactory;
             this._appConfiguration = configuration;
             this._userService = userService;
+            this._userPreferencesService = userPreferencesService;
         }
 
         /// <summary>
@@ -101,22 +105,11 @@ namespace ASI.Basecode.WebApp.Controllers
             {
                 // Authentication Succesful
                 await this._signInManager.SignInAsync(user);
-                this._session.SetString("UserName", user.Name);
+                this._session.SetString("UserId", user.UserId); // Store UserId
+                this._session.SetString("UserRole", user.Role); // Store Role
+                this._session.SetString("UserName", user.Name); // Store Name 
 
-                // fetch role
-                String roled = user.Role;
-
-                switch (roled)
-                {
-                    case "Super Admin":
-                        return RedirectToAction("SuperAdminDashboard", "SuperAdmin");
-                    case "Admin":
-                        return RedirectToAction("AdminDashboard", "Admin");
-                    case "Support Agent":
-                        return RedirectToAction("SupportAgentDashboard", "SupportAgent");
-                    case "Student":
-                        return RedirectToAction("StudentDashboard", "Student");
-                }
+                return RedirectToRoleBasedDashboard(user.Role);
             }
             else
             {
@@ -124,7 +117,22 @@ namespace ASI.Basecode.WebApp.Controllers
                 TempData["ErrorMessage"] = "Incorrect UserId or Password";
                 return View();
             }
-            return View();
+        }
+        private IActionResult RedirectToRoleBasedDashboard(string role)
+        {
+            switch (role)
+            {
+                case "Super Admin":
+                    return RedirectToAction("SuperAdminDashboard", "SuperAdmin");
+                case "Admin":
+                    return RedirectToAction("AdminDashboard", "Admin");
+                case "Support Agent":
+                    return RedirectToAction("SupportAgentDashboard", "SupportAgent");
+                case "Student":
+                    return RedirectToAction("StudentDashboard", "Student");
+                default:
+                    return RedirectToAction("Login", "Account"); // Fallback for unexpected roles
+            }
         }
 
         [HttpGet]
@@ -142,6 +150,22 @@ namespace ASI.Basecode.WebApp.Controllers
             {
                 model.Role = "Student";
                 _userService.AddUser(model);
+                // Set default preferences for the new user
+                var defaultPreferences = new UserPreferences
+                {
+                    UserId = model.UserId,
+                    DefaultCategoryId = 1, // Default to 'Enrollment'
+                    DefaultStatusId = 1,   // Default to 'Open'
+                    DefaultPriorityId = 4, // Default to 'General'
+                    CreatedTime = DateTime.UtcNow,
+                    UpdatedTime = DateTime.UtcNow
+                };
+                if (defaultPreferences == null)
+                {
+                    throw new InvalidOperationException("Default preferences object is null.");
+                }
+                // Save default preferences using the UserPreferencesService
+                _userPreferencesService.AddPreferences(defaultPreferences);
                 return RedirectToAction("Login", "Account");
 
             }

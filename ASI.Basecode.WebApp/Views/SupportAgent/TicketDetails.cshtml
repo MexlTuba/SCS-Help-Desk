@@ -83,7 +83,7 @@
                 </div>
                 <div style="margin-top: 10px; border-bottom: 2px solid #e0e0e0; width: 100%;"></div>
                 <p style="margin-top:15px; font-size:20px; font-weight:bold; color: #6D6D6D;">Make Changes:</p>
-                <form asp-action="UpdateStatus" asp-controller="SupportAgent" method="post">
+                <form asp-action="UpdateTicket" asp-controller="SupportAgent" method="post">
                     <div style="display: flex; flex-direction: row; align-items: center; margin-bottom: 15px;">
                         <p style="font-size: 15px; font-weight: bold;">Status:</p>
                         <div style="margin-left: 35px;">
@@ -140,11 +140,23 @@
                     </div>
                     <p style="font: 18px;">@ViewBag.Ticket.Description</p>
                 </div>
-                <div style="margin-top: 20px; background-color: #fff; width:330px; height:185px; border: 1px solid #e0e0e0; border-radius: 10px; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                <div style="margin-top: 20px; background-color: #fff; width:350px; height:175px; border: 1px solid #e0e0e0; border-radius: 10px; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
                     <div style="display:flex; flex-direction: row; align-items:start;">
-                        <img src="~/img/file.svg" style="width: 19px; height: auto;" alt="logo" />
+                        <img src="~/img/file.svg" style="width: 19px; height: auto;" alt="Attachment Logo" />
                         <p style="margin-left:15px; font-size:20px; font-weight:bold; color: #E68D4F;">Attachment</p>
                     </div>
+                    @if (!string.IsNullOrEmpty(ViewBag.Ticket.AttachmentPath))
+                    {
+                        <button type="button" class="btn btn-link p-0" onclick="viewAttachmentModal('@Url.Content(ViewBag.Ticket.AttachmentPath)')">
+                            View Attachment
+                        </button>
+                    }
+                    else
+                    {
+                        <button type="button" class="btn btn-link p-0" disabled>
+                            No Attachment Uploaded
+                        </button>
+                    }
                 </div>
             </div>
             <div style="background-color: #fff; width:300px; height:540px; border: 1px solid #e0e0e0; border-radius: 10px; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
@@ -156,6 +168,59 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="viewAttachmentModal" tabindex="-1" aria-labelledby="viewAttachmentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewAttachmentModalLabel">Attachment</h5>
+                <button type="button" class="btn" onclick="closeAttachmentModal()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                        <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body text-center" id="attachmentContent">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function viewAttachmentModal(attachmentPath) {
+        const modalBody = document.getElementById('attachmentContent');
+
+        if (!attachmentPath || attachmentPath === "null") {
+            modalBody.innerHTML = '<p>No attachment submitted.</p>';
+        } else {
+            const fileUrl = attachmentPath; // Use Razor's properly encoded URL
+
+            const fileExtension = fileUrl.split('.').pop().toLowerCase();
+            if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
+                modalBody.innerHTML = `<img src="${fileUrl}" alt="Attachment" class="img-fluid" />`;
+            } else if (['pdf'].includes(fileExtension)) {
+                modalBody.innerHTML = `<iframe src="${fileUrl}" width="100%" height="400px"></iframe>`;
+            } else {
+                modalBody.innerHTML = `
+                                <p>Attachment cannot be previewed. <a href="${fileUrl}" target="_blank">Download</a></p>
+                            `;
+            }
+        }
+
+        var modal = new bootstrap.Modal(document.getElementById('viewAttachmentModal'));
+        modal.show();
+    }
+
+    function closeAttachmentModal() {
+        const modalElement = document.getElementById('viewAttachmentModal');
+        if (modalElement) {
+            const modalInstance = bootstrap.Modal.getInstance(modalElement);
+            if (modalInstance) {
+                modalInstance.hide();
+            }
+        }
+    }
+</script>
 
 @section Styles {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">

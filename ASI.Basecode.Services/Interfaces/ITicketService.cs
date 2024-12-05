@@ -7,12 +7,22 @@ namespace ASI.Basecode.Services.Interfaces
     public interface ITicketService
     {
         List<TicketServiceModel> GetAllTickets();
+        List<Ticket> GetTickets();
 
+        List<TicketServiceModel> GetFilteredTickets(int? categoryId, int? priorityId, int? statusId);
         Ticket GetTicketById(int id);
 
-        void UpdateStatus(Ticket ticket);
+        void UpdateTicket(Ticket ticket);
 
         int GetTicketCount();
         int GetTicketCountByStatus(string statusType);
+
+        int GetDeletedTicketCount();
+
+        void AddTicket(TicketViewModel model, string userName);
+        void DeleteTicket(int ticketId);
+
+        void EditDetailsTicket(Ticket ticket);
+
     }
 }

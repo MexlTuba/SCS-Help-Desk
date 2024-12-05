@@ -1,5 +1,7 @@
-﻿@{
-    ViewData["Title"] = "SCS Help Desk";
+﻿@model ASI.Basecode.Services.ServiceModels.UserPreferencesViewModel
+
+@{
+    ViewData["Title"] = "User Account Settings - SCS Help Desk";
 }
 @section styles {
     <link rel="stylesheet" href="~/css/settings.css" />
@@ -20,11 +22,71 @@
             </a>
 
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                <button class="btn btn-custom me-md-2 mr-5" type="button">Back to Homepage</button>
+                <a href="@Url.Action("StudentDashboard", "Student")" class="btn btn-custom me-md-2 mr-5" role="button">Back to Homepage</a>
                 <a asp-action="SignOutUser" asp-controller="Account" class="btn btn-danger logout-btn shadow-lg" type="button">Logout</a>
             </div>
-
         </nav>
     </div>
+
+    <div class="half-background "></div>
+    <div class="container settings-preferences p-3 shadow-sm rounded bg-light">
+        <h2 class="mb-4 fw-bold">Settings & Preferences</h2>
+
+        <!-- Ticket Views Section -->
+        <div id="ticketViewsSection">
+            <h5 class="mb-3 fw-semibold">Ticket View Preferences</h5>
+
+            <!-- Bind Form to Edit Preferences -->
+            <form asp-action="Edit" asp-controller="UserPreferences" method="post">
+                <input type="hidden" asp-for="UserId" />
+                <div class="row mb-3">
+                    <label class="col-sm-3 col-form-label">Category Filter:</label>
+                    <div class="col-sm-9">
+                        <select asp-for="DefaultCategoryId" class="form-select">
+                            <option value="1">Enrolment</option>
+                            <option value="2">Grades</option>
+                            <option value="3">Organizational</option>
+                            <option value="4">Inquiry</option>
+                            <option value="5">Miscellaneous</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <label class="col-sm-3 col-form-label">Status Filter:</label>
+                    <div class="col-sm-9">
+                        <select asp-for="DefaultStatusId" class="form-select">
+                            <option value="1">Open</option>
+                            <option value="2">In Progress</option>
+                            <option value="3">Resolved</option>
+                            <option value="4">Closed</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <label class="col-sm-3 col-form-label">Priority Filter:</label>
+                    <div class="col-sm-9">
+                        <select asp-for="DefaultPriorityId" class="form-select">
+                            <option value="4">General</option>
+                            <option value="1">High</option>
+                            <option value="2">Medium</option>
+                            <option value="3">Low</option>
+                        </select>
+                    </div>
+                </div>
+
+
+
+                <div class="d-flex justify-content-start mt-4">
+                    <button type="reset" class="btn btn-outline-secondary me-2" style="margin-right: 10px;">Cancel</button>
+                    <button type="submit" class="btn btn-warning">Save Changes</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+
 </body>
 </html>
+
