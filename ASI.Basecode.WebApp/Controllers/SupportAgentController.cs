@@ -398,38 +398,41 @@ namespace ASI.Basecode.WebApp.Controllers
             return View(model);
         }
 
-        // Delete Knowledgebase
         public IActionResult DeleteKnowledgebase(int id)
         {
-            var article = _knowledgebaseService.GetArticleById(id);
-
-            if (article == null)
+            try
             {
-                TempData["ErrorMessage"] = "Article not found.";
-                return RedirectToAction("ListArticles");
+                var article = _knowledgebaseService.GetArticleById(id);
+                if (article == null)
+                {
+                    TempData["ErrorMessage"] = "Article not found.";
+                    return RedirectToAction("ListArticles");
+                }
+
+                _knowledgebaseService.DeleteKnowledgebase(id);
+
+                TempData["SuccessMessage"] = "Article deleted successfully.";
+            }
+            catch (Exception ex)
+            {
+                // Log the exception and show an error message
+                TempData["ErrorMessage"] = "An error occurred while deleting the article: " + ex.Message;
             }
 
-            var articleViewModel = new KnowledgeBaseViewModel
-            {
-                ArticleId = article.ArticleId,
-                Title = article.Title,
-                Content = article.Content,
-                CategoryName = article.CategoryName,
-                CreatedBy = article.CreatedBy,
-                CreatedAt = article.CreatedAt
-            };
-
-            return View(articleViewModel);
+            // Redirect back to the list view
+            return RedirectToAction("ListArticles");
         }
-
 
         [HttpPost]
         public IActionResult DeleteConfirmed(int id)
         {
+            // Call service to delete the article
             _knowledgebaseService.DeleteKnowledgebase(id);
 
+            // Optionally, set a success message
             TempData["SuccessMessage"] = "Article deleted successfully!";
 
+            // Redirect back to ListArticles page
             return RedirectToAction("ListArticles");
         }
 
