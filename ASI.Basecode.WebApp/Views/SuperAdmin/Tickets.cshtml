@@ -184,7 +184,7 @@
                                         else
                                         {
                                             <span style="background-color:#F1F1F1; color: black; border-radius: 10px; padding: 5px 10px; font-weight: bold;">
-                                                General
+                                                <i class="bi bi-circle-fill" style="font-size: 10px; margin-right: 5px;"></i> General
                                             </span>
                                         }
                                     </td>
@@ -206,6 +206,12 @@
                                         {
                                             <span style="background-color: #FFCCCC; color: red; border-radius: 10px; padding: 5px 10px; font-weight: bold;">
                                                 Closed
+                                            </span>
+                                        }
+                                        else if (ticket.StatusType == "Resolved")
+                                        {
+                                            <span style="background-color: #62B0FF; color: blue; border-radius: 10px; padding: 5px 10px; font-weight: bold;">
+                                                Resolved
                                             </span>
                                         }
                                         else

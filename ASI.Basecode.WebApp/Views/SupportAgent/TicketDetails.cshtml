@@ -203,7 +203,7 @@
         if (!attachmentPath || attachmentPath === "null") {
             modalBody.innerHTML = '<p>No attachment submitted.</p>';
         } else {
-            const fileUrl = attachmentPath; // Use Razor's properly encoded URL
+            const fileUrl = attachmentPath; 
 
             const fileExtension = fileUrl.split('.').pop().toLowerCase();
             if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
