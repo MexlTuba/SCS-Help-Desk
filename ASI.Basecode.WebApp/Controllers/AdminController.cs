@@ -344,13 +344,29 @@ namespace ASI.Basecode.WebApp.Controllers
             }
         }
 
-        // List Articles
-        public IActionResult ListArticles()
+        public IActionResult ListArticles(int? categoryId)
         {
-            var articles = _knowledgebaseService.GetAllArticles();
-            return View(articles);
+            var model = new KnowledgeBaseViewModel
+            {
+                Categories = _categoryService.GetAllCategories()
+            };
+
+            if (categoryId.HasValue && categoryId.Value > 0)
+            {
+                // Get filtered articles by category
+                model.Articles = _knowledgebaseService.GetArticlesByCategory(categoryId.Value);
+            }
+            else
+            {
+                // No category filter applied, show all articles
+                model.Articles = _knowledgebaseService.GetAllArticles();
+            }
+
+            return View(model);
         }
 
+
+        // Create Knowledgebase
         public IActionResult CreateKnowledgebase()
         {
             var model = new KnowledgeBaseViewModel
@@ -380,6 +396,7 @@ namespace ASI.Basecode.WebApp.Controllers
             return View(model);
         }
 
+        // Edit Knowledgebase
         public IActionResult EditKnowledgebase(int id)
         {
             var article = _knowledgebaseService.GetArticleById(id);
@@ -418,33 +435,40 @@ namespace ASI.Basecode.WebApp.Controllers
         // Delete Knowledgebase
         public IActionResult DeleteKnowledgebase(int id)
         {
+            // Assuming the service method returns a KnowledgeBaseModel
             var article = _knowledgebaseService.GetArticleById(id);
+
             if (article == null)
             {
-                TempData["ErrorMessage"] = "Article not found!";
+                TempData["ErrorMessage"] = "Article not found.";
                 return RedirectToAction("ListArticles");
             }
-            var model = new KnowledgeBaseViewModel
+
+            // Map the KnowledgeBaseModel to KnowledgeBaseViewModel
+            var articleViewModel = new KnowledgeBaseViewModel
             {
                 ArticleId = article.ArticleId,
                 Title = article.Title,
-                CategoryName = article.CategoryName
+                Content = article.Content,
+                CategoryName = article.CategoryName,
+                CreatedBy = article.CreatedBy,
+                CreatedAt = article.CreatedAt
             };
-            return View(model);
+
+            return View(articleViewModel);  // Pass the ViewModel to the view
         }
 
-        [HttpPost, ActionName("DeleteKnowledgebase")]
-        public IActionResult DeleteKnowledgebaseConfirm(int id)
+
+        [HttpPost]
+        public IActionResult DeleteConfirmed(int id)
         {
-            try
-            {
-                _knowledgebaseService.DeleteKnowledgebase(id);
-                TempData["SuccessMessage"] = "Article deleted successfully!";
-            }
-            catch
-            {
-                TempData["ErrorMessage"] = "Error deleting article!";
-            }
+            // Call service to delete the article
+            _knowledgebaseService.DeleteKnowledgebase(id);
+
+            // Optionally, set a success message
+            TempData["SuccessMessage"] = "Article deleted successfully!";
+
+            // Redirect back to ListArticles page
             return RedirectToAction("ListArticles");
         }
 
