@@ -128,14 +128,88 @@
             </div>
         </div> <!-- Closing Main Content -->
     </div> <!-- Closing flex container -->
+@* 
+    <div class="modal fade" id="deleteUserModal" tabindex="-1" aria-labelledby="deleteUserModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- Form to handle deletion -->
+                <form id="deleteUserForm" method="post" asp-action="Delete" asp-controller="SuperAdmin">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteUserModalLabel">Confirm Deletion</h5>
+                    </div>
+                    <div class="modal-body">
+                        <p id="deleteUserMessage">Are you sure you want to delete this user?</p>
+                        <!-- Hidden field to pass the user ID -->
+                        <input type="hidden" id="userIdToDelete" name="id" />
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="closeUserModal()">No</button>
+                        <button onclick="showDeleteModal(userId)" class="btn btn-danger btn-sm">
+                            <i class="bi bi-trash"></i> Yes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div> *@
+
     @section Scripts {
         <script>
             function confirmDelete(userId) {
                 if (confirm("Are you sure you want to delete this user?")) {
-                    window.location.href = '@Url.Action("Delete", "SuperAdmin")?id=' + userId;
+                    window.location.href = '@Url.Action("Delete", "Admin")?id=' + userId;
                 }
             }
         </script>
+      @*   <script>
+            var userIdToDelete = '';
+
+            function showDeleteModal(userId) {
+                userIdToDelete = userId;
+                var modal = new bootstrap.Modal(document.getElementById('deleteUserModal'));
+                modal.show();
+            }
+
+            function deleteUser() {
+                if (!userIdToDelete) return;
+
+                window.location.href = '@Url.Action("Delete", "SuperAdmin")?id=' + userIdToDelete;
+            }
+        </script>
+
+        <script>
+            function openUserDeleteModal(userId) {
+                // Set the user ID in the hidden input field
+                document.getElementById('userIdToDelete').value = userId;
+
+                // Update the modal body content to display the specific user ID
+                document.getElementById('deleteUserMessage').textContent = `Are you sure you want to delete User ${userId}?`;
+                console.log('Opening delete modal for User ID:', userId);
+
+                // Show the modal
+                var modal = new bootstrap.Modal(document.getElementById('deleteUserModal'));
+                modal.show();
+            }
+
+            function closeUserModal() {
+                var modalElement = document.getElementById('deleteUserModal');
+                if (modalElement) {
+                    modalElement.classList.remove('show');
+                    modalElement.setAttribute('aria-hidden', 'true');
+                    modalElement.style.display = 'none';
+                    document.body.classList.remove('modal-open');
+                    var backdrop = document.querySelector('.modal-backdrop');
+                    if (backdrop) {
+                        backdrop.parentNode.removeChild(backdrop);
+                    }
+                }
+            }
+
+            // Debugging form submission for delete functionality
+            document.getElementById('deleteUserForm').addEventListener('submit', function (event) {
+                console.log('Submitting the delete form with user ID:', document.getElementById('userIdToDelete').value);
+            });
+        </script> *@
     }
 
     @section Styles {
