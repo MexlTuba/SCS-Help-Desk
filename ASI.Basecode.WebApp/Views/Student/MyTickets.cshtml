@@ -95,14 +95,18 @@
                                         <select name="StatusId" class="form-control form-select">
                                             <option disabled>Status</option>
                                             <option value="0" selected="@(Model.StatusId == 0 ? "selected" : null)">All</option>
-                                            @foreach (var status in Model.Statuses.Where(s => s.StatusType != "Archived"))
+                                            @foreach (var status in Model.Statuses.Where(s => s.StatusType != "Deleted"))
                                             {
-                                                <option value="@status.StatusId" selected="@(status.StatusId == Model.StatusId ? "selected" : null)">
-                                                    @status.StatusType
-                                                </option>
+                                                if (status.StatusId != 5) // Exclude the status with ID 5
+                                                {
+                                                    <option value="@status.StatusId" selected="@(status.StatusId == Model.StatusId ? "selected" : null)">
+                                                        @status.StatusType
+                                                    </option>
+                                                }
                                             }
                                         </select>
                                     </div>
+
 
                                     <!-- Priority Filter -->
                                     <div class="col-md">
