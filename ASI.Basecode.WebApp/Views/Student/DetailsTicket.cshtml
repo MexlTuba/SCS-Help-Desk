@@ -43,16 +43,44 @@
             document.getElementById("createTicketForm").reset();
         }
         function openEditModal(ticketId, title, description, category) {
-            
             document.getElementById('editTicketId').value = ticketId;
             document.getElementById('editTitle').value = title;
             document.getElementById('editDescription').value = description;
             document.getElementById('editCategory').value = category;
 
-           
+        
+            document.getElementById('editTitle').setAttribute('data-original-value', title);
+            document.getElementById('editDescription').setAttribute('data-original-value', description);
+
             var modal = new bootstrap.Modal(document.getElementById('editTicketModal'));
             modal.show();
         }
+
+        function resetForm() {
+            const editTitle = document.getElementById('editTitle');
+            const editDescription = document.getElementById('editDescription');
+
+            editTitle.value = editTitle.getAttribute('data-original-value');
+            editDescription.value = editDescription.getAttribute('data-original-value');
+        }
+
+        function closeEditModal() {
+            var modalElement = document.getElementById('editTicketModal');
+            if (modalElement) {
+                modalElement.classList.remove('show');
+                modalElement.setAttribute('aria-hidden', 'true');
+                modalElement.style.display = 'none';
+
+                var backdrop = document.querySelector('.modal-backdrop');
+                if (backdrop) {
+                    backdrop.parentNode.removeChild(backdrop);
+                }
+
+                document.body.classList.remove('modal-open');
+                document.body.style.paddingRight = ''; 
+            }
+        }
+
         function viewAttachmentModal(attachmentPath) {
             const modalBody = document.getElementById('attachmentContent');
 
@@ -98,25 +126,6 @@
         }
 
        
-        function closeEditModal() {
-            var modalElement = document.getElementById('editTicketModal');
-            if (modalElement) {
-                modalElement.classList.remove('show');
-                modalElement.setAttribute('aria-hidden', 'true');
-                modalElement.style.display = 'none';
-
-                
-                var backdrop = document.querySelector('.modal-backdrop');
-                if (backdrop) {
-                    backdrop.parentNode.removeChild(backdrop);
-                }
-
-                
-                document.body.classList.remove('modal-open');
-                document.body.style.paddingRight = ''; 
-            }
-        }
-
         function openFeedbackModal(ticketId, userId) {
             console.log("Opening Feedback Modal");
             console.log("UserId:", userId);
@@ -146,11 +155,8 @@
         function clearFeedbackForm() {
            
             const form = document.getElementById('feedbackForm');
-
-           
             form.reset();
 
-           
             const radioButtons = form.querySelectorAll('input[type="radio"]');
             radioButtons.forEach(button => button.checked = false);
         }
@@ -170,7 +176,7 @@
 
         </nav>
 
-        <div class="d-flex justify-content-center align-items-center vh-100">
+        <div class="d-flex justify-content-center align-items-center vh-80 mt-5">
             <div class="row w-100">
                 <!-- First Card -->
                 <div class="col-md-8 d-flex justify-content-center">
@@ -180,7 +186,7 @@
                                 <!-- Left Group: Back Button and Heading -->
                                 <div class="d-flex align-items-center">
                                     <!-- Back Button -->
-                                    <a href="@Url.Action("MyTickets", "Student")" class="btn btn-primary me-4">
+                                    <a href="@Url.Action("MyTickets", "Student")" class="btn btn-custom-icon me-4">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-return-left" viewBox="0 0 16 16">
                                             <path fill-rule="evenodd" d="M14.5 1.5a.5.5 0 0 1 .5.5v4.8a2.5 2.5 0 0 1-2.5 2.5H2.707l3.347 3.346a.5.5 0 0 1-.708.708l-4.2-4.2a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 8.3H12.5A1.5 1.5 0 0 0 14 6.8V2a.5.5 0 0 1 .5-.5" />
                                         </svg>
@@ -190,7 +196,7 @@
                                 </div>
                                 <!-- Right Group: Action Buttons -->
                                 <div class="d-flex">
-                                    <button class="btn btn-outline-primary me-2 mr-2"
+                                    <button class="btn btn-outline-custom me-2 mr-2"
                                     @(Model.StatusId == 1 || Model.HasFeedback ? "disabled" : "")
                                             title="@(Model.StatusId == 1
                                             ? "Feedback is only available after the ticket is closed"
@@ -201,26 +207,117 @@
                                         Submit Feedback
                                     </button>
 
-                                    <button class="btn btn-primary" onclick="openEditModal(@Model.TicketId, '@Model.Title', '@Model.Description', '@(Model.Categories?.FirstOrDefault(c => c.CategoryId == Model.CategoryId)?.CategoryType ?? "Unknown")')">Edit Ticket</button>
+                                    <button class="btn btn-custom" onclick="openEditModal(@Model.TicketId, '@Model.Title', '@Model.Description', '@(Model.Categories?.FirstOrDefault(c => c.CategoryId == Model.CategoryId)?.CategoryType ?? "Unknown")')">Edit Ticket</button>
                                 </div>
                             </div>
                             <!-- Ticket Details Content -->
-                            <div class="mt-4">
-                                <h2><strong></strong> @Model.Title</h2>
-                                <p><strong>Date Created:</strong> @Model.DateCreated.ToString("yyyy-MM-dd")</p>
-                                <p><strong>Ticket ID:</strong> @Model.TicketId</p>
-                                <p><strong>Category:</strong> @categoryMap[Model.CategoryId]</p>
-                                <p><strong>Priority:</strong> @priorityMap[Model.PriorityId]</p>
-                                <p><strong>Status:</strong> @statusMap[Model.StatusId]</p>
-                                <p><strong>Assigned To:</strong> @(!string.IsNullOrEmpty(Model.AssignedToName) ? Model.AssignedToName : "Unassigned")</p>
-                                <p><strong>Description:</strong> @Model.Description</p>
-                                <p>
-                                    <strong>Attachment: </strong>
-                                    <button class="btn btn-secondary" onclick="viewAttachmentModal('@Url.Content("~/" + Model.AttachmentPath)')">View attachment</button>
-                                </p>
+                            <div class="container mt-4">
+                                <div class="row">
+                                    <!-- Left Column -->
+                                    <div class="col-md-6">
+                                        <h2 style="color: #f4a261;"><strong>@Model.Title</strong></h2>
+                                        <p><strong>Date Created:</strong> @Model.DateCreated.ToString("yyyy-MM-dd")</p>
+                                        <p><strong>Ticket ID:</strong> @Model.TicketId</p>
+
+                                        <!-- Category -->
+                                        <p>
+                                            <strong>Category:</strong>
+                                            <span class="shadow-lg badge text-dark" style="background-color: #dee2e6; border-radius: 10px; padding: 8px 15px; font-size: 16px;">
+                                                @categoryMap[Model.CategoryId]
+                                            </span>
+                                        </p>
+
+                                        <!-- Priority -->
+                                        <p>
+                                            <strong>Priority:</strong>
+                                            @if (priorityMap[Model.PriorityId] == "High")
+                                            {
+                                                <span class="badge text-danger" style="background-color: #FFCCCC; border-radius: 10px; padding: 8px 15px; font-size: 16px;">
+                                                    <i class="bi bi-circle-fill me-1" style="font-size: 10px;"></i> High
+                                                </span>
+                                            }
+                                            else if (priorityMap[Model.PriorityId] == "Medium")
+                                            {
+                                                <span class="badge text-warning" style="background-color: #FFEDCC; border-radius: 10px; padding: 8px 15px; font-size: 16px;">
+                                                    <i class="bi bi-circle-fill me-1" style="font-size: 10px;"></i> Medium
+                                                </span>
+                                            }
+                                            else if (priorityMap[Model.PriorityId] == "Low")
+                                            {
+                                                <span class="badge text-success" style="background-color: #D9FFD9; border-radius: 10px; padding: 8px 15px; font-size: 16px;">
+                                                    <i class="bi bi-circle-fill me-1" style="font-size: 10px;"></i> Low
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge text-dark" style="background-color: #F1F1F1; border-radius: 10px; padding: 8px 15px; font-size: 16px;">
+                                                    General
+                                                </span>
+                                            }
+                                        </p>
+
+                                        <!-- Status -->
+                                        <p>
+                                            <strong>Status:</strong>
+                                            @if (statusMap[Model.StatusId] == "Open")
+                                            {
+                                                <span class="badge text-success" style="background-color: #D9FFD9; border-radius: 10px; padding: 8px 15px; font-size: 16px;">
+                                                    Open
+                                                </span>
+                                            }
+                                            else if (statusMap[Model.StatusId] == "In Progress")
+                                            {
+                                                <span class="badge text-warning" style="background-color: #FFEDCC; color: #E68D4F; border-radius: 10px; padding: 8px 15px; font-size: 16px;">
+                                                    In Progress
+                                                </span>
+                                            }
+                                            else if (statusMap[Model.StatusId] == "Closed")
+                                            {
+                                                <span class="badge text-danger" style="background-color: #FFCCCC; border-radius: 10px; padding: 8px 15px; font-size: 16px;">
+                                                    Closed
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge text-dark" style="background-color: #F1F1F1; border-radius: 10px; padding: 8px 15px; font-size: 16px;">
+                                                    Unknown
+                                                </span>
+                                            }
+                                        </p>
+
+                                        <!-- Assigned To -->
+                                        <p>
+                                            <strong>Assigned To:</strong>
+                                            <span class="badge text-dark" style="background-color: #FFD98F; border-radius: 10px; padding: 8px 15px; font-size: 16px;">
+                                                @(!string.IsNullOrEmpty(Model.AssignedToName) ? Model.AssignedToName : "Unassigned")
+                                            </span>
+                                        </p>
+                                    </div>
 
 
+                                    <!-- Right Column -->
+                                    <div class="col-md-6 mt-5">
+                                        <p style="color: #f4a261;">
+                                            <img class="me-2" src="~/img/issue.svg" style="width: 19px; height: auto;" alt="logo" />
+                                            <strong>Description:</strong> 
+                                        </p>
+                                        <p class="mb-5">@Model.Description</p>
+                                        <p class="mt-5" style="color: #f4a261;">
+                                            <img class="me-2" src="~/img/file.svg" style="width: 19px; height: auto;" alt="Attachment Logo" />
+                                            <strong>Attachment: </strong>
+                                        </p>
+                                        <button class="btn d-flex align-items-center justify-content-start shadow-sm px-3 py-2"
+                                                style="background-color: #f8f9fa; color: #6c757d; border: 1px solid #dee2e6; border-radius: 5px; text-align: left; width: 100%;"
+                                                onmouseover="this.style.backgroundColor='#d6d6d6'; this.style.color='#c0763d';"
+                                                onmouseout="this.style.backgroundColor='#f8f9fa'; this.style.color='#E68D4F';"
+                                                onclick="viewAttachmentModal('@Url.Content("~/" + Model.AttachmentPath)')">
+                                            <span>View Attachment</span>
+                                        </button>
+
+                                    </div>
+                                </div>
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -232,9 +329,58 @@
                             <h1 class="custom-card-title">Ticket Feedback</h1>
                             @if (Model.TicketRating.HasValue || !string.IsNullOrEmpty(Model.TicketComment))
                             {
-                                <p><strong>Ticket Rating:</strong> @Model.TicketRating/5</p>
+                                <!-- Ticket Rating -->
+                                <p>
+                                    <strong>Ticket Rating:</strong>
+                                    @if (Model.TicketRating == 5)
+                                    {
+                                        <span class="badge text-light" style="background-color: #28a745; border-radius: 10px; padding: 8px 15px; font-size: 16px;">
+                                            @Model.TicketRating/5
+                                        </span>
+                                    }
+                                    else if (Model.TicketRating == 1)
+                                    {
+                                        <span class="badge text-light" style="background-color: #dc3545; border-radius: 10px; padding: 8px 15px; font-size: 16px;">
+                                            @Model.TicketRating/5
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge text-dark" style="background-color: #dee2e6; border-radius: 10px; padding: 8px 15px; font-size: 16px;">
+                                            @Model.TicketRating/5
+                                        </span>
+                                    }
+                                </p>
+
+                                <!-- Ticket Comment -->
                                 <p><strong>Ticket Comment:</strong> @Model.TicketComment</p>
-                                <p><strong>Agent Rating:</strong> @Model.AgentRating/5</p>
+
+                                <div style="border-top: 1px solid #ccc; margin: 20px 0;"></div>
+
+                                <!-- Agent Rating -->
+                                <p>
+                                    <strong>Agent Rating:</strong>
+                                    @if (Model.AgentRating == 5)
+                                    {
+                                        <span class="badge text-light" style="background-color: #28a745; border-radius: 10px; padding: 8px 15px; font-size: 16px;">
+                                            @Model.AgentRating/5
+                                        </span>
+                                    }
+                                    else if (Model.AgentRating == 1)
+                                    {
+                                        <span class="badge text-light" style="background-color: #dc3545; border-radius: 10px; padding: 8px 15px; font-size: 16px;">
+                                            @Model.AgentRating/5
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge text-dark" style="background-color: #dee2e6; border-radius: 10px; padding: 8px 15px; font-size: 16px;">
+                                            @Model.AgentRating/5
+                                        </span>
+                                    }
+                                </p>
+
+                                <!-- Agent Comment -->
                                 <p><strong>Agent Comment:</strong> @Model.AgentComment</p>
                             }
                             else
@@ -244,6 +390,7 @@
                         </div>
                     </div>
                 </div>
+
 
             </div>
         </div>
@@ -266,23 +413,23 @@
                         <input type="hidden" id="editTicketId" name="TicketId" />
 
                         <div class="mb-3">
-                            <label for="editTitle" class="form-label">Title</label>
+                            <label for="editTitle" class="form-label"><b>Ticket Title</b></label>
                             <input type="text" class="form-control" id="editTitle" name="Title" required />
                         </div>
 
                         <div class="mb-3">
-                            <label for="editDescription" class="form-label">Description</label>
+                            <label for="editDescription" class="form-label"><b>Ticket Description</b></label>
                             <textarea class="form-control" id="editDescription" name="Description" rows="3" required></textarea>
                         </div>
 
                         <div class="mb-3">
-                            <label for="editCategory" class="form-label">Category</label>
+                            <label for="editCategory" class="form-label"><b>Category</b></label>
                             <input type="text" class="form-control" id="editCategory" name="Category" readonly />
                         </div>
 
                         <div class="d-flex justify-content-end">
-                            
-                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                            <button type="button" class="btn btn-danger me-2 mr-3" onclick="resetForm()">Clear</button>
+                            <button type="submit" class="btn btn-success">Save Changes</button>
                         </div>
                     </form>
                 </div>
@@ -364,8 +511,8 @@
                         </div>
 
                         <div class="d-flex justify-content-end">
-                            <button type="button" class="btn btn-secondary me-2" onclick="clearFeedbackForm()">Clear</button>
-                            <button type="submit" class="btn btn-primary">Submit Feedback</button>
+                            <button type="button" class="btn btn-danger me-2 mr-3" onclick="clearFeedbackForm()">Clear</button>
+                            <button type="submit" class="btn btn-success">Submit Feedback</button>
                         </div>
                     </form>
                 </div>

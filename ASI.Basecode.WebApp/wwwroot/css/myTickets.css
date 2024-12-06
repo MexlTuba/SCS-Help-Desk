@@ -31,6 +31,20 @@
     color: white;
 }
 
+.btn-outline-custom {
+    border: 1px solid #f4a261;
+    color: #f4a261;
+    background-color: transparent;
+    border-radius: 5px;
+    width: 100%;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+    .btn-outline-custom:hover {
+        background-color: #f4a261;
+        color: white;
+    }
+
 .custom-dropdown {
     position: absolute;
     background-color: white;
@@ -41,23 +55,68 @@
     z-index: 1000;
     padding: 5px 0;
     display: none;
-    margin-left: -10px; /* Shift left by 10px */
+    margin-left: -10px;
 }
 
 
-    .custom-dropdown .dropdown-item {
-        padding: 8px 12px;
-        cursor: pointer;
-        text-decoration: none;
-        color: #333;
-        display: block;
-    }
+.custom-dropdown .dropdown-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    text-decoration: none;
+    color: #333;
+    display: block;
+} 
 
-        .custom-dropdown .dropdown-item:hover {
-            background-color: #f2f2f2;
-        }
+.custom-dropdown .dropdown-item:hover {
+    background-color: #f2f2f2;
+}
 
-        .custom-dropdown .dropdown-item.text-danger {
-            color: #dc3545;
-        }
+.custom-dropdown .dropdown-item.text-danger {
+    color: #dc3545;
+ }
+
+.pagination {
+    font-size: 16px; 
+}
+
+
+.page-link {
+    color: #E68D4F; 
+    border: 1px solid #E68D4F; 
+    border-radius: 5px; 
+    padding: 5px 10px; 
+    
+    transition: background-color 0.3s ease, color 0.3s ease; 
+}
+
+    
+.page-link:hover {
+    background-color: #E68D4F; 
+    color: white;
+}
+
+
+.page-item.disabled .page-link {
+    color: #ccc; 
+    background-color: transparent; 
+    border-color: #ccc; 
+    pointer-events: none;
+}
+
+
+.page-item.active .page-link {
+    background-color: #F4A261; 
+    color: white;
+    border-color: #F4A261; 
+    font-weight: bold; 
+    pointer-events: none; 
+}
+
+
+.btn-custom-page {
+    background-color: #F4A261 !important;
+    color: white !important;
+    border-color: #F4A261 !important;
+}
+
 
