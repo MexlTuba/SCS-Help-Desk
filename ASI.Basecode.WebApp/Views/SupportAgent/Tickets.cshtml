@@ -99,7 +99,7 @@
                             <select name="statusId" style="width: 137px; height: 29px; border: 1px solid #E68D4F; border-radius: 5px;">
                                 <option disabled>Status</option>
                                 <option value="0" selected="@(Model.StatusId == 0 ? "selected" : null)">All</option>
-                                @foreach (var status in Model.Statuses)
+                                @foreach (var status in Model.Statuses.Where(s => s.StatusType != "Deleted"))
                                 {
                                     <option value="@status.StatusId" selected="@(status.StatusId == Model.StatusId ? "selected" : null)">
                                         @status.StatusType

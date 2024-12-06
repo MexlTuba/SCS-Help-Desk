@@ -137,9 +137,7 @@
                         </div>
                          @if (!string.IsNullOrEmpty(ViewBag.Ticket.AttachmentPath))
                          {
-                        <button type="button" class="btn btn-link p-0" onclick="viewAttachmentModal('@Url.Content(ViewBag.Ticket.AttachmentPath)')">
-                            View Attachment
-                        </button>
+                        <button class="btn btn-secondary" onclick="viewAttachmentModal('@Url.Content("~/" + Model.AttachmentPath)')">View attachment</button>
                         }
                         else
                         {
@@ -175,53 +173,59 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="viewAttachmentModalLabel">Attachment</h5>
-                <button type="button" class="btn" onclick="closeAttachmentModal()">
+                <button type="button" class="btn" onclick="closeAttachmentModal()" aria-label="Close">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
                         <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
                     </svg>
                 </button>
             </div>
-            <div class="modal-body text-center" id="attachmentContent">
-            </div>
+            <div class="modal-body" id="attachmentContent"></div>
         </div>
     </div>
 </div>
 
+@section scripts {
     <script>
-    function viewAttachmentModal(attachmentPath) {
-        const modalBody = document.getElementById('attachmentContent');
+        function viewAttachmentModal(attachmentPath) {
+            const modalBody = document.getElementById('attachmentContent');
+            const fileUrl = attachmentPath;
 
-        if (!attachmentPath || attachmentPath === "null") {
-            modalBody.innerHTML = '<p>No attachment submitted.</p>';
-        } else {
-            const fileUrl = attachmentPath; // Use Razor's properly encoded URL
+            if (fileUrl) {
+                const fileExtension = fileUrl.split('.').pop().toLowerCase();
 
-            const fileExtension = fileUrl.split('.').pop().toLowerCase();
-            if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
-                modalBody.innerHTML = `<img src="${fileUrl}" alt="Attachment" class="img-fluid" />`;
-            } else if (['pdf'].includes(fileExtension)) {
-                modalBody.innerHTML = `<iframe src="${fileUrl}" width="100%" height="400px"></iframe>`;
+                if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
+                    modalBody.innerHTML = `<img src="${fileUrl}" alt="Attachment" class="img-fluid" />`;
+                } else if (['pdf'].includes(fileExtension)) {
+                    modalBody.innerHTML = `<iframe src="${fileUrl}" width="100%" height="400px"></iframe>`;
+                } else {
+                    modalBody.innerHTML = '<p>Unsupported file type.</p>';
+                }
             } else {
-                modalBody.innerHTML = `
-                            <p>Attachment cannot be previewed. <a href="${fileUrl}" target="_blank">Download</a></p>
-                        `;
+                modalBody.innerHTML = '<p>No attachment submitted.</p>';
             }
+
+            var modal = new bootstrap.Modal(document.getElementById('viewAttachmentModal'));
+            modal.show();
         }
 
-        var modal = new bootstrap.Modal(document.getElementById('viewAttachmentModal'));
-        modal.show();
-    }
-
         function closeAttachmentModal() {
-            const modalElement = document.getElementById('viewAttachmentModal');
+            var modalElement = document.getElementById('viewAttachmentModal');
             if (modalElement) {
-                const modalInstance = bootstrap.Modal.getInstance(modalElement);
-                if (modalInstance) {
-                    modalInstance.hide();
+                modalElement.classList.remove('show');
+                modalElement.setAttribute('aria-hidden', 'true');
+                modalElement.style.display = 'none';
+
+                var backdrop = document.querySelector('.modal-backdrop');
+                if (backdrop) {
+                    backdrop.parentNode.removeChild(backdrop);
                 }
+
+                document.body.classList.remove('modal-open');
+                document.body.style.paddingRight = '';
             }
         }
     </script>
+}
 
 @section Styles {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">

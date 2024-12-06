@@ -148,9 +148,7 @@
                     </div>
                     @if (!string.IsNullOrEmpty(ViewBag.Ticket.AttachmentPath))
                     {
-                        <button type="button" class="btn btn-link p-0" onclick="viewAttachmentModal('@Url.Content(ViewBag.Ticket.AttachmentPath)')">
-                            View Attachment
-                        </button>
+                        <button class="btn btn-secondary" onclick="viewAttachmentModal('@Url.Content("~/" + Model.AttachmentPath)')">View attachment</button>
                     }
                     else
                     {
@@ -158,8 +156,8 @@
                             No Attachment Uploaded
                         </button>
                     }
+                    </div>
                 </div>
-            </div>
             <div style="background-color: #fff; width:300px; height:530px; border: 1px solid #e0e0e0; border-radius: 10px; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
                 <div style="display:flex; flex-direction: row;">
                     <img src="~/img/info.svg" style="margin-bottom:10px; width: 21px; height: auto;" alt="logo" />
@@ -224,12 +222,19 @@
     }
 
     function closeAttachmentModal() {
-        const modalElement = document.getElementById('viewAttachmentModal');
+        var modalElement = document.getElementById('viewAttachmentModal');
         if (modalElement) {
-            const modalInstance = bootstrap.Modal.getInstance(modalElement);
-            if (modalInstance) {
-                modalInstance.hide();
+            modalElement.classList.remove('show');
+            modalElement.setAttribute('aria-hidden', 'true');
+            modalElement.style.display = 'none';
+
+            var backdrop = document.querySelector('.modal-backdrop');
+            if (backdrop) {
+                backdrop.parentNode.removeChild(backdrop);
             }
+
+            document.body.classList.remove('modal-open');
+            document.body.style.paddingRight = '';
         }
     }
 </script>
