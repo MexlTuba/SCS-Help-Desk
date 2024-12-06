@@ -115,7 +115,7 @@ namespace ASI.Basecode.WebApp.Controllers
             return View(model);
         }
         // GET: UsersController
-        public IActionResult UserList(string role, string searchId, int page = 1, int pageSize = 10)
+        public IActionResult UserList(string role, string searchId, int page = 1, int pageSize = 5)
         {
             var users = _userService.GetAllUsers().Where(u => u.Role != "Super Admin" && u.Role != "Admin").ToList();
 
