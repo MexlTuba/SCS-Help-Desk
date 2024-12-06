@@ -59,7 +59,6 @@
                             <label style="display: block; margin-bottom: 5px; font-weight: bold;">Role:</label>
                             <select asp-for="Role" class="form-control">
                                 <option value="">Select option</option>
-                                <option value="Admin">Admin</option>
                                 <option value="Support Agent">Support Agent</option>
                                 <option value="Student">Student</option>
                             </select>
@@ -74,18 +73,12 @@
                     <!-- Photo Upload Area -->
                     <div style="width: 200px; text-align: center;">
                         <div style="width: 150px; height: 150px; margin: 0 auto 20px; background-color: white; border-radius: 50%; display: flex; justify-content: center; align-items: center;">
-                            <div style="color: #666;">
-                                Add Photo
-                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Buttons -->
                 <div style="display: flex; justify-content: flex-end; margin-top: 30px;">
-                    <button type="reset" style="padding: 10px 20px; background-color: white; color: #f4a460; border: 1px solid #f4a460; border-radius: 5px; margin-right: 10px; cursor: pointer;">
-                        Clear Form
-                    </button>
                     <button type="submit" style="padding: 10px 20px; background-color: #f4a460; color: black; border: none; border-radius: 5px; margin-right: 10px; cursor: pointer;">
                         Save Changes
                     </button>
@@ -104,7 +97,7 @@
             if (confirm("Are you sure you want to reset the password for this user?")) {
                 var form = document.createElement("form");
                 form.method = "post";
-                form.action = "/User/ResetPassword";
+                form.action = "/Admin/ResetPassword";
 
                 var input = document.createElement("input");
                 input.type = "hidden";

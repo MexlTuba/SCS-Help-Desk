@@ -6,7 +6,7 @@
 
 <div style="display: flex; min-height: 100vh;">
     <!-- Sidebar -->
-    <div style="width: 250px; background-color: #f8f9fa; ">
+    <div style="width: 250px; background-color: #f8f9fa;">
         <div style="padding: 15px;">
             <img src="~/img/SCS-Logo.png" alt="SCS Logo" style="max-width: 50px; margin-bottom: 10px;">
             <h5 style="margin-bottom: 20px;">SCS HELP DESK</h5>
@@ -31,43 +31,60 @@
                 <i class="bi bi-box-arrow-right"></i> LOGOUT
             </a>
         </div>
-    </div>
-
+    </div> <!-- Closing Sidebar -->
     <!-- Main Content -->
     <div style="flex: 1; background: #D9D9D9; padding: 20px;">
         <div style="background-color: white; border-radius: 15px; padding: 30px; margin: 0 20px;">
             <h2 class="card-title mb-4">USER LIST</h2>
 
-            <div class="row mb-4">
-                <div class="col-md-4">
-                    <form method="get" action="@Url.Action("UserList", "Admin")">
-                        <div class="input-group">
+            <div class="row mb-4 align-items-center">
+                <!-- Left section: Search bar, filter dropdown, apply filter, reset filter -->
+                <div class="col-md-9 d-flex align-items-center" style="flex-wrap: nowrap; gap: 15px;">
+                    <form method="get" action="@Url.Action("UserList", "Admin")" class="d-flex w-100 align-items-center" style="gap: 15px;">
+                        <!-- Search Bar -->
+                        <div class="input-group" style="max-width: 250px;">
                             <span class="input-group-text" style="background-color: #f8f9fa; border: none;">
                                 <i class="bi bi-search"></i>
                             </span>
-                            <input type="text" class="form-control" placeholder="Search ID" name="searchId" value="@ViewBag.SearchId" style="background-color: #f8f9fa; border: none;">
+                            <input type="number"
+                                   class="form-control"
+                                   placeholder="Search ID"
+                                   name="searchId"
+                                   value="@ViewBag.SearchId"
+                                   style="background-color: #f8f9fa; border: none;"
+                                   oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                                   class="no-arrows">
                         </div>
 
-                        <div class="row-md-4">
+                        <!-- Filter Dropdown -->
+                        <select name="role" class="form-select" style="border: none; max-width: 200px;">
+                            <option value="">All</option>
+                            <option value="Admin">Admin</option>
+                            <option value="Support Agent">Support Agent</option>
+                            <option value="Student">Student</option>
+                        </select>
 
-                            <select name="role" class="form-select" style="border: none;">
-                                <option value="">All</option>
-                                <option value="Admin">Admin</option>
-                                <option value="Support Agent">Support Agent</option>
-                                <option value="Student">Student</option>
-                            </select>
-                            <button type="submit" class="btn btn-primary" style="background-color: white; color: #E68D4F; border: 2px solid #E68D4F; margin-left: 10px;">
-                                Apply Filter
-                            </button>
-                        </div>
+                        <!-- Apply Filter Button -->
+                        <button type="submit" class="btn btn-primary" style="background-color: white; color: #E68D4F; border: 2px solid #E68D4F;">
+                            Apply Filter
+                        </button>
+
+                        <!-- Reset Filter Button -->
+                        <a href="@Url.Action("UserList", "Admin")" class="btn btn-outline-secondary">Reset Filters</a>
                     </form>
                 </div>
-                <div class="col-md-4 d-flex justify-content-end align-items-start">
+
+                <!-- Right section: Add User button -->
+                <div class="col-md-3 d-flex justify-content-end">
                     <a href="@Url.Action("UserAdd", "Admin")" class="btn btn-primary" style="background-color: #E68D4F; color: black;">
                         <i class="bi bi-plus"></i> Add User
                     </a>
                 </div>
             </div>
+
+
+
+
 
             <hr style="border: 1px solid black;">
 
@@ -114,18 +131,31 @@
                     </ul>
                 </nav>
             </div>
-        </div>
-
-        @section Scripts {
-            <script>
-                function confirmDelete(userId) {
-                    if (confirm("Are you sure you want to delete this user?")) {
-                        window.location.href = '@Url.Action("Delete", "Admin")?id=' + userId;
-                    }
+        </div> <!-- Closing Main Content -->
+    </div> <!-- Closing flex container -->
+    @section Scripts {
+        <script>
+            function confirmDelete(userId) {
+                if (confirm("Are you sure you want to delete this user?")) {
+                    window.location.href = '@Url.Action("Delete", "Admin")?id=' + userId;
                 }
-            </script>
-        }
+            }
+        </script>
+    }
 
-        @section Styles {
-            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
-        }
+    @section Styles {
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+
+        <style>
+            /* Remove number input arrows */
+            input[type="number"]::-webkit-inner-spin-button,
+            input[type="number"]::-webkit-outer-spin-button {
+                -webkit-appearance: none;
+                margin: 0;
+            }
+
+            input[type="number"] {
+                -moz-appearance: textfield; /* For Firefox */
+            }
+        </style>
+    }
