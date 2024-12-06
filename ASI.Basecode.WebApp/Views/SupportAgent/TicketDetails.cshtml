@@ -30,10 +30,6 @@
 <div style="display: flex; min-height: 100vh;">
     <!-- Sidebar -->
     <div style="width: 250px; background-color: #f8f9fa;">
-        <div style="padding: 15px;">
-            <img src="~/img/SCS-Logo.png" alt="SCS Logo" style="max-width: 50px; margin-bottom: 10px;">
-            <h5 style="margin-bottom: 20px;">SCS HELP DESK</h5>
-        </div>
         <div style="width: 250px; background-color: #f8f9fa; ">
             <div style="padding: 15px;">
                 <img src="~/img/SCS-Logo.png" alt="SCS Logo" style="max-width: 50px; margin-bottom: 10px;">
@@ -75,7 +71,7 @@
                 <h2 style="margin-top:10px; color:#E68D4F; font-size:30px; font-weight:bold;">@ViewBag.Ticket.Title</h2>
                 <h6 style="margin-top:20px; font-size:15px; font-weight:bold;">Date Created: @ViewBag.Ticket.DateCreated.ToShortDateString()</h6>
                 <h6 style="margin-top:20px; font-size:15px; font-weight:bold;">Ticket ID: @ViewBag.Ticket.TicketId</h6>
-                <h6 style="margin-top:15px; font-size:15px; font-weight:bold;">Requested By: @ViewBag.Ticket.CreatedBy</h6>
+                <h6 style="margin-top:15px; font-size:15px; font-weight:bold;">Requested By: @Model.CreatedByName</h6>
                 <div style="display:flex; flex-direction: row; align-items:center;">
                     <p style="font-size:15px; font-weight:bold;">Cateory: </p>
                     <p style="margin-left: 10px; padding:5px; width:220px; height:29px; border:none; background-color: #F1F1F1; border-radius:20px; text-align:center;">
@@ -141,7 +137,7 @@
                     </div>
                     <p style="font: 18px;">@ViewBag.Ticket.Description</p>
                 </div>
-                <div style="margin-top: 20px; background-color: #fff; width:350px; height:175px; border: 1px solid #e0e0e0; border-radius: 10px; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+                <div style="margin-top: 20px; background-color: #fff; width:330px; height:175px; border: 1px solid #e0e0e0; border-radius: 10px; padding: 20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
                     <div style="display:flex; flex-direction: row; align-items:start;">
                         <img src="~/img/file.svg" style="width: 19px; height: auto;" alt="Attachment Logo" />
                         <p style="margin-left:15px; font-size:20px; font-weight:bold; color: #E68D4F;">Attachment</p>
