@@ -6,7 +6,7 @@
 
 <div style="display: flex; flex-direction: column; min-height: 100vh;">
     <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg bg-body-tertiary shadow-lg p-3">
+    <nav class="navbar navbar-expand-lg ticketNavBar shadow-lg p-3">
         <div class="container-fluid">
             <!-- Logo and Title -->
             <div class="d-flex align-items-center">
@@ -16,7 +16,7 @@
 
             <!-- Right Side: Buttons -->
             <div class="d-flex gap-3">
-                <a href="@Url.Action("StudentDashboard", "Student")" class="btn btn-custom shadow-sm">
+                <a href="@Url.Action("StudentDashboard", "Student")" class="btn btn-custom shadow-sm mr-5">
                     Back to Homepage
                 </a>
                 <a asp-action="SignOutUser" asp-controller="Account" class="btn btn-danger logout-btn shadow-lg">

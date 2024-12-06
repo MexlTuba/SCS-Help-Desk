@@ -183,6 +183,8 @@ namespace ASI.Basecode.WebApp.Controllers
             {
                 return NotFound();
             }
+
+            // Fetch all support agents for dropdown (unchanged)
             var supportAgents = _userService.GetAllUsers()
                                             .Where(u => u.Role == "Support Agent")
                                             .Select(u => new { u.UserId, u.Name })
@@ -190,15 +192,19 @@ namespace ASI.Basecode.WebApp.Controllers
 
             ViewBag.SupportAgents = new SelectList(supportAgents, "UserId", "Name");
             ViewBag.Ticket = ticket;
-            var feedback = _feedbackService.GetFeedbackByTicketId(id);
-            var feedbackExists = _feedbackService.GetFeedbackByTicketId(id) != null;
 
+            // Fetch feedback information
+            var feedback = _feedbackService.GetFeedbackByTicketId(id);
+            var feedbackExists = feedback != null;
+
+            // Populate the view model
             var model = new DetailsTicketViewModel
             {
                 TicketId = ticket.TicketId,
                 Title = ticket.Title,
                 Description = ticket.Description,
                 DateCreated = ticket.DateCreated,
+                CreatedByName = _userService.GetUserById(ticket.CreatedBy)?.Name ?? "Unknown", // Same approach as AssignedToName
                 HasFeedback = feedbackExists,
                 AttachmentPath = ticket.AttachmentPath,
                 CategoryId = ticket.CategoryId,
@@ -216,8 +222,10 @@ namespace ASI.Basecode.WebApp.Controllers
                 Priorities = _priorityService.GetAllPriorities().ToList(),
                 Statuses = _statusService.GetAllStatuses().ToList()
             };
+
             return View(model);
         }
+
 
         public IActionResult AssignTicket(int ticketId, string assigneeId)
         {
@@ -390,38 +398,41 @@ namespace ASI.Basecode.WebApp.Controllers
             return View(model);
         }
 
-        // Delete Knowledgebase
         public IActionResult DeleteKnowledgebase(int id)
         {
-            var article = _knowledgebaseService.GetArticleById(id);
-
-            if (article == null)
+            try
             {
-                TempData["ErrorMessage"] = "Article not found.";
-                return RedirectToAction("ListArticles");
+                var article = _knowledgebaseService.GetArticleById(id);
+                if (article == null)
+                {
+                    TempData["ErrorMessage"] = "Article not found.";
+                    return RedirectToAction("ListArticles");
+                }
+
+                _knowledgebaseService.DeleteKnowledgebase(id);
+
+                TempData["SuccessMessage"] = "Article deleted successfully.";
+            }
+            catch (Exception ex)
+            {
+                // Log the exception and show an error message
+                TempData["ErrorMessage"] = "An error occurred while deleting the article: " + ex.Message;
             }
 
-            var articleViewModel = new KnowledgeBaseViewModel
-            {
-                ArticleId = article.ArticleId,
-                Title = article.Title,
-                Content = article.Content,
-                CategoryName = article.CategoryName,
-                CreatedBy = article.CreatedBy,
-                CreatedAt = article.CreatedAt
-            };
-
-            return View(articleViewModel);
+            // Redirect back to the list view
+            return RedirectToAction("ListArticles");
         }
-
 
         [HttpPost]
         public IActionResult DeleteConfirmed(int id)
         {
+            // Call service to delete the article
             _knowledgebaseService.DeleteKnowledgebase(id);
 
+            // Optionally, set a success message
             TempData["SuccessMessage"] = "Article deleted successfully!";
 
+            // Redirect back to ListArticles page
             return RedirectToAction("ListArticles");
         }
 
