@@ -20,9 +20,6 @@
             <a href="@Url.Action("UserList", "SuperAdmin")" style="display: block; padding: 10px 15px; text-decoration: none; color: white; background-color: #6c757d;">
                 <i class="bi bi-person"></i> USER LIST
             </a>
-            <a href="@Url.Action("Knowledge", "SuperAdmin")" style="display: block; padding: 10px 15px; text-decoration: none; color: black;">
-                <i class="bi bi-book"></i> KNOWLEDGE BASE
-            </a>
             <a href="@Url.Action("Tickets", "SuperAdmin")" style="display: block; padding: 10px 15px; text-decoration: none; color: black;">
                 <i class="bi bi-ticket"></i> TICKETS
             </a>
@@ -49,8 +46,8 @@
                     <div style="flex: 1; margin-right: 40px;">
                         <div class="form-outline mb-4">
                             <label class="form-label" for="userId">ID Number</label>
-                            <input type="text" id="userId" class="form-control"
-                                   asp-for="UserId" placeholder="Enter ID Number" />
+                            <input type="number" id="userId" class="form-control"
+                                   asp-for="UserId" placeholder="Enter ID Number" oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
                             <span asp-validation-for="UserId" class="text-danger"></span>
                         </div>
 
@@ -78,6 +75,12 @@
                             </select>
                         </div>
                     </div>
+
+                    <!-- Photo Upload Area -->
+                    <div style="width: 200px; text-align: center;">
+                        <div style="width: 150px; height: 150px; margin: 0 auto 20px; background-color: white; border-radius: 50%; display: flex; justify-content: center; align-items: center;">
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Buttons -->
@@ -98,13 +101,26 @@
 @section scripts {
     <script>
         // Check for error message and display Toastr notification
-        var errorMessage = '@TempData["ErrorMessage"]';
-        if (errorMessage) {
-            toastr.error(errorMessage);
-        }
+            var errorMessage = '@TempData["ErrorMessage"]';
+            if (errorMessage) {
+                toastr.error(errorMessage);
+            }
     </script>
 }
 
 @section Styles {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+
+    <style>
+        /* Remove number input arrows */
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+    </style>
 }
