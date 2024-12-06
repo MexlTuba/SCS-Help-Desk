@@ -82,8 +82,8 @@
                     <button type="submit" style="padding: 10px 20px; background-color: #f4a460; color: black; border: none; border-radius: 5px; margin-right: 10px; cursor: pointer;">
                         Save Changes
                     </button>
-                    <button type="button" onclick="resetPassword('@Model.UserId')" style="padding: 10px 20px; background-color: white; color: #FF0000; border: 1px solid #FF0000; border-radius: 5px; margin-right: 10px; cursor: pointer;">
-                        Reset Password
+                   <button type="button" onclick="openResetPasswordModal('@Model.UserId')" style="padding: 10px 20px; background-color: white; color: #FF0000; border: 1px solid #FF0000; border-radius: 5px; margin-right: 10px; cursor: pointer;">
+                    Reset Password
                     </button>
                 </div>
             </form>
@@ -91,26 +91,66 @@
     </div>
 </div>
 
+<!-- Reset Password Confirmation Modal -->
+<div class="modal fade" id="resetPasswordModal" tabindex="-1" aria-labelledby="resetPasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="resetPasswordForm" method="post" asp-action="ResetPassword" asp-controller="SuperAdmin">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="resetPasswordModalLabel">Confirm Password Reset</h5>
+                </div>
+                <div class="modal-body">
+                    <p id="resetPasswordMessage">Are you sure you want to reset the password?</p>
+                    <!-- Hidden field to pass the user ID -->
+                    <input type="hidden" id="resetPasswordUserId" name="id" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">No</button>
+                    <button type="submit" class="btn btn-danger">Yes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+            function confirmDelete(userId) {
+                if (confirm("Are you sure you want to reset the password")) {
+                    window.location.href = '@Url.Action("ResetPassword", "SuperAdmin")?id=' + userId;
+                }
+            }
+        </script>
+
     <script>
-        function resetPassword(userId) {
-            if (confirm("Are you sure you want to reset the password for this user?")) {
-                var form = document.createElement("form");
-                form.method = "post";
-                form.action = "/Admin/ResetPassword";
+        function openResetPasswordModal(userId) {
+            // Get the modal element
+             const modalElement = document.getElementById('resetPasswordModal');
+            if (!modalElement) {
+                console.error('Modal element not found');
+                return;
+            }
 
-                var input = document.createElement("input");
-                input.type = "hidden";
-                input.name = "id";
-                input.value = userId;
-                form.appendChild(input);
+            // Set the user ID and message
+            document.getElementById('resetPasswordUserId').value = userId;
+            document.getElementById('resetPasswordMessage').textContent = `Are you sure you want to reset the password of User ID #${userId}?`;
 
-                document.body.appendChild(form);
-                form.submit();
+            // Create and show modal
+            var modal = new bootstrap.Modal(modalElement);
+            modal.show();
+        }
+
+        function closeModal() {
+            const modalElement = document.getElementById('resetPasswordModal');
+            const modal = bootstrap.Modal.getInstance(modalElement);
+            if (modal) {
+                modal.hide();
             }
         }
     </script>
 }
+
 @section Styles {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
 }
