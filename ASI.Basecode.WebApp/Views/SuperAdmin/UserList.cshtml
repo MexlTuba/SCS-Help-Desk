@@ -162,7 +162,7 @@
         <script>
             function confirmDelete(userId) {
                 if (confirm("Are you sure you want to delete this user?")) {
-                    window.location.href = '@Url.Action("Delete", "Admin")?id=' + userId;
+                    window.location.href = '@Url.Action("Delete", "SuperAdmin")?id=' + userId;
                 }
             }
         </script>
