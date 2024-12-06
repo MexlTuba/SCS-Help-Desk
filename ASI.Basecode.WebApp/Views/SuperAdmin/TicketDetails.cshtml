@@ -26,6 +26,24 @@
         { 3, "Resolved" },
         { 4, "Closed" }
     };
+
+    string statusStyle = ViewBag.Ticket.StatusId switch
+    {
+        1 => "background-color: #B8E8A5; color: #3FC10C;",  // Green
+        2 => "background-color: #FFD580; color: #FFA500;",  // Orange
+        3 => "background-color: #ADD8E6; color: #0000FF;",  // Blue
+        4 => "background-color: #F5A3A3; color: #FF0000;",  // Red
+        _ => "background-color: #CCCCCC; color: #000000;"   // Default (unknown)
+    };
+
+    string priorityStyle = ViewBag.Ticket.PriorityId switch
+    {
+        1 => "background-color: #F5A3A3; color: #FF0000;",  // Red
+        2 => "background-color: #FFD580; color: #FFA500;",  // Orange
+        3 => "background-color: #B8E8A5; color: #3FC10C;",  // Green
+        4 => "background-color: #E0E0E0; color: #000000;",  // Black
+        _ => "background-color: #CCCCCC; color: #000000;"   // Default (unknown)
+    };
 }
 
 <div style="display: flex; min-height: 100vh;">
@@ -80,13 +98,14 @@
                 </div>
                 <div style="display:flex; flex-direction: row; align-items:center;">
                     <p style="font-size:15px; font-weight:bold;">Status: </p>
-                    <p style="margin-left: 20px; padding:5px; width:220px; height:29px; border:none; background-color: #B8E8A5; border-radius:20px; color:#3FC10C; text-align:center;">
+                    <p style="margin-left: 20px; padding:5px; width:220px; height:29px; border:none; border-radius:20px; text-align:center; @statusStyle">
                         @(statusMap.ContainsKey(@ViewBag.Ticket.StatusId) ? statusMap[@ViewBag.Ticket.StatusId] : "Unknown")
                     </p>
                 </div>
                 <div style="display:flex; flex-direction: row; align-items:center;">
                     <p style="font-size:15px; font-weight:bold;">Priority: </p>
-                    <p style="margin-left: 15px; padding:5px; width:220px; height:29px; border:none; background-color: #F1F1F1; border-radius:20px; text-align:center;">
+                    <p style="margin-left: 15px; padding:5px; width:220px; height:29px; border:none; border-radius:20px; text-align:center; @priorityStyle">
+                        <i class="bi bi-circle-fill" style="font-size: 10px; margin-right: 5px;"></i>
                         @(priorityMap.ContainsKey(@ViewBag.Ticket.PriorityId) ? priorityMap[@ViewBag.Ticket.PriorityId] : "Unknown")
                     </p>
                 </div>
@@ -186,7 +205,7 @@
         if (!attachmentPath || attachmentPath === "null") {
             modalBody.innerHTML = '<p>No attachment submitted.</p>';
         } else {
-            const fileUrl = attachmentPath; // Use Razor's properly encoded URL
+            const fileUrl = attachmentPath;
 
             const fileExtension = fileUrl.split('.').pop().toLowerCase();
             if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {

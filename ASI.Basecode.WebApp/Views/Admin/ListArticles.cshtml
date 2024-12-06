@@ -1,0 +1,160 @@
+﻿@model ASI.Basecode.Services.ServiceModels.KnowledgeBaseViewModel
+
+@{
+    ViewData["Title"] = "Knowledgebase Articles";
+}
+
+<div style="display: flex; min-height: 100vh;">
+    <!-- Sidebar -->
+    <div style="width: 250px; background-color: #f8f9fa;">
+        <div style="padding: 15px;">
+            <img src="~/img/SCS-Logo.png" alt="SCS Logo" style="max-width: 50px; margin-bottom: 10px;">
+            <h5 style="margin-bottom: 20px;">SCS HELP DESK</h5>
+        </div>
+        <div>
+            <a href="@Url.Action("AdminDashboard", "Admin")" style="display: block; padding: 10px 15px; text-decoration: none; color: white; background-color: #6c757d;">
+                <i class="bi bi-grid"></i> DASHBOARD
+            </a>
+            <a href="@Url.Action("UserList", "Admin")" style="display: block; padding: 10px 15px; text-decoration: none; color: black;">
+                <i class="bi bi-person"></i> USER LIST
+            </a>
+            <a href="@Url.Action("ListArticles", "Admin")" style="display: block; padding: 10px 15px; text-decoration: none; color: black;">
+                <i class="bi bi-book"></i> KNOWLEDGE BASE
+            </a>
+            <a href="@Url.Action("Tickets", "Admin")" style="display: block; padding: 10px 15px; text-decoration: none; color: black;">
+                <i class="bi bi-ticket"></i> TICKETS
+            </a>
+            <a href="@Url.Action("Settings", "Admin")" style="display: block; padding: 10px 15px; text-decoration: none; color: black;">
+                <i class="bi bi-gear"></i> ACCOUNT SETTINGS
+            </a>
+            <a asp-action="SignOutUser" asp-controller="Account" style="display: block; padding: 10px 15px; text-decoration: none; color: black;">
+                <i class="bi bi-box-arrow-right"></i> LOGOUT
+            </a>
+        </div>
+    </div>
+
+    <!-- Main content -->
+    <div style="display: flex; flex-direction: column; flex-grow: 1; background-color: #D9D9D9; padding: 20px;">
+        <div style="background-color: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+            <!-- Page Header -->
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h2 style="font-weight: bold; font-size: 24px;">Knowledgebase Articles</h2>
+                <a href="@Url.Action("CreateKnowledgebase", "Admin")" class="btn btn-primary" style="background-color: #007bff; color: white; padding: 10px 20px; border-radius: 5px; font-weight: bold;">
+                    Create Article
+                </a>
+            </div>
+
+            <!-- Filter Form -->
+            <div style="margin-top: 20px;">
+                <form method="get" asp-action="ListArticles" asp-controller="Admin" style="display: flex; align-items: center; gap: 15px;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <img src="~/img/sort.svg" style="width: 19px; height: auto;" alt="logo" />
+                        <p style="font-size: 16px; font-weight: bold; margin: 0;">Sort by:</p>
+                    </div>
+                    <div class="form-group" style="flex-grow: 1;">
+                        <label asp-for="CategoryId" class="form-label">Category</label>
+                        <select asp-for="CategoryId" asp-items="@(new SelectList(Model.Categories, "CategoryId", "CategoryType"))" class="form-control">
+                            <option value="">-- Select Category --</option>
+                        </select>
+                        <span asp-validation-for="CategoryId" class="text-danger"></span>
+                    </div>
+                    <button type="submit" class="btn btn-warning" style="background-color: #E68D4F; color: white;">Apply Filters</button>
+                    <a href="@Url.Action("ListArticles", "Admin")" class="btn btn-outline-secondary">Reset Filters</a>
+                </form>
+            </div>
+
+            <!-- Articles Table -->
+            <div style="margin-top: 20px;">
+                <table class="table table-striped">
+                    <thead style="background-color: #E68D4F; color: white; text-align: center;">
+                        <tr>
+                            <th>Title</th>
+                            <th>Category</th>
+                            <th>Content</th>
+                            <th>Created By</th>
+                            <th>Created At</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Articles != null && Model.Articles.Any())
+                        {
+                            @foreach (var article in Model.Articles)
+                            {
+                                <tr>
+                                    <td>@article.Title</td>
+                                    <td>@article.CategoryName</td>
+                                    <td>@article.Content</td>
+                                    <td>@article.CreatedBy</td>
+                                    <td>@article.CreatedAt.ToString("g")</td>
+                                    <td>
+                                        <a href="@Url.Action("EditKnowledgebase", "Admin", new { id = article.ArticleId })" class="btn btn-warning btn-sm">Edit</a>
+                                        <button type="button" class="btn btn-danger btn-sm" onclick="openDeleteModal(@article.ArticleId)">Delete</button>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="6" style="text-align: center;">No articles found for the selected category.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteArticleModal" tabindex="-1" aria-labelledby="deleteArticleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="deleteArticleForm" method="post" asp-action="Delete" asp-controller="Admin">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteArticleModalLabel">Confirm Deletion</h5>
+                </div>
+                <div class="modal-body">
+                    <p id="deleteArticleMessage">Are you sure you want to delete this article?</p>
+                    <input type="hidden" id="articleIdToDelete" name="id" />
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-danger">Yes</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">No</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+}
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function openDeleteModal(articleId) {
+            document.getElementById('articleIdToDelete').value = articleId;
+            document.getElementById('deleteArticleMessage').textContent = `Are you sure you want to delete Article ID #${articleId}?`;
+            var modal = new bootstrap.Modal(document.getElementById('deleteArticleModal'));
+            modal.show();
+        }
+
+        function closeModal() {
+            var modalElement = document.getElementById('deleteArticleModal');
+            if (modalElement) {
+                modalElement.classList.remove('show');
+                modalElement.setAttribute('aria-hidden', 'true');
+                modalElement.style.display = 'none';
+                document.body.classList.remove('modal-open');
+                var backdrop = document.querySelector('.modal-backdrop');
+                if (backdrop) {
+                    backdrop.parentNode.removeChild(backdrop);
+                }
+            }
+        }
+    </script>
+}

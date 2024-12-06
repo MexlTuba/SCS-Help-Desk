@@ -303,49 +303,25 @@ namespace ASI.Basecode.WebApp.Controllers
         }
 
 
-
-        //public IActionResult ListArticles(int? categoryId)
-        //{
-        //    var model = new KnowledgeBaseViewModel
-        //    {
-        //        Categories = _categoryService.GetAllCategories(),  // Get all categories
-        //        Articles = _knowledgebaseService.GetAllArticles()  // Get all articles initially
-        //    };
-
-        //    // If categoryId is selected, filter the articles by category
-        //    if (categoryId.HasValue && categoryId.Value > 0)
-        //    {
-        //        model.SelectedCategoryId = categoryId.Value;  // Set the selected category
-        //        model.Articles = model.Articles.Where(a => a.CategoryId == categoryId.Value).ToList();  // Filter articles
-        //    }
-
-        //    return View(model);
-        //}
-
-
         public IActionResult ListArticles(int? categoryId)
         {
             var model = new KnowledgeBaseViewModel
             {
-                Categories = _categoryService.GetAllCategories() // Get the list of categories
+                Categories = _categoryService.GetAllCategories()
             };
 
             if (categoryId.HasValue && categoryId.Value > 0)
             {
-                // Get filtered articles by category
+
                 model.Articles = _knowledgebaseService.GetArticlesByCategory(categoryId.Value);
             }
             else
             {
-                // No category filter applied, show all articles
                 model.Articles = _knowledgebaseService.GetAllArticles();
             }
 
             return View(model);
         }
-
-
-
 
 
         // Create Knowledgebase
@@ -417,7 +393,6 @@ namespace ASI.Basecode.WebApp.Controllers
         // Delete Knowledgebase
         public IActionResult DeleteKnowledgebase(int id)
         {
-            // Assuming the service method returns a KnowledgeBaseModel
             var article = _knowledgebaseService.GetArticleById(id);
 
             if (article == null)
@@ -426,7 +401,6 @@ namespace ASI.Basecode.WebApp.Controllers
                 return RedirectToAction("ListArticles");
             }
 
-            // Map the KnowledgeBaseModel to KnowledgeBaseViewModel
             var articleViewModel = new KnowledgeBaseViewModel
             {
                 ArticleId = article.ArticleId,
@@ -437,25 +411,19 @@ namespace ASI.Basecode.WebApp.Controllers
                 CreatedAt = article.CreatedAt
             };
 
-            return View(articleViewModel);  // Pass the ViewModel to the view
+            return View(articleViewModel);
         }
 
 
         [HttpPost]
         public IActionResult DeleteConfirmed(int id)
         {
-            // Call service to delete the article
             _knowledgebaseService.DeleteKnowledgebase(id);
 
-            // Optionally, set a success message
             TempData["SuccessMessage"] = "Article deleted successfully!";
 
-            // Redirect back to ListArticles page
             return RedirectToAction("ListArticles");
         }
-
-
-
 
         public IActionResult Settings()
         {
@@ -464,7 +432,7 @@ namespace ASI.Basecode.WebApp.Controllers
 
             if (string.IsNullOrEmpty(userId))
             {
-                return RedirectToAction("Login", "Account"); // Redirect to login if session expired
+                return RedirectToAction("Login", "Account");
             }
 
             // Fetch user preferences using the service
