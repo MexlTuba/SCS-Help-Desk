@@ -92,7 +92,7 @@
                     <h2 style="margin-top:10px; color:#E68D4F; font-size:30px; font-weight:bold;">@ViewBag.Ticket.Title</h2>
                     <h6 style="margin-top:20px; font-size:15px; font-weight:bold;">Date Created: @ViewBag.Ticket.DateCreated.ToShortDateString()</h6>
                     <h6 style="margin-top:20px; font-size:15px; font-weight:bold;">Ticket ID: @ViewBag.Ticket.TicketId</h6>
-                    <h6 style="margin-top:15px; font-size:15px; font-weight:bold;">Requested By: @ViewBag.Ticket.CreatedBy</h6>
+                <h6 style="margin-top:15px; font-size:15px; font-weight:bold;">Requested By: @Model.CreatedByName</h6>
                     <div style="display:flex; flex-direction: row; align-items:center;">
                         <p style="font-size:15px; font-weight:bold;">Cateory: </p>
                         <p style="margin-left: 10px; padding:5px; width:220px; height:29px; border:none; background-color: #F1F1F1; border-radius:20px; text-align:center;">
