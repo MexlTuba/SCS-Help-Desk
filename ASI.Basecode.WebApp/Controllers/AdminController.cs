@@ -117,7 +117,7 @@ namespace ASI.Basecode.WebApp.Controllers
         // GET: UsersController
         public IActionResult UserList(string role, string searchId, int page = 1, int pageSize = 5)
         {
-            var users = _userService.GetAllUsers().Where(u => u.Role != "Super Admin" && u.Role != "Admin").ToList();
+            var users = _userService.GetAllUsers().Where(u => u.Role != "Super Admin").ToList();
 
             if (!string.IsNullOrEmpty(role))
             {
@@ -519,7 +519,7 @@ namespace ASI.Basecode.WebApp.Controllers
             return View(user);
         }
 
-        // POST: SuperAdminController/Edit/userId
+        // POST: AdminController/Edit/userId
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(User user)
@@ -539,7 +539,7 @@ namespace ASI.Basecode.WebApp.Controllers
             }
         }
 
-        // POST: SuperAdminController/ResetPassword/userId
+        // POST: AdminController/ResetPassword/userId
         [HttpPost]
         public ActionResult ResetPassword(string id)
         {
@@ -570,11 +570,12 @@ namespace ASI.Basecode.WebApp.Controllers
         // POST: UsersController/Delete/userId
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Delete(string id, IFormCollection collection)
         {
             try
             {
-                return RedirectToAction(nameof(UserList));
+                _userService.DeleteUser(id);
+                return RedirectToAction("UserList", "Admin");
             }
             catch
             {

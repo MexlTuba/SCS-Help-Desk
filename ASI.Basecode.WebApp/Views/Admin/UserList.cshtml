@@ -99,17 +99,28 @@
                     <tbody>
                         @foreach (var user in Model.Users)
                         {
-                            <tr>
+                            <tr data-role="@user.Role">
                                 <td>@user.Name</td>
                                 <td>@user.Role</td>
                                 <td>@user.UserId</td>
                                 <td>@user.Email</td>
-                                <td>     
-                                    <div class="btn-group" role="group" style="box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
-                                        <a href="@Url.Action("Edit", "Admin", new { id = user.UserId })" class="btn btn-sm" style="background-color: #EBEBEB; color: #E68D4F; padding: 12px; font-size: 20px;"><i class="bi bi-pencil"></i></a>
-                                        <a href="#" class="btn btn-sm" style="background-color: #EBEBEB; color: #E68D4F; padding: 12px; font-size: 20px;" onclick="confirmDelete('@user.UserId')"><i class="bi bi-trash"></i></a>
-                                    </div>
-                                </td>
+                                <td>
+                                    @if (user.Role == "Admin")
+                                    {
+                                        <span style="color: gray;">none</span>
+                                    }
+                                    else
+                                    {
+                                        <div class="btn-group action-buttons" role="group" style="box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                                            <a href="@Url.Action("Edit", "Admin", new { id = user.UserId })" class="btn btn-sm" style="background-color: #EBEBEB; color: #E68D4F; padding: 12px; font-size: 20px;"><i class="bi bi-pencil"></i></a>
+                                            <button type="button"
+                                                    class="btn btn-sm"
+                                                    onclick="openDeleteUserModal('@user.UserId')"
+                                                    style="background-color: #EBEBEB; color: #E68D4F;font-size: 20px;">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </div>
+                                    }
                             </tr>
                         }
                     </tbody>
@@ -131,12 +142,63 @@
         </div> <!-- Closing Main Content -->
     </div> <!-- Closing flex container -->
 
+    <!-- Delete User Confirmation Modal -->
+    <div class="modal fade" id="deleteUserModal" tabindex="-1" aria-labelledby="deleteUserModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- Form to handle user deletion -->
+                <form id="deleteUserForm" method="post" asp-action="Delete" asp-controller="Admin" method="post">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteUserModalLabel">Confirm Deletion</h5>
+                    </div>
+                    <div class="modal-body">
+                        <p id="deleteUserMessage">Are you sure you want to delete this user?</p>
+                        <!-- Hidden field to pass the user ID -->
+                        <input type="hidden" id="userIdToDelete" name="id" />
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="closeUserModal()">No</button>
+                        <button type="submit" class="btn btn-danger">Yes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
 
     @section Scripts {
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
         <script>
             function confirmDelete(userId) {
                 if (confirm("Are you sure you want to delete this user?")) {
                     window.location.href = '@Url.Action("Delete", "Admin")?id=' + userId;
+                }
+            }
+        </script>
+
+        <script>
+            function openDeleteUserModal(userId) {
+                // Get the modal element
+                const modalElement = document.getElementById('deleteUserModal');
+                if (!modalElement) {
+                    console.error('Modal element not found');
+                    return;
+                }
+
+                // Set the user ID and message
+                document.getElementById('userIdToDelete').value = userId;
+                document.getElementById('deleteUserMessage').textContent = `Are you sure you want to delete User ID #${userId}?`;
+
+                // Create and show modal
+                var modal = new bootstrap.Modal(modalElement);
+                modal.show();
+            }
+
+            function closeUserModal() {
+                const modalElement = document.getElementById('deleteUserModal');
+                const modal = bootstrap.Modal.getInstance(modalElement);
+                if (modal) {
+                    modal.hide();
                 }
             }
         </script>

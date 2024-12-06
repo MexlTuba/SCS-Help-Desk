@@ -430,7 +430,7 @@ namespace ASI.Basecode.WebApp.Controllers
             try
             {
                 _userService.DeleteUser(id);
-                return RedirectToAction(nameof(UserList));
+                return RedirectToAction("UserList", "SuperAdmin");
             }
             catch
             {
@@ -441,11 +441,12 @@ namespace ASI.Basecode.WebApp.Controllers
         // POST: UsersController/Delete/userId
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Delete(string id, IFormCollection collection)
         {
             try
             {
-                return RedirectToAction(nameof(UserList));
+                _userService.DeleteUser(id);
+                return RedirectToAction("UserList", "SuperAdmin");
             }
             catch
             {
