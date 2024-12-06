@@ -49,8 +49,8 @@
                     <div style="flex: 1; margin-right: 40px;">
                         <div class="form-outline mb-4">
                             <label class="form-label" for="userId">ID Number</label>
-                            <input type="text" id="userId" class="form-control"
-                                   asp-for="UserId" placeholder="Enter ID Number" />
+                            <input type="number" id="userId" class="form-control"
+                                   asp-for="UserId" placeholder="Enter ID Number" oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
                             <span asp-validation-for="UserId" class="text-danger"></span>
                         </div>
 
@@ -112,4 +112,17 @@
 
 @section Styles {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+
+    <style>
+        /* Remove number input arrows */
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+    </style>
 }
