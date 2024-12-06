@@ -7,6 +7,11 @@
     height: 60px;
 }
 
+.ticketNavBar {
+    background-color: white;
+}
+
+
 .btn-custom {
     background-color: #f4a261;
     border: none;
