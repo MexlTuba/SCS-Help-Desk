@@ -32,8 +32,8 @@
             </a>
         </div>
     </div>
-<div style="display: flex; min-height: 120vh; min-width:165vh; background-color: #D9D9D9; align-items: start;">
-        <div style="padding: 10px; width: 100%; height: 120vh; background-color: #fff; margin:20px; border: 1px solid #e0e0e0; border-radius:20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+    <div class="d-flex" style="height: 120vh; min-width: 175vh; background-color: #D9D9D9; align-items: flex-start;">
+        <div style="padding: 10px; width: 100%; height: 106vh; background-color: #fff; margin:20px; border: 1px solid #e0e0e0; border-radius:20px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
         <h2 style="margin-top: 32px; margin-left:23px; font-weight:bold; font-size:30px;">TICKETS</h2>
         <div style="display: flex; justify-content: space-between; margin-top: 30px;">
             <div style="flex: 1; background-color: #F1F1F1; height: 63px; margin-right: 20px; border-radius: 10px; display: flex; justify-content: start; align-items: start;">
@@ -127,7 +127,14 @@
 
                         <!-- Submit and Reset Buttons -->
                         <button type="submit" class="btn btn-warning" style="margin-left: 15px;background-color: #E68D4F; color:white">Apply Filters</button>
-                        <a href="@Url.Action("Tickets", "Admin")" class="btn btn-outline-secondary" style="margin-left: 15px; ">Reset Filters</a>
+                        <a href="@Url.Action("Tickets", "Admin")"
+                           class="btn"
+                           style="border: 1px solid #f4a261; color: #f4a261; background-color: transparent; border-radius: 5px; margin-left: 5px; transition: background-color 0.2s ease, color 0.2s ease;"
+                           onmouseover="this.style.backgroundColor='#f4a261'; this.style.color='white';"
+                           onmouseout="this.style.backgroundColor='transparent'; this.style.color='#f4a261';">
+                            Reset Filters
+                        </a>
+
                     </div>
                 </form>
 
@@ -223,10 +230,11 @@
                                     </td>
                                     <td style="padding: 10px; border-bottom: 1px solid #ddd;">@ticket.DateCreated.ToShortDateString()</td>
                                     <td style="padding: 10px; border-bottom: 1px solid #ddd;">
-                                        <a href="@Url.Action("TicketDetails", "Admin", new { id = ticket.TicketId })">
-                                            <div style="width: 40px; height: 40px; background-color:grey; border-radius: 10px; display: flex; align-items: center; justify-content: center;">
-                                                <img src="~/img/action.svg" alt="icon" style="width: 20px;" />
-                                            </div>
+                                        <a href="@Url.Action("TicketDetails", "Admin", new { id = ticket.TicketId })" class="btn btn-sm"
+                                           style="background-color: #EBEBEB; color: #E68D4F; padding: 5px; font-size: 20px;"
+                                           onmouseover="this.style.backgroundColor='#d6d6d6'; this.style.color='#c0763d';"
+                                           onmouseout="this.style.backgroundColor='#EBEBEB'; this.style.color='#E68D4F';">
+                                            <i class="bi bi-eye"></i>                                  
                                         </a>
                                     </td>
                                 </tr>
@@ -241,30 +249,38 @@
                     </tbody>
                 </table>
             </div>
-            <nav>
-                <ul class="pagination justify-content-center">
-                    @if (Model.CurrentPage > 1)
-                    {
-                        <li class="page-item" style="margin-top:15px;">
-                            <a class="page-link" href="@Url.Action("Tickets", new { pageNumber = Model.CurrentPage - 1, categoryId = Model.CategoryId, statusId = Model.StatusId, priorityId = Model.PriorityId, pageSize = Model.PageSize })">Previous</a>
-                        </li>
-                    }
+            <nav aria-label="Pagination">
+                <div class="d-flex justify-content-center mt-5">
+                    <div class="btn-group" role="group">
+                        <!-- Previous Button -->
+                        <a class="btn btn-outline-custom @(Model.CurrentPage <= 1 ? "disabled" : "")"
+                           href="@(Model.CurrentPage > 1 ? Url.Action("Tickets", new { pageNumber = Model.CurrentPage - 1, categoryId = Model.CategoryId, statusId = Model.StatusId, priorityId = Model.PriorityId, pageSize = Model.PageSize }) : "#")"
+                           style="color: #E68D4F; border: 1px solid #E68D4F; border-radius: 5px; padding: 5px 10px; transition: background-color 0.3s ease, color 0.3s ease; text-decoration: none;">
+                            Previous
+                        </a>
 
-                    @for (int i = 1; i <= Model.TotalPages; i++)
-                    {
-                        <li class="page-item @(i == Model.CurrentPage ? "active" : "")" style="margin-top:15px;">
-                            <a class="page-link" href="@Url.Action("Tickets", new { pageNumber = i, categoryId = Model.CategoryId, statusId = Model.StatusId, priorityId = Model.PriorityId, pageSize = Model.PageSize })">@i</a>
-                        </li>
-                    }
+                        <!-- Page Numbers -->
+                        @for (int i = 1; i <= Model.TotalPages; i++)
+                        {
+                            <a class="btn @(i == Model.CurrentPage ? "btn-custom-page" : "btn-outline-custom")"
+                               href="@Url.Action("Tickets", new { pageNumber = i, categoryId = Model.CategoryId, statusId = Model.StatusId, priorityId = Model.PriorityId, pageSize = Model.PageSize })"
+                               style="@(i == Model.CurrentPage
+                           ? "background-color: #F4A261; color: white; border-color: #F4A261; font-weight: bold;"
+                           : "color: #E68D4F; border: 1px solid #E68D4F; border-radius: 5px; padding: 5px 10px; transition: background-color 0.3s ease, color 0.3s ease; text-decoration: none;")">
+                                @i
+                            </a>
+                        }
 
-                    @if (Model.CurrentPage < Model.TotalPages)
-                    {
-                        <li class="page-item" style="margin-top:15px;">
-                            <a class="page-link" href="@Url.Action("Tickets", new { pageNumber = Model.CurrentPage + 1, categoryId = Model.CategoryId, statusId = Model.StatusId, priorityId = Model.PriorityId, pageSize = Model.PageSize })">Next</a>
-                        </li>
-                    }
-                </ul>
+                        <!-- Next Button -->
+                        <a class="btn btn-outline-custom @(Model.CurrentPage >= Model.TotalPages ? "disabled" : "")"
+                           href="@(Model.CurrentPage < Model.TotalPages ? Url.Action("Tickets", new { pageNumber = Model.CurrentPage + 1, categoryId = Model.CategoryId, statusId = Model.StatusId, priorityId = Model.PriorityId, pageSize = Model.PageSize }) : "#")"
+                           style="color: #E68D4F; border: 1px solid #E68D4F; border-radius: 5px; padding: 5px 10px; transition: background-color 0.3s ease, color 0.3s ease; text-decoration: none;">
+                            Next
+                        </a>
+                    </div>
+                </div>
             </nav>
+
         </div>
     </div>
 </div>
