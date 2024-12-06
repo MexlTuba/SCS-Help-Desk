@@ -21,6 +21,7 @@ namespace ASI.Basecode.Services.ServiceModels
         public int? TicketRating { get; set; }
         public string TicketComment { get; set; }
         public int? AgentRating { get; set; }
+
         public string AgentComment { get; set; }
         public string UserId { get; set; }
 

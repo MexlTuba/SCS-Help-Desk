@@ -4,6 +4,10 @@
     ViewData["Title"] = "SCS Help Desk";
 }
 
+@section Styles {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+}
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -17,15 +21,12 @@
         }
         
         function openDeleteModal(ticketId) {
-            // Set the ticket ID in the hidden input field
-            document.getElementById('ticketIdToDelete').value = ticketId;
-
-            // Update the modal body content to display the specific ticket ID
+            
+            document.getElementById('ticketIdToDelete').value = ticketId
             document.getElementById('deleteTicketMessage').textContent = `Are you sure you want to delete Ticket ID #${ticketId}?`;
-
             console.log('Opening delete modal for Ticket ID:', ticketId);
 
-            // Show the modal
+           
             var modal = new bootstrap.Modal(document.getElementById('deleteTicketModal'));
             modal.show();
         }
@@ -43,14 +44,10 @@
                 }
             }
         }
-
-
-
-
-        // Debugging form submission for delete functionality
         document.getElementById('deleteTicketForm').addEventListener('submit', function (event) {
             console.log('Submitting the delete form with ticket ID:', document.getElementById('ticketIdToDelete').value);
         });
+
     </script>
     <link rel="stylesheet" href="~/css/myTickets.css" />
 </head>
@@ -71,13 +68,11 @@
                 <div class="card-body">
                     <div class="headers d-flex align-items-center">
                         <h1 class="custom-card-title flex-grow-1">My Tickets</h1>
-                        <div class="container-sm my-2 mr-3">
+                        <div class="container-sm my-2 mr-3 sha">
                             <form method="get" asp-action="MyTickets" asp-controller="Student">
                                 <div class="row align-items-center bg-light rounded shadow-sm py-3">
-                                    <div class="col-md">
-                                        <a href="@Url.Action("MyTickets", "Student")" class="btn btn-secondary">Clear Filters</a>
-                                    </div>
                                     <div class="col-auto">
+                                        <img src="~/img/sort.svg" style="width: 19px; height: auto;" alt="logo" />
                                         <span class="fw-bold text-muted">Sort by:</span>
                                     </div>
 
@@ -124,7 +119,10 @@
                                     </div>
 
                                     <div class="col-md">
-                                        <button type="submit" class="btn btn-primary">Apply Filters</button>
+                                        <button type="submit" class="btn btn-custom">Apply Filters</button>
+                                    </div>
+                                    <div class="col-md">
+                                        <a href="@Url.Action("MyTickets", "Student")" class="btn btn-outline-custom">Clear Filters</a>
                                     </div>
                                 </div>
                             </form>
@@ -133,8 +131,8 @@
 
                     <!-- Ticket Table -->
                     <div class="table-responsive mt-4">
-                        <table class="table table-striped table-bordered">
-                            <thead class="table-dark">
+                        <table class="table table-striped text-center">
+                            <thead style="background-color: #E68D4F; color: white; text-align: center;">
                                 <tr>
                                     <th scope="col">Ticket ID</th>
                                     <th scope="col">Title</th>
@@ -153,18 +151,101 @@
                                     @foreach (var ticket in Model.Tickets)
                                     {
                                         <tr>
+                                            <!-- Ticket ID -->
                                             <td>@ticket.TicketId</td>
+
+                                            <!-- Title -->
                                             <td>@ticket.Title</td>
-                                            <td>@(string.IsNullOrEmpty(ticket.AssignedToName) ? "Unassigned" : ticket.AssignedToName)</td>
-                                            <td>@(Model.Categories.FirstOrDefault(c => c.CategoryId == ticket.CategoryId)?.CategoryType ?? "Unknown")</td>
-                                            <td>@(Model.Priorities.FirstOrDefault(p => p.PriorityId == ticket.PriorityId)?.PriorityType ?? "Unknown")</td>
-                                            <td>@(Model.Statuses.FirstOrDefault(s => s.StatusId == ticket.StatusId)?.StatusType ?? "Unknown")</td>
-                                            <td>@ticket.DateCreated.ToString("yyyy-MM-dd")</td>
-                                            <td>@(ticket.DateClosed.HasValue ? ticket.DateClosed.Value.ToString("yyyy-MM-dd") : "(Not yet closed)")</td>
+
+                                            <!-- Assigned To -->
                                             <td>
-                                                <div class="btn-group" role="group" aria-label="Ticket Actions">
-                                                    <a href="@Url.Action("DetailsTicket", "Student", new { id = ticket.TicketId })" class="btn btn-primary btn-sm">View Details</a>
-                                                    <button type="button" class="btn btn-danger btn-sm" onclick="openDeleteModal(@ticket.TicketId)">Delete</button>
+                                                <span style="background-color: #FFD98F; border-radius: 10px; padding: 5px 10px; font-weight: bold; color: black;">
+                                                    @(string.IsNullOrEmpty(ticket.AssignedToName) ? "Unassigned" : ticket.AssignedToName)
+                                                </span>
+                                            </td>
+
+                                            <!-- Category -->
+                                            <td>
+                                                <span style="background-color: #dee2e6; border-radius: 10px; padding: 5px 10px; font-weight: bold; color: black;">
+                                                    @(Model.Categories.FirstOrDefault(c => c.CategoryId == ticket.CategoryId)?.CategoryType ?? "Unknown")
+                                                </span>
+                                            </td>
+
+                                            <!-- Priority -->
+                                            <td>
+                                                @if (Model.Priorities.FirstOrDefault(p => p.PriorityId == ticket.PriorityId)?.PriorityType == "High")
+                                                {
+                                                    <span style="background-color: #FFCCCC; color: red; border-radius: 10px; padding: 5px 10px; font-weight: bold;">
+                                                        <i class="bi bi-circle-fill" style="font-size: 10px; margin-right: 5px;"></i> High
+                                                    </span>
+                                                }
+                                                else if (Model.Priorities.FirstOrDefault(p => p.PriorityId == ticket.PriorityId)?.PriorityType == "Medium")
+                                                {
+                                                    <span style="background-color: #FFEDCC; color: #E68D4F; border-radius: 10px; padding: 5px 10px; font-weight: bold;">
+                                                        <i class="bi bi-circle-fill" style="font-size: 10px; margin-right: 5px;"></i> Medium
+                                                    </span>
+                                                }
+                                                else if (Model.Priorities.FirstOrDefault(p => p.PriorityId == ticket.PriorityId)?.PriorityType == "Low")
+                                                {
+                                                    <span style="background-color: #D9FFD9; color: green; border-radius: 10px; padding: 5px 10px; font-weight: bold;">
+                                                        <i class="bi bi-circle-fill" style="font-size: 10px; margin-right: 5px;"></i> Low
+                                                    </span>
+                                                }
+                                                else
+                                                {
+                                                    <span style="background-color: #dee2e6; color: black; border-radius: 10px; padding: 5px 10px; font-weight: bold;">
+                                                        @(Model.Priorities.FirstOrDefault(p => p.PriorityId == ticket.PriorityId)?.PriorityType ?? "General")
+                                                    </span>
+                                                }
+                                            </td>
+
+
+                                            <!-- Status -->
+                                            <td>
+                                                @if (Model.Statuses.FirstOrDefault(s => s.StatusId == ticket.StatusId)?.StatusType == "Open")
+                                                {
+                                                    <span style="background-color: #D9FFD9; color: green; border-radius: 10px; padding: 5px 10px; font-weight: bold;">
+                                                        Open
+                                                    </span>
+                                                }
+                                                else if (Model.Statuses.FirstOrDefault(s => s.StatusId == ticket.StatusId)?.StatusType == "Closed")
+                                                {
+                                                    <span style="background-color: #FFCCCC; color: red; border-radius: 10px; padding: 5px 10px; font-weight: bold;">
+                                                        Closed
+                                                    </span>
+                                                }
+                                                else
+                                                {
+                                                    <span style="background-color: #FFEDCC; color: #E68D4F; border-radius: 10px; padding: 5px 10px; font-weight: bold;">
+                                                        In Progress
+                                                    </span>
+                                                }
+                                            </td>
+
+                                            <!-- Date Created -->
+                                            <td>@ticket.DateCreated.ToString("yyyy-MM-dd")</td>
+
+                                            <!-- Date Closed -->
+                                            <td>@(ticket.DateClosed.HasValue ? ticket.DateClosed.Value.ToString("yyyy-MM-dd") : "(Not yet closed)")</td>
+
+                                            <!-- Actions -->
+                                            <td>
+                                                <div class="btn-group shadow-sm" role="group" aria-label="Ticket Actions">
+                                                    <a href="@Url.Action("DetailsTicket", "Student", new { id = ticket.TicketId })"
+                                                       class="btn btn-sm"
+                                                       style="background-color: #EBEBEB; color: #E68D4F; padding: 5px; font-size: 20px;"
+                                                       onmouseover="this.style.backgroundColor='#d6d6d6'; this.style.color='#c0763d';"
+                                                       onmouseout="this.style.backgroundColor='#EBEBEB'; this.style.color='#E68D4F';">
+                                                        <i class="bi bi-eye"></i>
+                                                    </a>
+                                                    <button type="button"
+                                                            class="btn btn-sm"
+                                                            style="background-color: #EBEBEB; color: #E68D4F; padding: 5px; font-size: 20px;"
+                                                            onclick="openDeleteModal(@ticket.TicketId)"
+                                                            onmouseover="this.style.backgroundColor='#d6d6d6'; this.style.color='#c0763d';"
+                                                            onmouseout="this.style.backgroundColor='#EBEBEB'; this.style.color='#E68D4F';">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
                                                 </div>
                                             </td>
                                         </tr>
@@ -177,35 +258,36 @@
                                     </tr>
                                 }
                             </tbody>
+
                         </table>
                     </div>
                     <!-- Pagination Controls -->
-                    <nav>
-                        <ul class="pagination justify-content-center">
-                            @if (Model.CurrentPage > 1)
-                            {
-                                <li class="page-item">
-                                    <a class="page-link" href="@Url.Action("MyTickets", new { page = Model.CurrentPage - 1, categoryId = Model.CategoryId, statusId = Model.StatusId, priorityId = Model.PriorityId })">Previous</a>
-                                </li>
-                            }
+                    <nav aria-label="Pagination">
+                        <div class="d-flex justify-content-center">
+                            <div class="btn-group" role="group">
+                                <!-- Previous Button -->
+                                <a class="btn btn-outline-custom @(Model.CurrentPage <= 1 ? "disabled" : "")"
+                                   href="@(Model.CurrentPage > 1 ? Url.Action("MyTickets", new { page = Model.CurrentPage - 1, categoryId = Model.CategoryId, statusId = Model.StatusId, priorityId = Model.PriorityId }) : "#")">
+                                    Previous
+                                </a>
 
-                            @for (int i = 1; i <= Model.TotalPages; i++)
-                            {
-                                <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
-                                    <a class="page-link" href="@Url.Action("MyTickets", new { page = i, categoryId = Model.CategoryId, statusId = Model.StatusId, priorityId = Model.PriorityId })">@i</a>
-                                </li>
-                            }
+                                <!-- Page Numbers -->
+                                @for (int i = 1; i <= Model.TotalPages; i++)
+                                {
+                                    <a class="btn @(i == Model.CurrentPage ? "btn-custom-page" : "btn-outline-custom")"
+                                       href="@Url.Action("MyTickets", new { page = i, categoryId = Model.CategoryId, statusId = Model.StatusId, priorityId = Model.PriorityId })">
+                                        @i
+                                    </a>
+                                }
 
-                            @if (Model.CurrentPage < Model.TotalPages)
-                            {
-                                <li class="page-item">
-                                    <a class="page-link" href="@Url.Action("MyTickets", new { page = Model.CurrentPage + 1, categoryId = Model.CategoryId, statusId = Model.StatusId, priorityId = Model.PriorityId })">Next</a>
-                                </li>
-                            }
-                        </ul>
+                                <!-- Next Button -->
+                                <a class="btn btn-outline-custom @(Model.CurrentPage >= Model.TotalPages ? "disabled" : "")"
+                                   href="@(Model.CurrentPage < Model.TotalPages ? Url.Action("MyTickets", new { page = Model.CurrentPage + 1, categoryId = Model.CategoryId, statusId = Model.StatusId, priorityId = Model.PriorityId }) : "#")">
+                                    Next
+                                </a>
+                            </div>
+                        </div>
                     </nav>
-
-
 
                 </div>
             </div>
