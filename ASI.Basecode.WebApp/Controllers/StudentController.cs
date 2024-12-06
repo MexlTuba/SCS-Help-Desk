@@ -237,10 +237,25 @@ namespace ASI.Basecode.WebApp.Controllers
             return View();
         }
 
-        public IActionResult ListArticles()
+        public IActionResult ListArticles(int? categoryId)
         {
-            var articles = _knowledgebaseService.GetAllArticles();
-            return View(articles);
+            var model = new KnowledgeBaseViewModel
+            {
+                Categories = _categoryService.GetAllCategories()
+            };
+
+            if (categoryId.HasValue && categoryId.Value > 0)
+            {
+                // Get filtered articles by category
+                model.Articles = _knowledgebaseService.GetArticlesByCategory(categoryId.Value);
+            }
+            else
+            {
+                // No category filter applied, show all articles
+                model.Articles = _knowledgebaseService.GetAllArticles();
+            }
+
+            return View(model);
         }
 
         public IActionResult Settings()
