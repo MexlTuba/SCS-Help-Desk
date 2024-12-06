@@ -95,7 +95,7 @@
 <div class="modal fade" id="resetPasswordModal" tabindex="-1" aria-labelledby="resetPasswordModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form id="resetPasswordForm" method="post" asp-action="ResetPassword" asp-controller="SuperAdmin">
+            <form id="resetPasswordForm" method="post" asp-action="ResetPassword" asp-controller="Admin">
                 <div class="modal-header">
                     <h5 class="modal-title" id="resetPasswordModalLabel">Confirm Password Reset</h5>
                 </div>
@@ -118,7 +118,7 @@
         <script>
             function confirmDelete(userId) {
                 if (confirm("Are you sure you want to reset the password")) {
-                    window.location.href = '@Url.Action("ResetPassword", "SuperAdmin")?id=' + userId;
+                    window.location.href = '@Url.Action("ResetPassword", "Admin")?id=' + userId;
                 }
             }
         </script>
