@@ -1,0 +1,96 @@
+﻿@model ASI.Basecode.Services.ServiceModels.KnowledgeBaseViewModel
+
+@{
+    ViewData["Title"] = "SCS Help Desk";
+}
+
+<div style="display: flex; flex-direction: column; min-height: 100vh;">
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg bg-body-tertiary shadow-lg p-3">
+        <div class="container-fluid">
+            <!-- Logo and Title -->
+            <div class="d-flex align-items-center">
+                <img src="~/img/scsHelpDeskLogo.svg" alt="SCS Help Desk Logo" class="scsLogo">
+                <span class="navbar-brand mb-0 h1 fw-bold ms-3" style="font-size: 1.5rem;"></span>
+            </div>
+
+            <!-- Right Side: Buttons -->
+            <div class="d-flex gap-3">
+                <a href="@Url.Action("StudentDashboard", "Student")" class="btn btn-custom shadow-sm">
+                    Back to Homepage
+                </a>
+                <a asp-action="SignOutUser" asp-controller="Account" class="btn btn-danger logout-btn shadow-lg">
+                    Logout
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div style="flex-grow: 1; padding: 20px;">
+        <div style="background-color: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+            <!-- Page Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="fw-bold" style="font-size: 1.8rem;">Knowledgebase Articles</h2>
+            </div>
+
+            <!-- Filter Form -->
+            <div style="margin-top: 20px;">
+                <form method="get" asp-action="ListArticles" asp-controller="Student" style="display: flex; align-items: center; gap: 15px;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <img src="~/img/sort.svg" style="width: 19px; height: auto;" alt="logo" />
+                        <p style="font-size: 16px; font-weight: bold; margin: 0;">Sort by:</p>
+                    </div>
+                    <div class="form-group" style="flex-grow: 1;">
+                        <select asp-for="CategoryId" asp-items="@(new SelectList(Model.Categories, "CategoryId", "CategoryType"))" class="form-control">
+                            <option value="">-- Select Category --</option>
+                        </select>
+                        <span asp-validation-for="CategoryId" class="text-danger"></span>
+                    </div>
+                    <button type="submit" class="btn btn-warning" style="background-color: #E68D4F; color: white;">Apply Filters</button>
+                    <a href="@Url.Action("ListArticles", "Student")" class="btn btn-outline-secondary">Reset Filters</a>
+                </form>
+            </div>
+
+            <!-- Articles Table -->
+            <div style="margin-top: 20px;">
+                @if (Model.Articles != null && Model.Articles.Any())
+                {
+                    <table class="table table-striped">
+                        <thead style="background-color: #E68D4F; color: white; text-align: center;">
+                            <tr>
+                                <th>Title</th>
+                                <th>Category</th>
+                                <th>Content</th>
+                                <th>Created By</th>
+                                <th>Created At</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var article in Model.Articles)
+                            {
+                                <tr>
+                                    <td>@article.Title</td>
+                                    <td>@article.CategoryName</td>
+                                    <td>@article.Content</td>
+                                    <td>@article.CreatedBy</td>
+                                    <td>@article.CreatedAt.ToString("g")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <div class="alert alert-warning text-center">
+                        No articles found. Please adjust your filters or check back later.
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/knowledgeBase.css" />
+}
